@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ktlint)
 }
 
 android {
@@ -22,12 +23,19 @@ android {
         }
     }
 
+    ktlint {
+        android.set(true)
+        outputToConsole.set(true)
+        outputColorName.set("RED")
+        ignoreFailures.set(true)
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }

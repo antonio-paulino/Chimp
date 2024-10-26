@@ -1,7 +1,5 @@
 package pt.isel.pdm.chimp.ui.screens.about.components
 
-import androidx.compose.ui.graphics.painter.Painter
-
 /**
  * Represents an author of the application.
  * @property number The author's number.
@@ -13,6 +11,5 @@ data class Author(
     val number: String,
     val name: String,
     val image: Int,
-    val socials: Socials
+    val socials: Socials,
 )
-

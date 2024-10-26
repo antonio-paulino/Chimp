@@ -19,7 +19,7 @@ open class MainActivity : ComponentActivity() {
         setContent {
             ChIMPTheme {
                 MainScreen(
-                    onAboutNavigation = { navigateTo(AboutActivity::class.java) }
+                    onAboutNavigation = { navigateTo(AboutActivity::class.java) },
                 )
             }
         }
@@ -34,6 +34,7 @@ open class MainActivity : ComponentActivity() {
         super.onStop()
         Log.v(TAG, "MainActivity.onStop")
     }
+
     override fun onDestroy() {
         super.onDestroy()
         Log.v(TAG, "MainActivity.onDestroy")

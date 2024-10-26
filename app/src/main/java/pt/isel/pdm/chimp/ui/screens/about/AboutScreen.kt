@@ -25,14 +25,20 @@ import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(title: String, onNavIconClick: () -> Unit) {
+fun TopBar(
+    title: String,
+    onNavIconClick: () -> Unit,
+) {
     TopAppBar(
         title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = { onNavIconClick() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back),
+                )
             }
-        }
+        },
     )
 }
 
@@ -41,23 +47,26 @@ fun AboutScreen(
     onSendMail: (String) -> Unit = {},
     onOpenUrl: (Uri) -> Unit = {},
     onNavIconClick: () -> Unit = {},
-    authors: List<Author>
+    authors: List<Author>,
 ) {
     ChIMPTheme {
         Scaffold(
-            topBar = { TopBar(title = stringResource(R.string.about), onNavIconClick = onNavIconClick) }
+            topBar = {
+                TopBar(title = stringResource(R.string.about), onNavIconClick = onNavIconClick)
+            },
         ) { innerPadding ->
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
             ) {
                 for (author in authors) {
                     AuthorCard(
                         author = author,
                         onSendMail = onSendMail,
-                        onOpenUrl = onOpenUrl
+                        onOpenUrl = onOpenUrl,
                     )
                 }
             }
@@ -72,18 +81,19 @@ fun AboutScreenPreview() {
         onSendMail = {},
         onOpenUrl = {},
         onNavIconClick = {},
-        authors = listOf(
-            Author(
-                name = "Bernardo Pereira",
-                image = R.drawable.ic_launcher_foreground,
-                number = "50493",
-                socials = Socials(
-                    linkedInUrl = R.string.linkedin_link_bernardo_pereira,
-                    githubUrl = R.string.github_link_bernardo_pereira,
-                    mailUrl = R.string.mail_link_bernardo_pereira
-                )
-            )
-        )
+        authors =
+            listOf(
+                Author(
+                    name = "Bernardo Pereira",
+                    image = R.drawable.ic_launcher_foreground,
+                    number = "50493",
+                    socials =
+                        Socials(
+                            linkedInUrl = R.string.linkedin_link_bernardo_pereira,
+                            githubUrl = R.string.github_link_bernardo_pereira,
+                            mailUrl = R.string.mail_link_bernardo_pereira,
+                        ),
+                ),
+            ),
     )
 }
-

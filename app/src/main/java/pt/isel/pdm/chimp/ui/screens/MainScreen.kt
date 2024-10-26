@@ -36,12 +36,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    onAboutNavigation: () -> Unit
-) {
+fun MainScreen(onAboutNavigation: () -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -49,88 +46,101 @@ fun MainScreen(
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                Column (
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(240.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .width(240.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Box (
-                        modifier = Modifier
-                            .height(100.dp)
-                            .fillMaxWidth()
-                            .padding(2.dp)
+                    Box(
+                        modifier =
+                            Modifier
+                                .height(100.dp)
+                                .fillMaxWidth()
+                                .padding(2.dp),
                     ) {
                         Text(
                             text = "ChIMP",
-                            style = TextStyle(
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                                color = MaterialTheme.colorScheme.onSurface
-                            ),
-                            modifier = Modifier.align(Alignment.Center)
+                            style =
+                                TextStyle(
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                ),
+                            modifier = Modifier.align(Alignment.Center),
                         )
                     }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                    )
                     TileDrawerContent("About", Icons.Filled.Info) { onAboutNavigation() }
                 }
             },
-            scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f)
+            scrimColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.32f),
         ) {
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "ChIMP", color = MaterialTheme.colorScheme.onPrimary) },
+                        title = {
+                            Text(text = "ChIMP", color = MaterialTheme.colorScheme.onPrimary)
+                        },
                         navigationIcon = {
                             IconButton(
                                 onClick = {
                                     scope.launch {
                                         if (drawerState.isClosed) drawerState.open() else drawerState.close()
-                                    } },
+                                    }
+                                },
                                 content = {
                                     Icon(
                                         imageVector = Icons.Filled.Menu,
                                         contentDescription = "Menu",
-                                        tint = MaterialTheme.colorScheme.onPrimary
+                                        tint = MaterialTheme.colorScheme.onPrimary,
                                     )
-                                }
+                                },
                             )
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
+                        colors =
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
                     )
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) { innerPadding ->
                 Text(
                     text = "Hello, ChIMP!",
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
                 )
             }
         }
     }
 }
 
-
 @Composable
-fun TileDrawerContent(title:String, icon: ImageVector, onClick:()->Unit){
+fun TileDrawerContent(
+    title: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+) {
     Box(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .padding(16.dp),
-    ){
+        modifier =
+            Modifier
+                .clickable(onClick = onClick)
+                .padding(16.dp),
+    ) {
         Icon(
             imageVector = icon,
             contentDescription = title,
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurface,
         )
         Text(
             text = title,
             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(start = 30.dp)
+            modifier = Modifier.padding(start = 30.dp),
         )
     }
 }

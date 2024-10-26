@@ -32,31 +32,33 @@ private const val LARGE_ICON_SIZE = 36
 fun SocialLink(
     icon: Int,
     backgroundColor: Color,
-    url: String, size:
-    SocialLinkSize = SocialLinkSize.MEDIUM,
+    url: String,
+    size: SocialLinkSize = SocialLinkSize.MEDIUM,
     onOpenUrl: (Uri) -> Unit = {},
-    onSendMail: (String) -> Unit = {}
+    onSendMail: (String) -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
-            .clickable {
-                if (url.startsWith("mailto:")) {
-                    onSendMail(url)
-                } else {
-                    onOpenUrl(Uri.parse(url))
+        modifier =
+            Modifier
+                .clickable {
+                    if (url.startsWith("mailto:")) {
+                        onSendMail(url)
+                    } else {
+                        onOpenUrl(Uri.parse(url))
+                    }
                 }
-            }
-            .clip(shape = CircleShape)
-            .size(size.value.dp)
-            .background(backgroundColor),
+                .clip(shape = CircleShape)
+                .size(size.value.dp)
+                .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(id = icon),
             colorFilter = ColorFilter.tint(Color.White),
             contentDescription = null,
-            modifier = Modifier
-                .size(size.value.dp - size.value.dp / 3)
+            modifier =
+                Modifier
+                    .size(size.value.dp - size.value.dp / 3),
         )
     }
 }
@@ -64,5 +66,5 @@ fun SocialLink(
 enum class SocialLinkSize(val value: Int) {
     SMALL(SMALL_ICON_SIZE),
     MEDIUM(MEDIUM_ICON_SIZE),
-    LARGE(LARGE_ICON_SIZE)
+    LARGE(LARGE_ICON_SIZE),
 }

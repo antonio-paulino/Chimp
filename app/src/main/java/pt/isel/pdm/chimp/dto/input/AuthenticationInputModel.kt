@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.domain.wrappers.password.Password
 
-
 /**
  * Input model for login.
  *
@@ -22,7 +21,10 @@ data class AuthenticationInputModel(
     val email: String?,
 ) {
     companion object {
-        operator fun invoke(username: Name?, password: Password, email: Email?) =
-            AuthenticationInputModel(username?.value, password.value, email?.value)
+        operator fun invoke(
+            username: Name?,
+            password: Password,
+            email: Email?,
+        ) = AuthenticationInputModel(username?.value, password.value, email?.value)
     }
 }

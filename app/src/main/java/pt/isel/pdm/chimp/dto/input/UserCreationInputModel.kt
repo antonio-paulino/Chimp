@@ -18,7 +18,11 @@ data class UserCreationInputModel(
     val invitation: String,
 ) {
     companion object {
-        operator fun invoke(username: String, password: String, email: String, invitation: String) =
-            UserCreationInputModel(username, password, email, invitation)
+        operator fun invoke(
+            username: String,
+            password: String,
+            email: String,
+            invitation: String,
+        ) = UserCreationInputModel(username, password, email, invitation)
     }
 }

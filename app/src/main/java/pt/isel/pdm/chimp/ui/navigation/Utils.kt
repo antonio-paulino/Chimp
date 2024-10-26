@@ -9,9 +9,7 @@ import androidx.activity.ComponentActivity
  * @receiver The context to navigate from
  */
 
-fun <T> ComponentActivity.navigateTo(
-    clazz: Class<T>,
-) {
+fun <T> ComponentActivity.navigateTo(clazz: Class<T>) {
     val intent = Intent(this, clazz)
     startActivity(intent)
 }

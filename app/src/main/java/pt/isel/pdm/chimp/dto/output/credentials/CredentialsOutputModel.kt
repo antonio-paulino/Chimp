@@ -22,7 +22,7 @@ data class CredentialsOutputModel(
             user.toDomain(),
             accessToken.toDomain(),
             refreshToken,
-            refreshToken.expiresAt
+            refreshToken.expiresAt,
         )
     }
 }

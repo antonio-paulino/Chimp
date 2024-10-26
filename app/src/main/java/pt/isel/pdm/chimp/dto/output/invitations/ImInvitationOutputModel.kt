@@ -15,9 +15,10 @@ data class ImInvitationOutputModel(
     val expiresAt: String,
 ) {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun toDomain() = ImInvitation(
-        token = UUID.fromString(token),
-        status = ImInvitationStatus.valueOf(status),
-        expiresAt = LocalDateTime.parse(expiresAt)
-    )
+    fun toDomain() =
+        ImInvitation(
+            token = UUID.fromString(token),
+            status = ImInvitationStatus.valueOf(status),
+            expiresAt = LocalDateTime.parse(expiresAt),
+        )
 }

@@ -1,6 +1,5 @@
 package pt.isel.pdm.chimp.dto.input
 
-
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
