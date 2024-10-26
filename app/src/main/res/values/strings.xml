@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">ChIMP</string>
+    <string name="app_name">Chimp</string>
+
+    <string name="about">About</string>
+    <string name="back">Back</string>
+
+    <!-- Authors -->
+    <string name="bernardo_pereira_author_title">Bernardo Pereira</string>
+    <string name="bernardo_pereira_number">50493</string>
+    <string name="github_link_bernardo_pereira">https://github.com/BernardoPe</string>
+    <string name="linkedin_link_bernardo_pereira">https://linkedin.com/BernardoPe</string>
+    <string name="mail_link_bernardo_pereira">mailto:a50493@alunos.isel.pt</string>
+    <string name="error_opening_url">Could not open link</string>
+    <string name="error_sending_mail">Could not send email</string>
 </resources>
