@@ -10,4 +10,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class InvitationAcceptInputModel(
     val status: String,
-)
+) {
+    constructor(
+        accept: Boolean,
+    ) : this(
+        accept.toString(),
+    )
+}

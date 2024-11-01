@@ -19,4 +19,7 @@ data class Session(
     val accessToken: AccessToken,
     val refreshToken: RefreshToken,
     val expiresAt: LocalDateTime,
-)
+) {
+    val expired: Boolean
+        get() = LocalDateTime.now() >= expiresAt
+}

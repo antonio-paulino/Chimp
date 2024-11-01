@@ -18,8 +18,15 @@ import java.time.LocalDateTime
 data class Channel(
     val id: Identifier = Identifier(0),
     val name: Name,
+    val defaultRole: ChannelRole,
     val owner: User,
     val isPublic: Boolean,
     val createdAt: LocalDateTime,
-    private val members: List<ChannelMember>,
+    val members: List<ChannelMember>,
 )
+
+typealias UserChannels = Pair<OwnedChannels, MemberChannels>
+
+typealias OwnedChannels = List<Channel>
+
+typealias MemberChannels = List<Channel>
