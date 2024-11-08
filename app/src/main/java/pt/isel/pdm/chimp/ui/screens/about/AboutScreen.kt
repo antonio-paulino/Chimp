@@ -4,67 +4,58 @@ import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.ui.components.NavBar
+import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.AuthorCard
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
-import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar(
-    title: String,
-    onNavIconClick: () -> Unit,
-) {
-    TopAppBar(
-        title = { Text(text = title) },
-        navigationIcon = {
-            IconButton(onClick = { onNavIconClick() }) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back),
-                )
-            }
-        },
-    )
-}
 
 @Composable
 fun AboutScreen(
     onSendMail: (String) -> Unit = {},
     onOpenUrl: (Uri) -> Unit = {},
-    onNavIconClick: () -> Unit = {},
+    onHomeNavigation: () -> Unit,
+    onSearchNavigation: () -> Unit,
+    onInvitationsNavigation: () -> Unit,
     authors: List<Author>,
 ) {
-    ChIMPTheme {
-        Scaffold(
-            topBar = {
-                TopBar(title = stringResource(R.string.about), onNavIconClick = onNavIconClick)
-            },
-        ) { innerPadding ->
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-            ) {
-                for (author in authors) {
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = stringResource(R.string.about),
+            )
+        },
+        bottomBar = {
+            NavBar(
+                onHomeNavigation = onHomeNavigation,
+                onSearchNavigation = onSearchNavigation,
+                onInvitationsNavigation = onInvitationsNavigation,
+                onAboutNavigation = {},
+                currentScreen = stringResource(R.string.about),
+            )
+        },
+    ) { innerPadding ->
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            LazyColumn {
+                items(authors.size) { index ->
                     AuthorCard(
-                        author = author,
+                        Modifier.padding(vertical = 6.dp),
+                        author = authors[index],
                         onSendMail = onSendMail,
                         onOpenUrl = onOpenUrl,
                     )
@@ -80,7 +71,9 @@ fun AboutScreenPreview() {
     AboutScreen(
         onSendMail = {},
         onOpenUrl = {},
-        onNavIconClick = {},
+        onHomeNavigation = {},
+        onSearchNavigation = {},
+        onInvitationsNavigation = {},
         authors =
             listOf(
                 Author(

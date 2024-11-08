@@ -27,5 +27,7 @@ sealed class Problem {
         val detail: String,
     ) : Problem()
 
+    data object TooManyRequestsProblem : Problem()
+
     data object UnexpectedProblem : Problem()
 }

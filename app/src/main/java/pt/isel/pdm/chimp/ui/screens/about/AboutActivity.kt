@@ -5,26 +5,34 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.MainActivity
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
+import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
+import pt.isel.pdm.chimp.ui.utils.showErrorToast
 
 /**
  * Activity that shows information about the application.
  */
-class AboutActivity : MainActivity() {
+class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.v(TAG, "AboutActivity.onCreate")
         setContent {
-            AboutScreen(
-                onSendMail = { sendMail(it) },
-                onOpenUrl = { openUrl(it) },
-                onNavIconClick = { finish() },
-                authors = authors,
-            )
+            ChIMPTheme {
+                AboutScreen(
+                    onSendMail = { sendMail(it) },
+                    onOpenUrl = { openUrl(it) },
+                    onHomeNavigation = { navigateTo(MainActivity::class.java) },
+                    onSearchNavigation = { TODO() },
+                    onInvitationsNavigation = { TODO() },
+                    authors = authors,
+                )
+            }
         }
     }
 
@@ -37,11 +45,7 @@ class AboutActivity : MainActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to open URL: $url", e)
-            Toast.makeText(
-                this,
-                R.string.error_opening_url,
-                Toast.LENGTH_SHORT,
-            ).show()
+            showErrorToast(getString(R.string.error_opening_url), this)
         }
     }
 
@@ -60,11 +64,7 @@ class AboutActivity : MainActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send email to: $mail", e)
-            Toast.makeText(
-                this,
-                R.string.error_sending_mail,
-                Toast.LENGTH_SHORT,
-            ).show()
+            showErrorToast(getString(R.string.error_sending_mail), this)
         }
     }
 

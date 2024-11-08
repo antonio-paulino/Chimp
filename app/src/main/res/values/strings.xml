@@ -12,4 +12,9 @@
     <string name="mail_link_bernardo_pereira">mailto:a50493@alunos.isel.pt</string>
     <string name="error_opening_url">Could not open link</string>
     <string name="error_sending_mail">Could not send email</string>
+    <string name="success_icon">Success Icon</string>
+    <string name="error_icon">Error Icon</string>
+    <string name="invitations">Invitations</string>
+    <string name="search">Search</string>
+    <string name="home">Home</string>
 </resources>

@@ -52,6 +52,18 @@ open class BaseHTTPService(
                     failure(body<Problem.InputValidationProblem>())
                 }
 
+                HttpStatusCode.Unauthorized -> {
+                    failure(body<Problem.ServiceProblem>())
+                }
+
+                HttpStatusCode.Forbidden -> {
+                    failure(body<Problem.ServiceProblem>())
+                }
+
+                HttpStatusCode.TooManyRequests -> {
+                    failure(Problem.TooManyRequestsProblem)
+                }
+
                 HttpStatusCode.InternalServerError -> {
                     error()
                 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import isel.pdm.chimp.ui.theme.montserratFamily
@@ -31,7 +32,10 @@ fun AuthorCardHeader(
         Text(
             text = name,
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(16.dp),
+            modifier =
+                Modifier
+                    .scale(0.8f)
+                    .padding(top = 8.dp, start = 8.dp, end = 8.dp),
             fontFamily = montserratFamily(),
         )
         Text(
@@ -45,9 +49,9 @@ fun AuthorCardHeader(
             contentDescription = null,
             modifier =
                 Modifier
-                    .padding(16.dp)
+                    .padding(12.dp)
                     .clip(CircleShape)
-                    .size(200.dp),
+                    .size(150.dp),
         )
     }
 }

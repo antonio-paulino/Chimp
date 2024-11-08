@@ -40,7 +40,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .plus(buildQuery(null, pagination, sort)),
             session.accessToken.token.toString(),
         ).handle {
-            it!!.toDomain(channel)
+            it!!.toDomain()
         }
 
     override suspend fun getMessage(
@@ -54,7 +54,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(MESSAGE_ID_PARAM, messageId.value.toString()),
             session.accessToken.token.toString(),
         ).handle {
-            it!!.toDomain(channel)
+            it!!.toDomain()
         }
     }
 
