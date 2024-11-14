@@ -41,7 +41,7 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString()),
             session.accessToken.token.toString(),
             ChannelInvitationCreationInputModel(invitee.id, expiresAt, role),
-        ).handle { it!!.toDomain(channel, session.user, invitee, role, expiresAt) }
+        ).handle { it.toDomain(channel, session.user, invitee, role, expiresAt) }
 
     override suspend fun getInvitation(
         channel: Channel,
@@ -53,7 +53,7 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
                 .replace(INVITE_ID_PARAM, inviteId.value.toString()),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
     }
 
     override suspend fun getChannelInvitations(
@@ -67,7 +67,7 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
                 .plus(buildQuery(null, pagination, sort)),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     override suspend fun updateInvitation(
         invitationId: Identifier,
@@ -107,7 +107,7 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(USER_ID_PARAM, user.id.value.toString())
                 .plus(buildQuery(null, pagination, sort)),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
     }
 
     override suspend fun acceptOrRejectInvitation(

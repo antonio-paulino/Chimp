@@ -40,7 +40,7 @@ class ChannelServiceHTTP(
             session.accessToken.token.toString(),
             ChannelCreationInputModel(name, defaultRole, isPublic),
         ).handle {
-            it!!.toDomain(name, defaultRole, isPublic, session.user)
+            it.toDomain(name, defaultRole, isPublic, session.user)
         }
     }
 
@@ -52,7 +52,7 @@ class ChannelServiceHTTP(
             CHANNEL_ROUTE
                 .replace(CHANNEL_ID_PARAM, channelId.value.toString()),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
     }
 
     override suspend fun getChannels(
@@ -64,7 +64,7 @@ class ChannelServiceHTTP(
         return get<ChannelsPaginatedOutputModel>(
             CHANNELS_ROUTE + buildQuery(name, pagination, sort),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
     }
 
     override suspend fun updateChannel(

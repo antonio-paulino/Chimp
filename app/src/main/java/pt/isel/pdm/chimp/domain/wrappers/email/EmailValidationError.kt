@@ -1,4 +1,4 @@
-package im.domain.wrappers.email
+package pt.isel.pdm.chimp.domain.wrappers.email
 
 sealed class EmailValidationError(
     private val defaultMessage: String = "Email is invalid",

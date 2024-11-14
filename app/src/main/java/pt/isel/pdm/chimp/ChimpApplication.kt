@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp
 
 import android.app.Application
+import android.content.Context
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -23,6 +24,11 @@ interface DependenciesContainer {
 }
 
 class ChimpApplication : Application(), DependenciesContainer {
+
+    init {
+        instance = this
+    }
+
     private val client by lazy { createHttpClient() }
     override val chimpService by lazy { ChimpServiceHttp(API_BASE_URL, client) }
     override val sessionManager by lazy { SessionManagerMem() } // TODO: Use a persistent implementation of the session manager
@@ -47,6 +53,13 @@ class ChimpApplication : Application(), DependenciesContainer {
          */
         const val TAG = "CHIMP_APPLICATION"
 
-        private const val API_BASE_URL = "http://localhost:8080/api"
+        private var instance: ChimpApplication? = null
+
+        fun applicationContext(): Context {
+            return instance!!.applicationContext
+        }
+
+        private const val API_BASE_URL = "http://10.0.2.2:8080/api"
     }
+
 }

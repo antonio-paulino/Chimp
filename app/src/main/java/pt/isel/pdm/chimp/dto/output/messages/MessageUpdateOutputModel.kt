@@ -19,7 +19,7 @@ data class MessageUpdateOutputModel(
         createdAt: LocalDateTime,
     ) = Message(
         id = id,
-        channel = channel,
+        channelId = channel.id,
         content = content,
         user = author,
         createdAt = createdAt,

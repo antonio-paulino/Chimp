@@ -1,12 +1,10 @@
 package pt.isel.pdm.chimp.ui.utils
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.Success
@@ -24,14 +22,12 @@ private const val TOO_MANY_REQUESTS_DELAY = 1000L
  * @param request the request to execute.
  * @param onError the function to execute when the request fails.
  * @param onSuccess the function to execute when the request succeeds.
- * @param context the context.
  */
 fun <T> ViewModel.launchRequest(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
     onError: (Problem) -> Unit,
-    onSuccess: Success<T>.() -> Unit,
-    context: Context,
+    onSuccess: suspend (Success<T>) -> Unit,
 ) {
     viewModelScope.launch {
         executeRequest(
@@ -39,7 +35,6 @@ fun <T> ViewModel.launchRequest(
             request = request,
             onError = onError,
             onSuccess = onSuccess,
-            context = context,
         )
     }
 }
@@ -58,15 +53,13 @@ fun <T> ViewModel.launchRequest(
  * @param refresh the function to refresh the token.
  * @param onError the function to execute when the request fails.
  * @param onSuccess the function to execute when the request succeeds.
- * @param context the context.
  */
 fun <T> ViewModel.launchRequestRefreshing(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
     refresh: () -> Unit,
-    onError: Problem.() -> Unit,
-    onSuccess: Success<T>.() -> Unit,
-    context: Context,
+    onError: (Problem) -> Unit,
+    onSuccess: suspend (Success<T>) -> Unit,
 ) {
     viewModelScope.launch {
         executeRequestRefreshing(
@@ -75,7 +68,6 @@ fun <T> ViewModel.launchRequestRefreshing(
             refresh = refresh,
             onError = onError,
             onSuccess = onSuccess,
-            context = context,
         )
     }
 }
@@ -90,15 +82,14 @@ fun <T> ViewModel.launchRequestRefreshing(
  * @param request the request to execute.
  * @param onError the function to execute when the request fails.
  * @param onSuccess the function to execute when the request succeeds.
- * @param context the context.
  */
 suspend fun <T> executeRequest(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
-    onError: Problem.() -> Unit,
-    onSuccess: Success<T>.() -> Unit,
-    context: Context,
+    onError: (Problem) -> Unit,
+    onSuccess: suspend(Success<T>) -> Unit,
 ) {
+    val context = ChimpApplication.applicationContext()
     val res =
         if (context.isNetworkAvailable()) {
             request()
@@ -107,13 +98,13 @@ suspend fun <T> executeRequest(
         }
 
     if (res == null) {
-        showErrorToast("No connection available", context)
+        showErrorToast("No connection available")
         return
     }
 
     if (res.isTooManyRequests()) {
         delay(TOO_MANY_REQUESTS_DELAY)
-        executeRequest(noConnectionRequest, request, onError, onSuccess, context)
+        executeRequest(noConnectionRequest, request, onError, onSuccess)
     }
 
     when (res) {
@@ -135,52 +126,40 @@ suspend fun <T> executeRequest(
  * @param refresh the function to refresh the token.
  * @param onError the function to execute when the request fails.
  * @param onSuccess the function to execute when the request succeeds.
- * @param context the context.
  */
 suspend fun <T> executeRequestRefreshing(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
     refresh: () -> Unit,
     onError: (Problem) -> Unit,
-    onSuccess: Success<T>.() -> Unit,
-    context: Context,
+    onSuccess: suspend (Success<T>) -> Unit,
 ) {
-    val res = if (context.isNetworkAvailable()) {
-        request()
-    } else {
-        noConnectionRequest?.let { it() }
-    }
+    val context = ChimpApplication.applicationContext()
+    val res =
+        if (context.isNetworkAvailable()) {
+            request()
+        } else {
+            noConnectionRequest?.let { it() }
+        }
 
     if (res == null) {
-        showErrorToast("No connection available", context)
+        showErrorToast("No connection available")
         return
     }
 
     if (res.isTooManyRequests()) {
         delay(TOO_MANY_REQUESTS_DELAY)
-        executeRequestRefreshing(request, request, refresh, onError, onSuccess, context)
+        executeRequestRefreshing(request, request, refresh, onError, onSuccess)
     }
 
     if (res.isUnauthorized()) {
         refresh()
-        executeRequest(noConnectionRequest, request, onError, onSuccess, context)
+        executeRequest(noConnectionRequest, request, onError, onSuccess)
     }
 
     when (res) {
         is Success -> onSuccess(res)
         is Failure -> onError(res.value)
-    }
-}
-
-fun Context.isNetworkAvailable(): Boolean {
-    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork ?: return false
-    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-    return when {
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-        else -> false
     }
 }
 

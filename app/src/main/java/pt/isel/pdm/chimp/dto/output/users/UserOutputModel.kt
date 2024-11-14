@@ -1,8 +1,8 @@
 package pt.isel.pdm.chimp.dto.output.users
 
-import im.domain.wrappers.email.toEmail
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.chimp.domain.user.User
+import pt.isel.pdm.chimp.domain.wrappers.email.toEmail
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.toName
 

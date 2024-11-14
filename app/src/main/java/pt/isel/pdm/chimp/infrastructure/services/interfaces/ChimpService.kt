@@ -2,6 +2,7 @@ package pt.isel.pdm.chimp.infrastructure.services.interfaces
 
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.auth.AuthService
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.channels.ChannelService
+import pt.isel.pdm.chimp.infrastructure.services.interfaces.events.EventService
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.invitations.InvitationService
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.messages.MessageService
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.users.UserService
@@ -15,4 +16,5 @@ interface ChimpService {
     val channelService: ChannelService
     val messageService: MessageService
     val invitationService: InvitationService
+    val eventService: EventService
 }

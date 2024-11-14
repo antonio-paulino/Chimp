@@ -1,9 +1,9 @@
 package pt.isel.pdm.chimp.infrastructure.services.interfaces.auth
 
-import im.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
 import pt.isel.pdm.chimp.domain.sessions.Session
+import pt.isel.pdm.chimp.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.domain.wrappers.password.Password
@@ -23,9 +23,9 @@ interface AuthService {
      * @return Either a [Problem] or a [Session]
      */
     suspend fun login(
-        username: Name?,
-        email: Email?,
-        password: Password,
+        username: String?,
+        email: String?,
+        password: String,
     ): Either<Problem, Session>
 
     /**

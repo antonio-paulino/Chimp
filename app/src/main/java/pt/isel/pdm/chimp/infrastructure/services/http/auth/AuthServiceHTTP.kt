@@ -1,10 +1,10 @@
 package pt.isel.pdm.chimp.infrastructure.services.http.auth
 
-import im.domain.wrappers.email.Email
 import io.ktor.client.HttpClient
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
 import pt.isel.pdm.chimp.domain.sessions.Session
+import pt.isel.pdm.chimp.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
@@ -30,15 +30,15 @@ class AuthServiceHTTP(
     httpClient: HttpClient,
 ) : BaseHTTPService(httpClient, baseUrl), AuthService {
     override suspend fun login(
-        username: Name?,
-        email: Email?,
-        password: Password,
+        username: String?,
+        email: String?,
+        password: String,
     ): Either<Problem, Session> =
         post<AuthenticationInputModel, CredentialsOutputModel>(
             LOGIN_ROUTE,
             "",
             AuthenticationInputModel(username, password, email),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     override suspend fun register(
         username: Name,
@@ -50,7 +50,7 @@ class AuthServiceHTTP(
             REGISTER_ROUTE,
             "",
             UserCreationInputModel(username, password, email, token),
-        ).handle { it!!.id.toIdentifier() }
+        ).handle { it.id.toIdentifier() }
 
     override suspend fun logout(session: Session): Either<Problem, Unit> =
         post<Unit, Unit>(LOGOUT_ROUTE, session.accessToken.token.toString(), null).handle { }
@@ -60,14 +60,14 @@ class AuthServiceHTTP(
             REFRESH_ROUTE,
             session.refreshToken.token.toString(),
             null,
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     override suspend fun createInvitation(session: Session): Either<Problem, ImInvitation> =
         post<Unit, ImInvitationOutputModel>(
             INVITATIONS_ROUTE,
             session.accessToken.token.toString(),
             null,
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     companion object {
         private const val LOGIN_ROUTE = "auth/login"

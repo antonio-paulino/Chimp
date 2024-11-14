@@ -40,7 +40,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .plus(buildQuery(null, pagination, sort)),
             session.accessToken.token.toString(),
         ).handle {
-            it!!.toDomain()
+            it.toDomain()
         }
 
     override suspend fun getMessage(
@@ -54,7 +54,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(MESSAGE_ID_PARAM, messageId.value.toString()),
             session.accessToken.token.toString(),
         ).handle {
-            it!!.toDomain()
+            it.toDomain()
         }
     }
 
@@ -67,7 +67,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
             CHANNEL_MESSAGES_ROUTE.replace(CHANNEL_ID_PARAM, channel.id.value.toString()),
             session.accessToken.token.toString(),
             MessageCreationInputModel(content),
-        ).handle { it!!.toDomain(channel, session.user, content) }
+        ).handle { it.toDomain(channel, session.user, content) }
     }
 
     override suspend fun updateMessage(
@@ -82,7 +82,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(MESSAGE_ID_PARAM, messageId.value.toString()),
             session.accessToken.token.toString(),
             MessageCreationInputModel(content),
-        ).handle { LocalDateTime.parse(it!!.editedAt) }
+        ).handle { LocalDateTime.parse(it.editedAt) }
     }
 
     override suspend fun deleteMessage(
@@ -91,7 +91,7 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
     ): Either<Problem, Unit> {
         return delete(
             CHANNEL_MESSAGE_ROUTE
-                .replace(CHANNEL_ID_PARAM, message.channel.id.value.toString())
+                .replace(CHANNEL_ID_PARAM, message.channelId.value.toString())
                 .replace(MESSAGE_ID_PARAM, message.id.value.toString()),
             session.accessToken.token.toString(),
         ).handle { }

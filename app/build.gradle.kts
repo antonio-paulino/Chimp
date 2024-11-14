@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "pt.isel.pdm.chimp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "pt.isel.pdm.chimp"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

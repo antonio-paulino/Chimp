@@ -1,8 +1,8 @@
 package pt.isel.pdm.chimp.dto.input
 
-import im.domain.wrappers.email.Email
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
+import pt.isel.pdm.chimp.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.domain.wrappers.password.Password
 

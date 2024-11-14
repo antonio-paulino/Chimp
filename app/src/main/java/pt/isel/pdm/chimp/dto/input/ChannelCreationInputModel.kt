@@ -8,6 +8,7 @@ import pt.isel.pdm.chimp.domain.wrappers.name.Name
  * Input model for creating a channel.
  *
  * @property name The name of the channel.
+ * @property defaultRole The default role of the channel members.
  * @property isPublic Whether the channel is public.
  */
 @Serializable

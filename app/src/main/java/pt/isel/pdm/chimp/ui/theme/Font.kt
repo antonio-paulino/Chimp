@@ -1,11 +1,9 @@
-package isel.pdm.chimp.ui.theme
+package pt.isel.pdm.chimp.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import pt.isel.pdm.chimp.R
 
-@Composable
 fun montserratFamily() =
     FontFamily(
         Font(R.font.montserrat_regular),
@@ -15,7 +13,6 @@ fun montserratFamily() =
         Font(R.font.montserrat_light),
     )
 
-@Composable
 fun productSansFamily() =
     FontFamily(
         Font(R.font.productsans_bold),

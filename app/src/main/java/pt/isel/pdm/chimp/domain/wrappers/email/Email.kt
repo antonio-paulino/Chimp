@@ -1,4 +1,4 @@
-package im.domain.wrappers.email
+package pt.isel.pdm.chimp.domain.wrappers.email
 
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.Success

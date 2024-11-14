@@ -22,10 +22,9 @@ sealed class PasswordValidationError(
         val min: Int,
     ) : PasswordValidationError("Password must contain at least $min digit(s)")
 
+    data object CannotContainWhitespace : PasswordValidationError("Password cannot contain whitespace")
+
     fun toErrorMessage(): String = defaultMessage
 }
 
-fun List<PasswordValidationError>.toErrorMessage(): String =
-    joinToString("\n") {
-        it.toErrorMessage()
-    }
+fun List<PasswordValidationError>.toErrorMessage(): String = joinToString("\n") { it.toErrorMessage() }

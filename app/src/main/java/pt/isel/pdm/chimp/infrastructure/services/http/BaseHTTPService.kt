@@ -33,7 +33,7 @@ open class BaseHTTPService(
      *
      * @return the result of the request
      */
-    protected suspend inline fun <reified R> HttpResponse.parseResponse(): ApiResult<R?, Problem> {
+    protected suspend inline fun <reified R> HttpResponse.parseResponse(): ApiResult<R, Problem> {
         return try {
             return when (status) {
                 HttpStatusCode.OK -> {
@@ -45,11 +45,15 @@ open class BaseHTTPService(
                 }
 
                 HttpStatusCode.NoContent -> {
-                    success(null)
+                    success(Unit as R)
                 }
 
                 HttpStatusCode.BadRequest -> {
-                    failure(body<Problem.InputValidationProblem>())
+                    try {
+                        failure(body<Problem.InputValidationProblem>())
+                    } catch (e: Exception) {
+                        failure(body<Problem.ServiceProblem>())
+                    }
                 }
 
                 HttpStatusCode.Unauthorized -> {
@@ -89,11 +93,13 @@ open class BaseHTTPService(
     protected suspend inline fun <reified R> get(
         resource: String,
         token: String,
-    ): ApiResult<R?, Problem> =
-        httpClient.get {
-            url("$baseUrl/$resource")
-            header(AUTHORIZATION_HEADER, "Bearer $token")
-        }.parseResponse()
+    ): ApiResult<R, Problem> =
+        tryRequest {
+            httpClient.get {
+                url("$baseUrl/$resource")
+                header(AUTHORIZATION_HEADER, "Bearer $token")
+            }.parseResponse()
+        }
 
     /**
      * Performs a PUT request to the specified resource.
@@ -111,15 +117,17 @@ open class BaseHTTPService(
         resource: String,
         token: String,
         body: T?,
-    ): ApiResult<R?, Problem> =
-        httpClient.put {
-            url("$baseUrl/$resource")
-            header(AUTHORIZATION_HEADER, "Bearer $token")
-            body?.let {
-                header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
-                setBody(it)
-            }
-        }.parseResponse()
+    ): ApiResult<R, Problem> =
+        tryRequest {
+            httpClient.put {
+                url("$baseUrl/$resource")
+                header(AUTHORIZATION_HEADER, "Bearer $token")
+                body?.let {
+                    header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                    setBody(it)
+                }
+            }.parseResponse()
+        }
 
     /**
      * Performs a POST request to the specified resource.
@@ -137,15 +145,17 @@ open class BaseHTTPService(
         resource: String,
         token: String,
         body: T?,
-    ): ApiResult<R?, Problem> =
-        httpClient.post {
-            url("$baseUrl/$resource")
-            header(AUTHORIZATION_HEADER, "Bearer $token")
-            body?.let {
-                header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
-                setBody(it)
-            }
-        }.parseResponse()
+    ): ApiResult<R, Problem> =
+        tryRequest {
+            httpClient.post {
+                url("$baseUrl/$resource")
+                header(AUTHORIZATION_HEADER, "Bearer $token")
+                body?.let {
+                    header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                    setBody(it)
+                }
+            }.parseResponse()
+        }
 
     /**
      * Performs a DELETE request to the specified resource.
@@ -158,11 +168,13 @@ open class BaseHTTPService(
     protected suspend inline fun delete(
         resource: String,
         token: String,
-    ): ApiResult<Unit?, Problem> =
-        httpClient.delete {
-            url("$baseUrl/$resource")
-            header(AUTHORIZATION_HEADER, "Bearer $token")
-        }.parseResponse()
+    ): ApiResult<Unit, Problem> =
+        tryRequest {
+            httpClient.delete {
+                url("$baseUrl/$resource")
+                header(AUTHORIZATION_HEADER, "Bearer $token")
+            }.parseResponse()
+        }
 
     /**
      * Performs a PATCH request to the specified resource.
@@ -178,16 +190,29 @@ open class BaseHTTPService(
     protected suspend inline fun <reified T, reified R> patch(
         resource: String,
         token: String,
-        body: T?,
-    ): ApiResult<R?, Problem> =
-        httpClient.patch {
-            url("$baseUrl/$resource")
-            header(AUTHORIZATION_HEADER, "Bearer $token")
-            body?.let {
-                header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
-                setBody(it)
-            }
-        }.parseResponse()
+        body: T,
+    ): ApiResult<R, Problem> =
+        tryRequest {
+            httpClient.patch {
+                url("$baseUrl/$resource")
+                header(AUTHORIZATION_HEADER, "Bearer $token")
+                body?.let {
+                    header(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                    setBody(it)
+                }
+            }.parseResponse()
+        }
+
+    protected inline fun <T> tryRequest(
+        request: () -> ApiResult<T, Problem>,
+    ): ApiResult<T, Problem> {
+        return try {
+            request()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error executing request", e)
+            failure(Problem.UnexpectedProblem)
+        }
+    }
 
     companion object {
         protected const val AUTHORIZATION_HEADER = "Authorization"

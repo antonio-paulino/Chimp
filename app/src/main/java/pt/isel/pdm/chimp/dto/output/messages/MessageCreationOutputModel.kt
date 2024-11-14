@@ -19,7 +19,7 @@ data class MessageCreationOutputModel(
         content: String,
     ) = Message(
         id = id.toIdentifier(),
-        channel = channel,
+        channelId = channel.id,
         user = user,
         content = content,
         createdAt = LocalDateTime.parse(createdAt),

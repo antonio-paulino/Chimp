@@ -1,6 +1,6 @@
 package pt.isel.pdm.chimp.domain.user
 
-import im.domain.wrappers.email.Email
+import pt.isel.pdm.chimp.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 

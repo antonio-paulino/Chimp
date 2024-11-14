@@ -29,7 +29,7 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
         get<UserOutputModel>(
             USER_ROUTE.replace(USER_ID_PARAM, userId.toString()),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     override suspend fun getUsers(
         name: String?,
@@ -40,7 +40,7 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
         get<UsersPaginatedOutputModel>(
             USERS_ROUTE + buildQuery(name, pagination, sort),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
 
     override suspend fun getUserChannels(
         user: User,
@@ -52,7 +52,7 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(USER_ID_PARAM, user.id.toString())
                 .plus(buildQuery(null, null, sort)),
             session.accessToken.token.toString(),
-        ).handle { it!!.toDomain() }
+        ).handle { it.toDomain() }
     }
 
     companion object {

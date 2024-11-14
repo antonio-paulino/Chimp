@@ -3,6 +3,7 @@ package pt.isel.pdm.chimp.infrastructure.services.http
 import io.ktor.client.HttpClient
 import pt.isel.pdm.chimp.infrastructure.services.http.auth.AuthServiceHTTP
 import pt.isel.pdm.chimp.infrastructure.services.http.channels.ChannelServiceHTTP
+import pt.isel.pdm.chimp.infrastructure.services.http.events.EventServiceHTTP
 import pt.isel.pdm.chimp.infrastructure.services.http.invitations.InvitationServiceHTTP
 import pt.isel.pdm.chimp.infrastructure.services.http.messages.MessageServiceHTTP
 import pt.isel.pdm.chimp.infrastructure.services.http.users.UserServiceHTTP
@@ -22,4 +23,5 @@ class ChimpServiceHttp(
     override val channelService: ChannelService = ChannelServiceHTTP(baseUrl, httpClient)
     override val invitationService: InvitationService = InvitationServiceHTTP(baseUrl, httpClient)
     override val messageService: MessageService = MessageServiceHTTP(baseUrl, httpClient)
+    override val eventService = EventServiceHTTP(httpClient, baseUrl)
 }
