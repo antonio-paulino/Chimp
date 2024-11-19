@@ -7,6 +7,6 @@ package pt.isel.pdm.chimp.domain.pagination
  * @param info the pagination info
  */
 data class Pagination<T>(
-    val items: List<T>,
-    val info: PaginationInfo?,
+    val items: List<T> = emptyList(),
+    val info: PaginationInfo = PaginationInfo(),
 )

@@ -3,56 +3,81 @@ package pt.isel.pdm.chimp.infrastructure.services.interfaces.events
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import pt.isel.pdm.chimp.domain.channel.Channel
-import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
-import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.sessions.Session
+import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 
 /**
  * Represents the service responsible for managing the events of the Chelas Instant Messaging Platform.
  */
 interface EventService {
     /**
-     * Starts listening to the events from the server.
+     * Global flow of events received from the server.
      *
-     * The [scope] parameter is used to control the lifecycle of the listening process.
-     * The [session] parameter is used to authenticate the user.
-     */
-    fun startListening(scope: CoroutineScope, session: Session)
-
-    /**
-     * Stops listening to the events from the server.
-     */
-    fun stopListening(scope: CoroutineScope)
-
-    /**
-     * Returns a flow of messages that represents the messages received from the server.
-     */
-    suspend fun getMessages() : Flow<List<Message>>
-
-    /**
-     * Returns a flow of invitations that represents the invitations received from the server.
-     */
-    suspend fun getInvitations() : Flow<List<ChannelInvitation>>
-
-    /**
-     * Returns a flow of channels that represents the channels received from the server.
-     */
-    suspend fun getChannels() : Flow<List<Channel>>
-
-    /**
-     * Adds the specified [messages] to the flow of messages.
+     * This flow should be used to listen to all the events received from the server.
      *
-     * If [prepend] is true, the messages will be added to the beginning of the flow.
+     * @throws IllegalStateException If the service is not initialized.
      */
-    fun addMessagesToFlow(messages: List<Message>, prepend: Boolean = false)
+    val eventFlow: Flow<Event>
 
     /**
-     * Adds the specified [invitations] to the flow of invitations.
+     * Flow of channel events received from the server.
+     *
+     * This flow should be used to listen to all the channel events received from the server.
+     *
+     * @throws IllegalStateException If the service is not initialized.
      */
-    fun addInvitationsToFlow(invitations: List<ChannelInvitation>)
+    val channelEventFlow: Flow<Event.ChannelEvent>
 
     /**
-     * Adds the specified [channels] to the flow of channels.
+     * Flow of invitation events received from the server.
+     *
+     * This flow should be used to listen to all the invitation events received from the server.
+     *
+     * @throws IllegalStateException If the service is not initialized.
      */
-    fun addChannelsToFlow(channels: List<Channel>)
+    val invitationEventFlow: Flow<Event.InvitationEvent>
+
+    /**
+     * Flow of message events received from the server.
+     *
+     * This flow should be used to listen to all the message events received from the server.
+     *
+     * @throws IllegalStateException If the service is not initialized.
+     */
+    val messageEventFlow: Flow<Event.MessageEvent>
+
+    /**
+     * Returns a flow of message events from a specific channel.
+     *
+     * @param channel The channel to get the messages from.
+     *
+     * @throws IllegalStateException If the service is not initialized.
+     */
+    fun getMessageEventsByChannel(channel: Channel): Flow<Event.MessageEvent>
+
+    /**
+     * Initializes the service to start listening to the events from the server.
+     *
+     * This method should be called only once, ideally in the application's
+     * in the main activitý's lifecycle scope.
+     *
+     * Before adding any listeners, the service should be initialized,
+     * or an exception will be thrown.
+     *
+     * @throws IllegalStateException If the service is already initialized.
+     *
+     * @param scope The coroutine scope to use for listening to the events.
+     * @param session The session to use for establishing the connection.
+     */
+    fun initialize(
+        scope: CoroutineScope,
+        session: Session,
+    )
+
+    /**
+     * Stops listening to events.
+     *
+     * @throws IllegalStateException If the service is not initialized.
+     */
+    fun destroy()
 }

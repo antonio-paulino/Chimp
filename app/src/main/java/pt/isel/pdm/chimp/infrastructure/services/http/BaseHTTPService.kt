@@ -180,18 +180,17 @@ open class BaseHTTPService(
      * Performs a PATCH request to the specified resource.
      *
      * [T] the type of the body of the request
-     * [R] the type of the response
      *
      * @param resource the resource to patch
      * @param token the token to use in the request
      * @param body the body of the request
      * @return the result of the request
      */
-    protected suspend inline fun <reified T, reified R> patch(
+    protected suspend inline fun <reified T> patch(
         resource: String,
         token: String,
         body: T,
-    ): ApiResult<R, Problem> =
+    ): ApiResult<Unit, Problem> =
         tryRequest {
             httpClient.patch {
                 url("$baseUrl/$resource")
@@ -203,9 +202,7 @@ open class BaseHTTPService(
             }.parseResponse()
         }
 
-    protected inline fun <T> tryRequest(
-        request: () -> ApiResult<T, Problem>,
-    ): ApiResult<T, Problem> {
+    protected inline fun <T> tryRequest(request: () -> ApiResult<T, Problem>): ApiResult<T, Problem> {
         return try {
             request()
         } catch (e: Exception) {

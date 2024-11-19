@@ -79,7 +79,7 @@ interface InvitationService {
      *
      * - The user must be the inviter to update the invitation.
      *
-     * @param invitationId The identifier of the invitation.
+     * @param invitation The invitation to update.
      * @param role The role that the user will have in the channel.
      * @param expiresAt The expiration date of the invitation.
      * @param session The session of the user.
@@ -87,7 +87,7 @@ interface InvitationService {
      * @return Either a [Problem] or the updated invitation.
      */
     suspend fun updateInvitation(
-        invitationId: Identifier,
+        invitation: ChannelInvitation,
         role: ChannelRole,
         expiresAt: LocalDateTime,
         session: Session,
@@ -98,20 +98,17 @@ interface InvitationService {
      *
      * - The user must be the inviter to delete the invitation.
      *
-     * @param channel The channel of the invitation.
      * @param invitation The invitation to delete.
      * @param session The session of the user.
      */
     suspend fun deleteInvitation(
-        channel: Channel,
         invitation: ChannelInvitation,
         session: Session,
     ): Either<Problem, Unit>
 
     /**
-     * Gets all the invitations for a user.
+     * Gets the invitations for the currently authenticated user.
      *
-     * @param user The user to get the invitations.
      * @param pagination The pagination information.
      * @param sort The sort information.
      * @param session The session of the user.
@@ -119,7 +116,6 @@ interface InvitationService {
      * @return Either a [Problem] or a list with all the invitations.
      */
     suspend fun getUserInvitations(
-        user: User,
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,

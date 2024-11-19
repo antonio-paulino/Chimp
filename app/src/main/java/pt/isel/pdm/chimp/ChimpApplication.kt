@@ -24,7 +24,6 @@ interface DependenciesContainer {
 }
 
 class ChimpApplication : Application(), DependenciesContainer {
-
     init {
         instance = this
     }
@@ -55,11 +54,13 @@ class ChimpApplication : Application(), DependenciesContainer {
 
         private var instance: ChimpApplication? = null
 
+        val isInitialized: Boolean
+            get() = instance != null
+
         fun applicationContext(): Context {
             return instance!!.applicationContext
         }
 
         private const val API_BASE_URL = "http://10.0.2.2:8080/api"
     }
-
 }

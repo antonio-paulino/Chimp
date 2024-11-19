@@ -1,19 +1,19 @@
 package pt.isel.pdm.chimp.infrastructure.session
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import pt.isel.pdm.chimp.domain.sessions.Session
 
 class SessionManagerMem : SessionManager {
-    override var session: Session? by mutableStateOf(null)
-        private set
+    private var _session: MutableStateFlow<Session?> = MutableStateFlow(null)
+
+    override val session: Flow<Session?> = _session
 
     override fun set(session: Session) {
-        this.session = session
+        _session.value = session
     }
 
     override fun clear() {
-        session = null
+        _session.value = null
     }
 }

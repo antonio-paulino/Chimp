@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.infrastructure.session
 
+import kotlinx.coroutines.flow.Flow
 import pt.isel.pdm.chimp.domain.sessions.Session
 
 /**
@@ -7,7 +8,7 @@ import pt.isel.pdm.chimp.domain.sessions.Session
  * @see Session
  */
 interface SessionManager {
-    val session: Session?
+    val session: Flow<Session?>
 
     fun set(session: Session)
 

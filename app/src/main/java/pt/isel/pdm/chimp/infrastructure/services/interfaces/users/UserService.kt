@@ -1,7 +1,7 @@
 package pt.isel.pdm.chimp.infrastructure.services.interfaces.users
 
 import pt.isel.pdm.chimp.domain.Either
-import pt.isel.pdm.chimp.domain.channel.UserChannels
+import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
@@ -44,17 +44,19 @@ interface UserService {
     ): Either<Problem, Pagination<User>>
 
     /**
-     * Gets all the channels of a user.
+     * Gets the channels of the user.
      *
-     * @param user The identifier of the user.
      * @param sort The sort information.
+     * @param pagination The pagination information.
+     * @param filterOwned Whether to filter by owned channels.
      * @param session The session of the user.
      *
      * @return Either a [Problem] or a list with all the channels of the user.
      */
     suspend fun getUserChannels(
-        user: User,
         session: Session,
+        pagination: PaginationRequest?,
         sort: SortRequest?,
-    ): Either<Problem, UserChannels>
+        filterOwned: Boolean,
+    ): Either<Problem, Pagination<Channel>>
 }

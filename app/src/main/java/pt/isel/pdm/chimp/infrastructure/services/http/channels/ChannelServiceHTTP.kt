@@ -17,6 +17,11 @@ import pt.isel.pdm.chimp.dto.output.channel.ChannelCreationOutputModel
 import pt.isel.pdm.chimp.dto.output.channel.ChannelOutputModel
 import pt.isel.pdm.chimp.dto.output.channel.ChannelsPaginatedOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNELS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_MEMBERS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_ID_PARAM
 import pt.isel.pdm.chimp.infrastructure.services.http.buildQuery
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.channels.ChannelService
@@ -127,21 +132,12 @@ class ChannelServiceHTTP(
         role: ChannelRole,
         session: Session,
     ): Either<Problem, Unit> {
-        return patch<ChannelRoleUpdateInputModel, Unit>(
+        return patch<ChannelRoleUpdateInputModel>(
             CHANNEL_MEMBERS_ROUTE
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
                 .replace(USER_ID_PARAM, user.id.value.toString()),
             session.accessToken.token.toString(),
             ChannelRoleUpdateInputModel(role),
         ).handle { }
-    }
-
-    companion object {
-        private const val CHANNEL_ID_PARAM = "{channelId}"
-        private const val USER_ID_PARAM = "{userId}"
-        private const val CHANNELS_ROUTE = "channels"
-        private const val CHANNEL_ROUTE = "channels/{channelId}"
-        private const val CHANNEL_MEMBERS_ROUTE =
-            "channels/${CHANNEL_ID_PARAM}/members/${USER_ID_PARAM}"
     }
 }

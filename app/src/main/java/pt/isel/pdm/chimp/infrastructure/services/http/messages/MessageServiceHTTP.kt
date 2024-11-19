@@ -15,6 +15,10 @@ import pt.isel.pdm.chimp.dto.output.messages.MessageOutputModel
 import pt.isel.pdm.chimp.dto.output.messages.MessageUpdateOutputModel
 import pt.isel.pdm.chimp.dto.output.messages.MessagesPaginatedOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_MESSAGES_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_MESSAGE_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.MESSAGE_ID_PARAM
 import pt.isel.pdm.chimp.infrastructure.services.http.buildQuery
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.messages.MessageService
@@ -71,15 +75,14 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
     }
 
     override suspend fun updateMessage(
-        channel: Channel,
-        messageId: Identifier,
+        message: Message,
         content: String,
         session: Session,
     ): Either<Problem, MessageEditedTime> {
         return put<MessageCreationInputModel, MessageUpdateOutputModel>(
             CHANNEL_MESSAGE_ROUTE
-                .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
-                .replace(MESSAGE_ID_PARAM, messageId.value.toString()),
+                .replace(CHANNEL_ID_PARAM, message.channelId.value.toString())
+                .replace(MESSAGE_ID_PARAM, message.id.toString()),
             session.accessToken.token.toString(),
             MessageCreationInputModel(content),
         ).handle { LocalDateTime.parse(it.editedAt) }
@@ -95,12 +98,5 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
                 .replace(MESSAGE_ID_PARAM, message.id.value.toString()),
             session.accessToken.token.toString(),
         ).handle { }
-    }
-
-    companion object {
-        private const val CHANNEL_ID_PARAM = "{channelId}"
-        private const val MESSAGE_ID_PARAM = "{messageId}"
-        private const val CHANNEL_MESSAGES_ROUTE = "channels/$CHANNEL_ID_PARAM/messages"
-        private const val CHANNEL_MESSAGE_ROUTE = "channels/$CHANNEL_ID_PARAM/messages/$MESSAGE_ID_PARAM"
     }
 }

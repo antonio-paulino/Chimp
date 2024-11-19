@@ -35,10 +35,12 @@ fun buildQuery(
     name: String?,
     pagination: PaginationRequest?,
     sort: SortRequest?,
+    filterOwned: Boolean? = null,
 ): String {
     return listOfNotNull(
         name?.let { "name=$it" },
-        pagination?.let { "page=${it.page}&size=${it.size}" },
+        pagination?.let { "limit=${it.limit}&offset=${it.offset}" },
         sort?.let { "sort=${it.direction.name}&sortBy=${it.sortBy}" },
+        filterOwned?.let { "filterOwned=$it" },
     ).joinToString("&", prefix = "?")
 }

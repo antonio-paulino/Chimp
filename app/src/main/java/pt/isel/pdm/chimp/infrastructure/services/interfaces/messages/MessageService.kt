@@ -69,14 +69,12 @@ interface MessageService {
      *
      * - The user must be the author of the message to update it.
      *
-     * @param channel The channel where the message is.
-     * @param messageId The identifier of the message.
+     * @param message The message to update.
      * @param content The new content for the message.
      * @param session The session of the user.
      */
     suspend fun updateMessage(
-        channel: Channel,
-        messageId: Identifier,
+        message: Message,
         content: String,
         session: Session,
     ): Either<Problem, MessageEditedTime>

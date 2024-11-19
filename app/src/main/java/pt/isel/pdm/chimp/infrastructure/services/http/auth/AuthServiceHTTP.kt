@@ -15,6 +15,11 @@ import pt.isel.pdm.chimp.dto.output.credentials.CredentialsOutputModel
 import pt.isel.pdm.chimp.dto.output.invitations.ImInvitationOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UserCreationOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
+import pt.isel.pdm.chimp.infrastructure.services.http.INVITATIONS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.LOGIN_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.LOGOUT_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.REFRESH_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.REGISTER_ROUTE
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.auth.AuthService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
@@ -68,12 +73,4 @@ class AuthServiceHTTP(
             session.accessToken.token.toString(),
             null,
         ).handle { it.toDomain() }
-
-    companion object {
-        private const val LOGIN_ROUTE = "auth/login"
-        private const val REGISTER_ROUTE = "auth/register"
-        private const val LOGOUT_ROUTE = "auth/logout"
-        private const val REFRESH_ROUTE = "auth/refresh"
-        private const val INVITATIONS_ROUTE = "auth/invitations"
-    }
 }

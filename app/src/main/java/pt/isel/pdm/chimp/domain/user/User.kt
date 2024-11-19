@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.domain.user
 
+import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.wrappers.email.Email
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
@@ -12,7 +13,7 @@ import pt.isel.pdm.chimp.domain.wrappers.name.Name
  * @property email The email of the user.
  */
 data class User(
-    val id: Identifier = Identifier(0),
+    override val id: Identifier = Identifier(0),
     val name: Name,
     val email: Email,
-)
+) : Identifiable

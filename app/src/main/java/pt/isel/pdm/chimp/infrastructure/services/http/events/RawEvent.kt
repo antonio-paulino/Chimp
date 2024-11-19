@@ -9,8 +9,8 @@ internal data class RawEvent(
     val data: String,
 )
 
-internal suspend fun ByteReadChannel.readRawEvent(id: String): RawEvent {
-    val type = readUTF8Line()?.removePrefix("event:") ?: throw IllegalStateException("Invalid event: missing type")
+internal suspend fun ByteReadChannel.readRawEvent(name: String): RawEvent {
+    val id = readUTF8Line()?.removePrefix("id:") ?: throw IllegalStateException("Invalid event: missing type")
     val data = readUTF8Line()?.removePrefix("data:") ?: throw IllegalStateException("Invalid event: missing data")
-    return RawEvent(id.removePrefix("id:"), type, data)
+    return RawEvent(id, name.removePrefix("event:"), data)
 }

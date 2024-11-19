@@ -11,8 +11,8 @@ package pt.isel.pdm.chimp.domain.pagination
  */
 data class PaginationInfo(
     val total: Long? = null,
-    val currentPage: Int,
+    val currentPage: Int = 1,
     val totalPages: Int? = null,
-    val nextPage: Int?,
-    val prevPage: Int?,
+    val nextPage: Int? = null,
+    val prevPage: Int? = null,
 )

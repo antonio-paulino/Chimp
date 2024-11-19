@@ -7,11 +7,11 @@ import pt.isel.pdm.chimp.dto.output.PaginationOutputModel
 @Serializable
 data class UsersPaginatedOutputModel(
     val users: List<UserOutputModel>,
-    val pagination: PaginationOutputModel?,
+    val pagination: PaginationOutputModel,
 ) {
     fun toDomain() =
         Pagination(
             items = users.map { it.toDomain() },
-            info = pagination?.toInfo(),
+            info = pagination.toInfo(),
         )
 }

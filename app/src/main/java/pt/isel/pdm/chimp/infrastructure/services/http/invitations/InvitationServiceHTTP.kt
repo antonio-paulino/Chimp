@@ -18,6 +18,13 @@ import pt.isel.pdm.chimp.dto.output.invitations.ChannelInvitationCreationOutputM
 import pt.isel.pdm.chimp.dto.output.invitations.ChannelInvitationOutputModel
 import pt.isel.pdm.chimp.dto.output.invitations.ChannelInvitationsPaginatedOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_INVITATIONS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.CHANNEL_INVITATION_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.INVITE_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_INVITATIONS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_INVITATION_ROUTE
 import pt.isel.pdm.chimp.infrastructure.services.http.buildQuery
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.invitations.InvitationService
@@ -70,41 +77,39 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
         ).handle { it.toDomain() }
 
     override suspend fun updateInvitation(
-        invitationId: Identifier,
+        invitation: ChannelInvitation,
         role: ChannelRole,
         expiresAt: LocalDateTime,
         session: Session,
     ): Either<Problem, Unit> =
-        patch<ChannelInvitationUpdateInputModel, Unit>(
+        patch<ChannelInvitationUpdateInputModel>(
             CHANNEL_INVITATION_ROUTE
-                .replace(CHANNEL_ID_PARAM, invitationId.value.toString())
-                .replace(INVITE_ID_PARAM, invitationId.value.toString()),
+                .replace(CHANNEL_ID_PARAM, invitation.channel.id.value.toString())
+                .replace(INVITE_ID_PARAM, invitation.id.value.toString()),
             session.accessToken.token.toString(),
             ChannelInvitationUpdateInputModel(role, expiresAt),
         ).handle { }
 
     override suspend fun deleteInvitation(
-        channel: Channel,
         invitation: ChannelInvitation,
         session: Session,
     ): Either<Problem, Unit> {
         return delete(
             CHANNEL_INVITATION_ROUTE
-                .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
+                .replace(CHANNEL_ID_PARAM, invitation.channel.id.value.toString())
                 .replace(INVITE_ID_PARAM, invitation.id.value.toString()),
             session.accessToken.token.toString(),
         ).handle { }
     }
 
     override suspend fun getUserInvitations(
-        user: User,
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
     ): Either<Problem, Pagination<ChannelInvitation>> {
         return get<ChannelInvitationsPaginatedOutputModel>(
             USER_INVITATIONS_ROUTE
-                .replace(USER_ID_PARAM, user.id.value.toString())
+                .replace(USER_ID_PARAM, session.user.id.value.toString())
                 .plus(buildQuery(null, pagination, sort)),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
@@ -116,24 +121,12 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
         accept: Boolean,
         session: Session,
     ): Either<Problem, Unit> {
-        return patch<InvitationAcceptInputModel, Unit>(
+        return patch<InvitationAcceptInputModel>(
             USER_INVITATION_ROUTE
                 .replace(USER_ID_PARAM, session.user.id.value.toString())
                 .replace(INVITE_ID_PARAM, invitation.id.value.toString()),
             session.accessToken.token.toString(),
             InvitationAcceptInputModel(accept),
         ).handle { }
-    }
-
-    companion object {
-        private const val CHANNEL_ID_PARAM = "{channelId}"
-        private const val INVITE_ID_PARAM = "{inviteId}"
-        private const val USER_ID_PARAM = "{userId}"
-        private const val CHANNEL_INVITATIONS_ROUTE = "channels/$CHANNEL_ID_PARAM/invitations"
-        private const val CHANNEL_INVITATION_ROUTE =
-            "channels/$CHANNEL_ID_PARAM/invitations/$INVITE_ID_PARAM"
-        private const val USER_INVITATIONS_ROUTE = "users/$USER_ID_PARAM/invitations"
-        private const val USER_INVITATION_ROUTE =
-            "users/$USER_ID_PARAM/invitations/$INVITE_ID_PARAM"
     }
 }

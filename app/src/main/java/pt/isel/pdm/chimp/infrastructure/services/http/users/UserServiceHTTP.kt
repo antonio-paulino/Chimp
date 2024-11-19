@@ -2,16 +2,20 @@ package pt.isel.pdm.chimp.infrastructure.services.http.users
 
 import io.ktor.client.HttpClient
 import pt.isel.pdm.chimp.domain.Either
-import pt.isel.pdm.chimp.domain.channel.UserChannels
+import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.user.User
-import pt.isel.pdm.chimp.dto.output.users.UserChannelsOutputModel
+import pt.isel.pdm.chimp.dto.output.channel.ChannelsPaginatedOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UsersPaginatedOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
+import pt.isel.pdm.chimp.infrastructure.services.http.USERS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_CHANNELS_ROUTE
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_ID_PARAM
+import pt.isel.pdm.chimp.infrastructure.services.http.USER_ROUTE
 import pt.isel.pdm.chimp.infrastructure.services.http.buildQuery
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.users.UserService
@@ -43,22 +47,16 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
         ).handle { it.toDomain() }
 
     override suspend fun getUserChannels(
-        user: User,
         session: Session,
+        pagination: PaginationRequest?,
         sort: SortRequest?,
-    ): Either<Problem, UserChannels> {
-        return get<UserChannelsOutputModel>(
+        filterOwned: Boolean,
+    ): Either<Problem, Pagination<Channel>> {
+        return get<ChannelsPaginatedOutputModel>(
             USER_CHANNELS_ROUTE
-                .replace(USER_ID_PARAM, user.id.toString())
-                .plus(buildQuery(null, null, sort)),
+                .replace(USER_ID_PARAM, session.id.toString())
+                .plus(buildQuery(null, pagination, sort, filterOwned)),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
-    }
-
-    companion object {
-        private const val USER_ID_PARAM = "{userId}"
-        private const val USERS_ROUTE = "users"
-        private const val USER_ROUTE = "users/$USER_ID_PARAM"
-        private const val USER_CHANNELS_ROUTE = "users/$USER_ID_PARAM/channels"
     }
 }

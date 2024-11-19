@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.domain.sessions
 
+import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.tokens.AccessToken
 import pt.isel.pdm.chimp.domain.tokens.RefreshToken
 import pt.isel.pdm.chimp.domain.user.User
@@ -14,12 +15,12 @@ import java.time.LocalDateTime
  * @property expiresAt The date and time when the session expires.
  */
 data class Session(
-    val id: Identifier = Identifier(0),
+    override val id: Identifier = Identifier(0),
     val user: User,
     val accessToken: AccessToken,
     val refreshToken: RefreshToken,
     val expiresAt: LocalDateTime,
-) {
+) : Identifiable {
     val expired: Boolean
         get() = LocalDateTime.now() >= expiresAt
 }

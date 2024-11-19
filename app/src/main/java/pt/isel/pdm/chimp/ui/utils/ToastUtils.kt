@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
 @SuppressLint("InflateParams")
 fun showSuccessToast(
@@ -29,14 +31,12 @@ fun showSuccessToast(
 }
 
 @SuppressLint("InflateParams")
-fun showErrorToast(
-    message: String,
-    context: Context,
-) {
+fun showErrorToast(message: String) {
+    val context = ChimpApplication.applicationContext()
     val inflater = LayoutInflater.from(context)
     val layout: View = inflater.inflate(R.layout.error_toast, null)
 
-    Log.e(TAG, "Failed to open URL: $message")
+    Log.e(TAG, "Error: $message")
     val textView = layout.findViewById<TextView>(R.id.toast_message)
     textView.text = message
 
@@ -44,4 +44,13 @@ fun showErrorToast(
     toast.duration = Toast.LENGTH_SHORT
     toast.view = layout
     toast.show()
+}
+
+fun Problem.getMessage(): String {
+    return when (this) {
+        is Problem.InputValidationProblem -> this.detail
+        is Problem.ServiceProblem -> this.detail
+        is Problem.TooManyRequestsProblem -> "Too many requests"
+        is Problem.UnexpectedProblem -> "Unexpected problem"
+    }
 }

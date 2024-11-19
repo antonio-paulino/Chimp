@@ -5,12 +5,12 @@ package pt.isel.pdm.chimp.domain.pagination
  *
  * Page indexing starts at 1 when using this class.
  *
- * @param page the page number
- * @param size the page size
+ * @param offset the index of the first element to return
+ * @param limit the maximum number of elements to return
  * @param getCount whether to count the total number of elements
  */
 data class PaginationRequest(
-    val page: Int,
-    val size: Int,
-    val getCount: Boolean = true,
+    val offset: Long,
+    val limit: Long,
+    val getCount: Boolean = false,
 )

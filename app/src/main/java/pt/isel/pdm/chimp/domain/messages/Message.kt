@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.domain.messages
 
 import pt.isel.pdm.chimp.domain.Failure
+import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.Success
 import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
@@ -19,13 +20,13 @@ import java.time.temporal.ChronoUnit
  * @property editedAt The date and time when the message was last edited.
  */
 data class Message(
-    val id: Identifier = Identifier(0),
+    override val id: Identifier = Identifier(0),
     val channelId: Identifier,
     val user: User,
     val content: String,
     val createdAt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
     val editedAt: LocalDateTime? = null,
-) {
+) : Identifiable {
     companion object {
         private val validator = MessageValidator()
 

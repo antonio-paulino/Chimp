@@ -1,7 +1,9 @@
 package pt.isel.pdm.chimp.ui.utils
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.isel.pdm.chimp.ChimpApplication
@@ -26,10 +28,10 @@ private const val TOO_MANY_REQUESTS_DELAY = 1000L
 fun <T> ViewModel.launchRequest(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
-    onError: (Problem) -> Unit,
+    onError: suspend (Problem) -> Unit,
     onSuccess: suspend (Success<T>) -> Unit,
-) {
-    viewModelScope.launch {
+): Job {
+    return viewModelScope.launch {
         executeRequest(
             noConnectionRequest = noConnectionRequest,
             request = request,
@@ -57,11 +59,11 @@ fun <T> ViewModel.launchRequest(
 fun <T> ViewModel.launchRequestRefreshing(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
-    refresh: () -> Unit,
-    onError: (Problem) -> Unit,
+    refresh: suspend () -> Unit,
+    onError: suspend(Problem) -> Unit,
     onSuccess: suspend (Success<T>) -> Unit,
-) {
-    viewModelScope.launch {
+): Job {
+    return viewModelScope.launch {
         executeRequestRefreshing(
             noConnectionRequest = noConnectionRequest,
             request = request,
@@ -86,7 +88,7 @@ fun <T> ViewModel.launchRequestRefreshing(
 suspend fun <T> executeRequest(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
-    onError: (Problem) -> Unit,
+    onError: suspend(Problem) -> Unit,
     onSuccess: suspend(Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
@@ -130,13 +132,16 @@ suspend fun <T> executeRequest(
 suspend fun <T> executeRequestRefreshing(
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
     request: suspend () -> Either<Problem, T>,
-    refresh: () -> Unit,
-    onError: (Problem) -> Unit,
+    refresh: (suspend() -> Unit)? = null,
+    onError: suspend(Problem) -> Unit,
     onSuccess: suspend (Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
     val res =
         if (context.isNetworkAvailable()) {
+            if (refresh != null) {
+                refresh()
+            }
             request()
         } else {
             noConnectionRequest?.let { it() }
@@ -149,12 +154,7 @@ suspend fun <T> executeRequestRefreshing(
 
     if (res.isTooManyRequests()) {
         delay(TOO_MANY_REQUESTS_DELAY)
-        executeRequestRefreshing(request, request, refresh, onError, onSuccess)
-    }
-
-    if (res.isUnauthorized()) {
-        refresh()
-        executeRequest(noConnectionRequest, request, onError, onSuccess)
+        executeRequest(request, request, onError, onSuccess)
     }
 
     when (res) {
@@ -175,4 +175,12 @@ fun <T> Either<Problem, T>.isUnauthorized(): Boolean {
         is Failure -> value is Problem.ServiceProblem && value.status == 401
         else -> false
     }
+}
+
+fun List<Either<Problem, *>>.allSuccessful(): Boolean {
+    return all { it is Success }
+}
+
+fun List<TextFieldValue>.allValid(): Boolean {
+    return all { it.text.isNotEmpty() }
 }

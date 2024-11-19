@@ -30,9 +30,9 @@ internal const val KEEP_ALIVE_EVENT = "keep-alive"
 typealias JsonString = String
 typealias EventId = String
 
-private const val READ_DELAY = 1000L
+private const val READ_DELAY = 100L
 
-fun ByteReadChannel.readEvents(scope: CoroutineScope): Flow<Event> {
+internal fun ByteReadChannel.readEvents(scope: CoroutineScope): Flow<Event> {
     return flow {
         while (!isClosedForRead && scope.isActive) {
             val line = readUTF8Line()
@@ -46,28 +46,47 @@ fun ByteReadChannel.readEvents(scope: CoroutineScope): Flow<Event> {
     }
 }
 
-sealed class Event(val id : EventId) {
-    data class MessageCreatedEvent(val eventId: EventId, val message: Message) : Event(eventId)
-    data class MessageUpdatedEvent(val eventId: EventId, val message: Message) : Event(eventId)
-    data class MessageDeletedEvent(val eventId: EventId, val messageId: Identifier) : Event(eventId)
-    data class InvitationCreatedEvent(val eventId: EventId, val invitation: ChannelInvitation) : Event(eventId)
-    data class InvitationUpdatedEvent(val eventId: EventId, val invitation: ChannelInvitation) : Event(eventId)
-    data class InvitationDeletedEvent(val eventId: EventId, val invitationId: Identifier) : Event(eventId)
-    data class ChannelDeletedEvent(val eventId: EventId, val channelId: Identifier) : Event(eventId)
-    data class ChannelUpdatedEvent(val eventId: EventId, val channel: Channel) : Event(eventId)
+/**
+ * Strongly typed representation of an event received from the server.
+ *
+ * @param id The event's identifier.
+ */
+sealed class Event(val id: EventId) {
     data class KeepAliveEvent(val eventId: EventId) : Event(eventId)
+
+    sealed class MessageEvent(messageEventId: EventId, messageId: Identifier) : Event(messageEventId) {
+        data class CreatedEvent(val eventId: EventId, val message: Message) : MessageEvent(eventId, message.id)
+
+        data class UpdatedEvent(val eventId: EventId, val message: Message) : MessageEvent(eventId, message.id)
+
+        data class DeletedEvent(val eventId: EventId, val messageId: Identifier) : MessageEvent(eventId, messageId)
+    }
+
+    sealed class InvitationEvent(invitationEventId: EventId, invitationId: Identifier) : Event(invitationEventId) {
+        data class CreatedEvent(val eventId: EventId, val invitation: ChannelInvitation) : InvitationEvent(eventId, invitation.id)
+
+        data class UpdatedEvent(val eventId: EventId, val invitation: ChannelInvitation) : InvitationEvent(eventId, invitation.id)
+
+        data class DeletedEvent(val eventId: EventId, val invitationId: Identifier) : InvitationEvent(eventId, invitationId)
+    }
+
+    sealed class ChannelEvent(channelEventId: EventId, channelId: Identifier) : Event(channelEventId) {
+        data class DeletedEvent(val eventId: EventId, val channelId: Identifier) : ChannelEvent(eventId, channelId)
+
+        data class UpdatedEvent(val eventId: EventId, val channel: Channel) : ChannelEvent(eventId, channel.id)
+    }
 }
 
 internal fun RawEvent.toEvent(): Event {
     return when (type) {
-        MESSAGE_CREATED_EVENT -> Event.MessageCreatedEvent(id, data.toMessage())
-        MESSAGE_UPDATED_EVENT -> Event.MessageUpdatedEvent(id, data.toMessage())
-        MESSAGE_DELETED_EVENT -> Event.MessageDeletedEvent(id, data.toIdentifier())
-        INVITATION_CREATED_EVENT -> Event.InvitationCreatedEvent(id, data.toInvitation())
-        INVITATION_UPDATED_EVENT -> Event.InvitationUpdatedEvent(id, data.toInvitation())
-        INVITATION_DELETED_EVENT -> Event.InvitationDeletedEvent(id, data.toIdentifier())
-        CHANNEL_DELETED_EVENT -> Event.ChannelDeletedEvent(id, data.toIdentifier())
-        CHANNEL_UPDATED_EVENT -> Event.ChannelUpdatedEvent(id, data.toChannel())
+        MESSAGE_CREATED_EVENT -> Event.MessageEvent.CreatedEvent(id, data.toMessage())
+        MESSAGE_UPDATED_EVENT -> Event.MessageEvent.UpdatedEvent(id, data.toMessage())
+        MESSAGE_DELETED_EVENT -> Event.MessageEvent.DeletedEvent(id, data.toIdentifier())
+        INVITATION_CREATED_EVENT -> Event.InvitationEvent.CreatedEvent(id, data.toInvitation())
+        INVITATION_UPDATED_EVENT -> Event.InvitationEvent.UpdatedEvent(id, data.toInvitation())
+        INVITATION_DELETED_EVENT -> Event.InvitationEvent.DeletedEvent(id, data.toIdentifier())
+        CHANNEL_DELETED_EVENT -> Event.ChannelEvent.DeletedEvent(id, data.toIdentifier())
+        CHANNEL_UPDATED_EVENT -> Event.ChannelEvent.UpdatedEvent(id, data.toChannel())
         KEEP_ALIVE_EVENT -> Event.KeepAliveEvent(id)
         else -> throw IllegalArgumentException("Unknown event type: $type")
     }

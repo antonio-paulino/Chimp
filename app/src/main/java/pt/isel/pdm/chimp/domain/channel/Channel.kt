@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.domain.channel
 
+import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
@@ -16,17 +17,11 @@ import java.time.LocalDateTime
  * @property members the users that are members of the channel and their roles
  */
 data class Channel(
-    val id: Identifier = Identifier(0),
+    override val id: Identifier = Identifier(0),
     val name: Name,
     val defaultRole: ChannelRole,
     val owner: User,
     val isPublic: Boolean,
     val createdAt: LocalDateTime,
     val members: List<ChannelMember>,
-)
-
-typealias UserChannels = Pair<OwnedChannels, MemberChannels>
-
-typealias OwnedChannels = List<Channel>
-
-typealias MemberChannels = List<Channel>
+) : Identifiable
