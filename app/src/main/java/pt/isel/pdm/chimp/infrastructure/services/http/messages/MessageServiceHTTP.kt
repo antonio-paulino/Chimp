@@ -37,11 +37,12 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>> =
         get<MessagesPaginatedOutputModel>(
             CHANNEL_MESSAGES_ROUTE
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
-                .plus(buildQuery(null, pagination, sort)),
+                .plus(buildQuery(null, pagination, sort, before = before)),
             session.accessToken.token.toString(),
         ).handle {
             it.toDomain()

@@ -8,28 +8,30 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
-        secondary = PurpleGrey80,
-        tertiary = Pink80,
+        background = Gray900,
+        primary = Brand50,
+        error = Red800,
+        onError = Red50,
+        onErrorContainer = Red900,
+        surface = Gray800,
+        outline = Gray700,
+        onBackground = Gray50,
     )
 
 private val LightColorScheme =
     lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-        background = Color(0xFFFFFBFE),
-        surface = Color(0xFFFFFBFE),
-        onPrimary = Color.White,
-        onSecondary = Color.White,
-        onTertiary = Color.White,
-        onBackground = Color(0xFF1C1B1F),
-        onSurface = Color(0xFF1C1B1F),
+        background = Gray900,
+        primary = Brand300,
+        error = Red400,
+        onError = Red900,
+        onErrorContainer = Red50,
+        surface = Gray50,
+        outline = Gray300,
+        onBackground = Gray900,
     )
 
 @Composable
@@ -53,6 +55,6 @@ fun ChIMPTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content,
+        content = { RadialGradientBackground { content() } },
     )
 }

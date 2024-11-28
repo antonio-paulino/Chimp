@@ -13,4 +13,8 @@ data class UserOutputModel(
     val email: String,
 ) {
     fun toDomain() = User(id.toIdentifier(), name.toName(), email.toEmail())
+
+    companion object {
+        fun fromDomain(user: User) = UserOutputModel(user.id.value, user.name.value, user.email.value)
+    }
 }

@@ -6,7 +6,6 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.toName
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
-import java.time.LocalDateTime
 
 @Serializable
 data class ChannelOutputModel(
@@ -16,7 +15,6 @@ data class ChannelOutputModel(
     val owner: UserOutputModel,
     val isPublic: Boolean,
     val members: List<ChannelMemberOutputModel>,
-    val createdAt: String,
 ) {
     fun toDomain(): Channel {
         return Channel(
@@ -25,8 +23,20 @@ data class ChannelOutputModel(
             defaultRole = ChannelRole.valueOf(defaultRole),
             owner = owner.toDomain(),
             isPublic = isPublic,
-            createdAt = LocalDateTime.parse(createdAt),
             members = members.map { it.toDomain() },
         )
+    }
+
+    companion object {
+        fun fromDomain(channel: Channel): ChannelOutputModel {
+            return ChannelOutputModel(
+                id = channel.id.value,
+                name = channel.name.value,
+                defaultRole = channel.defaultRole.name,
+                owner = UserOutputModel.fromDomain(channel.owner),
+                isPublic = channel.isPublic,
+                members = channel.members.map { ChannelMemberOutputModel.fromDomain(it) },
+            )
+        }
     }
 }

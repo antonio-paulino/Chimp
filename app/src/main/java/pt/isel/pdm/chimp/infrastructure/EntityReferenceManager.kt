@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.infrastructure
 
+import kotlinx.coroutines.flow.Flow
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
 import pt.isel.pdm.chimp.domain.messages.Message
@@ -17,16 +18,16 @@ import pt.isel.pdm.chimp.domain.user.User
  * through this manager.
  */
 interface EntityReferenceManager {
-    val message: Message?
-    val channel: Channel?
-    val user: User?
-    val invitation: ChannelInvitation?
+    val message: Flow<Message?>
+    val channel: Flow<Channel?>
+    val user: Flow<User?>
+    val invitation: Flow<ChannelInvitation?>
 
-    fun set(message: Message)
+    fun set(message: Message?)
 
-    fun set(channel: Channel)
+    fun set(channel: Channel?)
 
-    fun set(user: User)
+    fun set(user: User?)
 
-    fun set(invitation: ChannelInvitation)
+    fun set(invitation: ChannelInvitation?)
 }

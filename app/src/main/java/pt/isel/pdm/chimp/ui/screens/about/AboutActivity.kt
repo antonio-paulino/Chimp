@@ -9,7 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
-import pt.isel.pdm.chimp.ui.screens.MainActivity
+import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -27,7 +27,7 @@ class AboutActivity : ComponentActivity() {
                 AboutScreen(
                     onSendMail = { sendMail(it) },
                     onOpenUrl = { openUrl(it) },
-                    onHomeNavigation = { navigateTo(MainActivity::class.java) },
+                    onHomeNavigation = { navigateTo(ChannelsActivity::class.java) },
                     onSearchNavigation = { TODO() },
                     onInvitationsNavigation = { TODO() },
                     authors = authors,
@@ -45,7 +45,7 @@ class AboutActivity : ComponentActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to open URL: $url", e)
-            showErrorToast(getString(R.string.error_opening_url), this)
+            showErrorToast(getString(R.string.error_opening_url))
         }
     }
 
@@ -64,7 +64,7 @@ class AboutActivity : ComponentActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send email to: $mail", e)
-            showErrorToast(getString(R.string.error_sending_mail), this)
+            showErrorToast(getString(R.string.error_sending_mail))
         }
     }
 

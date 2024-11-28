@@ -68,11 +68,12 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        after: Identifier?,
     ): Either<Problem, Pagination<ChannelInvitation>> =
         get<ChannelInvitationsPaginatedOutputModel>(
             CHANNEL_INVITATIONS_ROUTE
                 .replace(CHANNEL_ID_PARAM, channel.id.value.toString())
-                .plus(buildQuery(null, pagination, sort)),
+                .plus(buildQuery(null, pagination, sort, after = after)),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
 
@@ -106,11 +107,12 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        after: Identifier?,
     ): Either<Problem, Pagination<ChannelInvitation>> {
         return get<ChannelInvitationsPaginatedOutputModel>(
             USER_INVITATIONS_ROUTE
                 .replace(USER_ID_PARAM, session.user.id.value.toString())
-                .plus(buildQuery(null, pagination, sort)),
+                .plus(buildQuery(null, pagination, sort, after = after)),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
     }

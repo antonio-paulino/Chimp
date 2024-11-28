@@ -137,11 +137,8 @@ suspend fun <T> executeRequestRefreshing(
     onSuccess: suspend (Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
-    val res =
+    var res =
         if (context.isNetworkAvailable()) {
-            if (refresh != null) {
-                refresh()
-            }
             request()
         } else {
             noConnectionRequest?.let { it() }
@@ -150,6 +147,11 @@ suspend fun <T> executeRequestRefreshing(
     if (res == null) {
         showErrorToast("No connection available")
         return
+    }
+
+    if (res is Failure && res.value.status == 401) {
+        refresh?.let { it() }
+        res = request()
     }
 
     if (res.isTooManyRequests()) {
@@ -170,12 +172,7 @@ fun <T> Either<Problem, T>.isTooManyRequests(): Boolean {
     }
 }
 
-fun <T> Either<Problem, T>.isUnauthorized(): Boolean {
-    return when (this) {
-        is Failure -> value is Problem.ServiceProblem && value.status == 401
-        else -> false
-    }
-}
+fun <T> Either<Problem, T>.isUnauthorized(): Boolean = this is Failure && value is Problem.ServiceProblem && value.status == 401
 
 fun List<Either<Problem, *>>.allSuccessful(): Boolean {
     return all { it is Success }

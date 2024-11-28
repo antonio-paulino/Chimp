@@ -10,6 +10,7 @@ import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.http.messages.MessageEditedTime
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+import java.time.LocalDateTime
 
 /**
  * Service that provides operations related to messages.
@@ -24,12 +25,14 @@ interface MessageService {
      * @param pagination The pagination information.
      * @param sort The sort information.
      * @param session The session of the user.
+     * @param before The date of creation of the last message currently in view.
      */
     suspend fun getChannelMessages(
         channel: Channel,
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>>
 
     /**

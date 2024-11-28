@@ -52,12 +52,4 @@ data class Message(
         val validation = validator.validate(content)
         require(validation is Success) { (validation as Failure).value.toErrorMessage() }
     }
-
-    /**
-     * Edits the content of the message.
-     *
-     * @param content the new content of the message
-     * @return a new message with the updated content
-     */
-    fun edit(content: String): Message = copy(content = content, editedAt = LocalDateTime.now())
 }

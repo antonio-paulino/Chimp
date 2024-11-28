@@ -24,4 +24,16 @@ data class MessageOutputModel(
             createdAt = LocalDateTime.parse(createdAt),
             editedAt = editedAt?.let { LocalDateTime.parse(it) },
         )
+
+    companion object {
+        fun fromDomain(message: Message) =
+            MessageOutputModel(
+                id = message.id.value,
+                channelId = message.channelId.value,
+                author = UserOutputModel.fromDomain(message.user),
+                content = message.content,
+                createdAt = message.createdAt.toString(),
+                editedAt = message.editedAt?.toString(),
+            )
+    }
 }

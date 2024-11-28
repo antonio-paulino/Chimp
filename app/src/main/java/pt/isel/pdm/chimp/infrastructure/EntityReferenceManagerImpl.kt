@@ -1,39 +1,36 @@
 package pt.isel.pdm.chimp.infrastructure
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.user.User
 
 class EntityReferenceManagerImpl : EntityReferenceManager {
-    override var message: Message? by mutableStateOf(null)
-        private set
+    private val _message = MutableStateFlow<Message?>(null)
+    private val _channel = MutableStateFlow<Channel?>(null)
+    private val _user = MutableStateFlow<User?>(null)
+    private val _invitation = MutableStateFlow<ChannelInvitation?>(null)
 
-    override var channel: Channel? by mutableStateOf(null)
-        private set
+    override val message: Flow<Message?> = _message
+    override val channel: Flow<Channel?> = _channel
+    override val user: Flow<User?> = _user
+    override val invitation: Flow<ChannelInvitation?> = _invitation
 
-    override var user: User? by mutableStateOf(null)
-        private set
-
-    override var invitation: ChannelInvitation? by mutableStateOf(null)
-        private set
-
-    override fun set(message: Message) {
-        this.message = message
+    override fun set(message: Message?) {
+        _message.value = message
     }
 
-    override fun set(channel: Channel) {
-        this.channel = channel
+    override fun set(channel: Channel?) {
+        _channel.value = channel
     }
 
-    override fun set(user: User) {
-        this.user = user
+    override fun set(user: User?) {
+        _user.value = user
     }
 
-    override fun set(invitation: ChannelInvitation) {
-        this.invitation = invitation
+    override fun set(invitation: ChannelInvitation?) {
+        _invitation.value = invitation
     }
 }

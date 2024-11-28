@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import pt.isel.pdm.chimp.R
 
 /**
  * Shows information about the author.
@@ -33,13 +31,13 @@ fun AuthorCard(
     onOpenUrl: (Uri) -> Unit = {},
 ) {
     Card(
-        border = BorderStroke(Dp.Hairline, Color.Gray),
+        border = BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.outline),
         colors =
             CardColors(
-                containerColor = colorResource(R.color.white),
-                contentColor = colorResource(R.color.black),
-                disabledContentColor = colorResource(R.color.black),
-                disabledContainerColor = colorResource(R.color.white),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface,
             ),
         modifier = modifier,
     ) {

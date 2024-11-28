@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import isel.pdm.chimp.ui.theme.montserratFamily
 
 @Composable
 fun AuthorCardHeader(
@@ -36,13 +35,11 @@ fun AuthorCardHeader(
                 Modifier
                     .scale(0.8f)
                     .padding(top = 8.dp, start = 8.dp, end = 8.dp),
-            fontFamily = montserratFamily(),
         )
         Text(
             text = number,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(8.dp),
-            fontFamily = montserratFamily(),
         )
         Image(
             painter = image,

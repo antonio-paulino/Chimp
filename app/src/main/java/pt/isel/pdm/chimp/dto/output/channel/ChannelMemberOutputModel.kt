@@ -19,4 +19,14 @@ data class ChannelMemberOutputModel(
             role = ChannelRole.valueOf(role),
         )
     }
+
+    companion object {
+        fun fromDomain(member: ChannelMember): ChannelMemberOutputModel {
+            return ChannelMemberOutputModel(
+                id = member.id.value,
+                name = member.name.value,
+                role = member.role.name,
+            )
+        }
+    }
 }

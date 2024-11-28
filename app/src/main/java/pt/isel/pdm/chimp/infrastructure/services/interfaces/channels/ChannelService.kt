@@ -58,6 +58,7 @@ interface ChannelService {
      * @param pagination The pagination information
      * @param sort The sort information
      * @param session The session of the user
+     * @param after The identifier of the last channel currently in view
      *
      * @return Either a [Problem] or a list with all the channels
      */
@@ -66,6 +67,8 @@ interface ChannelService {
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        after: Identifier?,
+        filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>>
 
     /**

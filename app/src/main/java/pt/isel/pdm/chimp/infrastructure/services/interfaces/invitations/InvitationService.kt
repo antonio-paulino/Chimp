@@ -64,6 +64,7 @@ interface InvitationService {
      * @param pagination The pagination information.
      * @param sort The sort information.
      * @param session The session of the user.
+     * @param after The identifier of the last invitation currently in view.
      *
      * @return Either a [Problem] or a list with all the invitations.
      */
@@ -72,6 +73,7 @@ interface InvitationService {
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        after: Identifier?,
     ): Either<Problem, Pagination<ChannelInvitation>>
 
     /**
@@ -112,6 +114,7 @@ interface InvitationService {
      * @param pagination The pagination information.
      * @param sort The sort information.
      * @param session The session of the user.
+     * @param after The identifier of the last invitation currently in view.
      *
      * @return Either a [Problem] or a list with all the invitations.
      */
@@ -119,6 +122,7 @@ interface InvitationService {
         session: Session,
         pagination: PaginationRequest?,
         sort: SortRequest?,
+        after: Identifier?,
     ): Either<Problem, Pagination<ChannelInvitation>>
 
     /**

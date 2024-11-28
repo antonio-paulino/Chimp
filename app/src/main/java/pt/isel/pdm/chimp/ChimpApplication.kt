@@ -13,6 +13,8 @@ import pt.isel.pdm.chimp.infrastructure.services.http.ChimpServiceHttp
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.ChimpService
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import pt.isel.pdm.chimp.infrastructure.session.SessionManagerMem
+import pt.isel.pdm.chimp.infrastructure.storage.Storage
+import pt.isel.pdm.chimp.infrastructure.storage.firestore.FireStoreStorage
 
 /**
  * Represents the dependencies container for the Chimp application.
@@ -21,6 +23,7 @@ interface DependenciesContainer {
     val chimpService: ChimpService
     val sessionManager: SessionManager
     val entityReferenceManager: EntityReferenceManager
+    val storage: Storage
 }
 
 class ChimpApplication : Application(), DependenciesContainer {
@@ -32,6 +35,7 @@ class ChimpApplication : Application(), DependenciesContainer {
     override val chimpService by lazy { ChimpServiceHttp(API_BASE_URL, client) }
     override val sessionManager by lazy { SessionManagerMem() } // TODO: Use a persistent implementation of the session manager
     override val entityReferenceManager by lazy { EntityReferenceManagerImpl() }
+    override val storage by lazy { FireStoreStorage() }
 
     private fun createHttpClient() =
         HttpClient(OkHttp) {

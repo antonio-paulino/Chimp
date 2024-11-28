@@ -7,7 +7,6 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
-import java.time.LocalDateTime
 
 @Serializable
 data class ChannelCreationOutputModel(
@@ -25,7 +24,6 @@ data class ChannelCreationOutputModel(
         defaultRole = defaultRole,
         isPublic = isPublic,
         owner = owner,
-        createdAt = LocalDateTime.parse(createdAt),
         members = listOf(ChannelMember(owner.id, owner.name, ChannelRole.OWNER)),
     )
 }

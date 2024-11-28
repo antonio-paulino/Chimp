@@ -5,7 +5,9 @@ import pt.isel.pdm.chimp.domain.failure
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.success
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+import java.time.LocalDateTime
 
 /**
  * Handles the [ApiResult] by transforming the value of the [ApiResult.Success] into a new value of type [T]
@@ -28,6 +30,9 @@ fun <T, R> ApiResult<R, Problem>.handle(transform: (R) -> T): Either<Problem, T>
  * @param name the name to search for
  * @param pagination the pagination parameters
  * @param sort the sort parameters
+ * @param filterOwned the filter to apply for owned channels
+ * @param before the identifier to search before
+ * @param after the date to search after
  *
  * @return the query string
  */
@@ -36,11 +41,15 @@ fun buildQuery(
     pagination: PaginationRequest?,
     sort: SortRequest?,
     filterOwned: Boolean? = null,
+    before: LocalDateTime? = null,
+    after: Identifier? = null,
 ): String {
     return listOfNotNull(
         name?.let { "name=$it" },
         pagination?.let { "limit=${it.limit}&offset=${it.offset}" },
         sort?.let { "sort=${it.direction.name}&sortBy=${it.sortBy}" },
         filterOwned?.let { "filterOwned=$it" },
+        before?.let { "before=$it" },
+        after?.let { "after=${it.value}" },
     ).joinToString("&", prefix = "?")
 }
