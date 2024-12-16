@@ -80,8 +80,7 @@ class CredentialsViewModel(
         token: String,
     ) {
         var registerSuccess = false
-        val job =
-            launchRequest(
+        val job = launchRequest(
                 noConnectionRequest = {
                     showErrorToast("No connection")
                     null

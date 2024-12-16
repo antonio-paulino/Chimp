@@ -3,8 +3,7 @@ package pt.isel.pdm.chimp.infrastructure.session
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
-import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
-import pt.isel.pdm.chimp.domain.pagination.SortRequest
+import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
@@ -12,14 +11,16 @@ interface ChannelRepository {
     /**
      * Gets a list of channels.
      *
-     * @param pagination The pagination information.
-     * @param sort The sort information.
+     * @param limit The maximum number of channels to return.
+     * @param getCount Whether to count the total number of channels.
+     * @param sortDirection The direction of the sort.
      * @param after The identifier of the last channel currently in view.
      * @param filterOwned If the channels should be filtered by the ones owned by the user.
      */
     suspend fun getChannels(
-        pagination: PaginationRequest?,
-        sort: SortRequest?,
+        limit: Long = 10,
+        getCount: Boolean = false,
+        sortDirection : Sort = Sort.ASC,
         after: Identifier?,
         filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>>

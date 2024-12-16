@@ -4,6 +4,7 @@ import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
+import java.time.LocalDateTime
 
 /**
  * Represents a channel in the application.
@@ -21,4 +22,5 @@ data class Channel(
     val owner: User,
     val isPublic: Boolean,
     val members: List<ChannelMember>,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) : Identifiable

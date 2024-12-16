@@ -19,14 +19,15 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.channel.Channel
-import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.events.EventService
+import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import pt.isel.pdm.chimp.ui.utils.awaitNetworkAvailable
 import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketException
+import java.util.concurrent.TimeoutException
 import kotlin.time.Duration
 
 /**
@@ -59,19 +60,29 @@ class EventServiceHTTP(
 
     override fun initialize(
         scope: CoroutineScope,
-        session: Session,
+        session: SessionManager,
     ) {
         check(job == null) { "Event service already initialized" }
-        job =
-            scope.launch {
+        job = scope.launch {
                 _eventFlow = listenEvents(session, scope)
             }
         Log.d(TAG, "Event service initialized")
     }
 
+    override suspend fun awaitInitialization(timeout: Duration) {
+        val startTime = System.currentTimeMillis()
+        while (_eventFlow == null) {
+            if (System.currentTimeMillis() - startTime > timeout.inWholeMilliseconds) {
+                throw TimeoutException("Initialization timed out")
+            }
+            delay(100)
+        }
+    }
+
     override fun destroy() {
         check(job != null) { "Event service not initialized" }
         job!!.cancel()
+        job = null
     }
 
     override val eventFlow: Flow<Event> =
@@ -113,7 +124,7 @@ class EventServiceHTTP(
     }
 
     private fun listenEvents(
-        session: Session,
+        session: SessionManager,
         scope: CoroutineScope,
     ): Flow<Event> {
         val url = "$baseUrl$EVENT_SOURCE_URL"
@@ -125,7 +136,7 @@ class EventServiceHTTP(
                     httpClient.prepareRequest {
                         url(url)
                         header("Accept", "text/event-stream")
-                        header("Authorization", "Bearer ${session.accessToken.token}")
+                        header("Authorization", "Bearer ${session.currentSession?.accessToken?.token.toString()}")
                         lastEventId?.let { header("Last-Event-ID", it) }
                     }.execute { response ->
                         val channel = response.bodyAsChannel()
@@ -142,6 +153,8 @@ class EventServiceHTTP(
                     Log.d(TAG, "Connection error: ${e.message} - reconnecting in $reconnectTime")
                 } catch (e: ConnectTimeoutException) {
                     Log.d(TAG, "Connection timeout: ${e.message} - reconnecting in $reconnectTime")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Unexpected error: ${e.message} - reconnecting in $reconnectTime", e)
                 }
                 if (!context.isNetworkAvailable()) {
                     context.awaitNetworkAvailable()

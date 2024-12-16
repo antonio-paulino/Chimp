@@ -9,13 +9,12 @@ import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.failure
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.pagination.Pagination
-import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.Sort
-import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.success
 import pt.isel.pdm.chimp.dto.output.messages.MessageOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.storage.MessageRepository
+import pt.isel.pdm.chimp.infrastructure.storage.firestore.dto.MessagePOJO
 import java.time.LocalDateTime
 
 class FireStoreMessageRepository : MessageRepository {
@@ -24,35 +23,27 @@ class FireStoreMessageRepository : MessageRepository {
 
     override suspend fun getChannelMessages(
         channel: Channel,
-        pagination: PaginationRequest?,
-        sort: SortRequest?,
-        before: LocalDateTime?,
+        limit: Long,
+        getCount: Boolean,
+        sortDirection: Sort,
+        before: LocalDateTime?
     ): Either<Problem, Pagination<Message>> {
         return try {
-            val pageRequest =
-                pagination?.let {
-                    PaginationRequest(it.limit, it.offset, it.getCount)
-                } ?: PaginationRequest(limit = 10, offset = 0, getCount = false)
-            val sortRequest = sort?.let { SortRequest(it.sortBy, it.direction) } ?: SortRequest("createdAt", Sort.DESC)
-
             val querySnapshot =
                 messageCollection
                     .whereEqualTo("channelId", channel.id.value)
                     .apply {
-                        if (sortRequest.sortBy != null) {
-                            orderBy(sortRequest.sortBy, sortRequest.direction.toFirestoreSort())
-                        } else {
-                            orderBy("createdAt", sortRequest.direction.toFirestoreSort())
-                        }
+                        orderBy("createdAt", sortDirection.toFirestoreSort())
                         if (before != null) {
-                            whereLessThan("createdAt", before)
+                            startAfter(before)
+                        } else {
+                            startAfter(LocalDateTime.MIN)
                         }
-                        limit(pageRequest.limit)
-                        startAt(pageRequest.offset)
+                        limit(limit)
                     }
                     .get().await()
 
-            return success(querySnapshot.getPagination(MessageOutputModel::class.java, MessageOutputModel::toDomain, pageRequest))
+            return success(querySnapshot.getPagination(MessagePOJO::class.java, MessagePOJO::toDomain, limit, getCount))
         } catch (e: Exception) {
             Log.d("FirestoreMessageRepository", "Failed to get channel messages", e)
             failure(Problem.UnexpectedProblem)

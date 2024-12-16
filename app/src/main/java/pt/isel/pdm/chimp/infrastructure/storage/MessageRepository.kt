@@ -4,8 +4,7 @@ import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.pagination.Pagination
-import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
-import pt.isel.pdm.chimp.domain.pagination.SortRequest
+import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import java.time.LocalDateTime
 
@@ -19,14 +18,15 @@ interface MessageRepository {
      * Gets all the messages for a channel.
      *
      * @param channel The channel where the messages are.
-     * @param pagination The pagination information.
-     * @param sort The sort information.
+     * @param getCount Whether to count the total number of messages.
+     * @param sortDirection The direction of the sort.
      * @param before The date of creation of the last message currently in view.
      */
     suspend fun getChannelMessages(
         channel: Channel,
-        pagination: PaginationRequest?,
-        sort: SortRequest?,
+        limit: Long = 10,
+        getCount: Boolean = false,
+        sortDirection: Sort = Sort.DESC,
         before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>>
 

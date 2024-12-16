@@ -11,6 +11,8 @@ sealed class InfiniteScrollState<T : Identifiable>(
 
     data class Loaded<T : Identifiable>(val paginationState: Pagination<T>) : InfiniteScrollState<T>(paginationState)
 
+    data class Initial<T : Identifiable>(val paginationState: Pagination<T> = Pagination()) : InfiniteScrollState<T>(paginationState)
+
     data class Error<T : Identifiable>(
         val paginationState: Pagination<T>,
         val problem: Problem,

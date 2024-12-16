@@ -3,8 +3,9 @@ package pt.isel.pdm.chimp.infrastructure.services.interfaces.events
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import pt.isel.pdm.chimp.domain.channel.Channel
-import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
+import pt.isel.pdm.chimp.infrastructure.session.SessionManager
+import kotlin.time.Duration
 
 /**
  * Represents the service responsible for managing the events of the Chelas Instant Messaging Platform.
@@ -67,12 +68,17 @@ interface EventService {
      * @throws IllegalStateException If the service is already initialized.
      *
      * @param scope The coroutine scope to use for listening to the events.
-     * @param session The session to use for establishing the connection.
+     * @param session The session manager to use for authentication.
      */
     fun initialize(
         scope: CoroutineScope,
-        session: Session,
+        session: SessionManager,
     )
+
+    /**
+     * Suspends the coroutine until the service is initialized or the timeout is reached.
+     */
+    suspend fun awaitInitialization(timeout: Duration)
 
     /**
      * Stops listening to events.

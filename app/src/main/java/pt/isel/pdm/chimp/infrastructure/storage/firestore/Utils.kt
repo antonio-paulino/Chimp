@@ -16,11 +16,12 @@ internal fun Sort.toFirestoreSort(): Query.Direction =
 internal fun <T, R> QuerySnapshot.getPagination(
     mapClazz: Class<T>,
     mapFunction: (T) -> R,
-    pageRequest: PaginationRequest,
+    limit: Long,
+    getCount: Boolean,
 ): Pagination<R> {
     return Pagination(
         items = this.toObjects(mapClazz).map(mapFunction),
-        info = this.getPaginationInfo(pageRequest),
+        info = this.getPaginationInfo(PaginationRequest(offset = 0, limit = limit, getCount = getCount)),
     )
 }
 

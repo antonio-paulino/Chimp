@@ -8,6 +8,7 @@ import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.user.User
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.dto.output.channel.ChannelsPaginatedOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UsersPaginatedOutputModel
@@ -51,11 +52,12 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
         pagination: PaginationRequest?,
         sort: SortRequest?,
         filterOwned: Boolean,
+        after: Identifier?
     ): Either<Problem, Pagination<Channel>> {
         return get<ChannelsPaginatedOutputModel>(
             USER_CHANNELS_ROUTE
-                .replace(USER_ID_PARAM, session.id.toString())
-                .plus(buildQuery(null, pagination, sort, filterOwned)),
+                .replace(USER_ID_PARAM, session.user.id.value.toString())
+                .plus(buildQuery(null, pagination, sort, filterOwned, after = after)),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
     }

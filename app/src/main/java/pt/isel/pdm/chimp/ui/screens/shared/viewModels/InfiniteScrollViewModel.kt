@@ -13,6 +13,7 @@ import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.domain.Success
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
 class InfiniteScrollViewModel<T : Identifiable>(
@@ -20,10 +21,11 @@ class InfiniteScrollViewModel<T : Identifiable>(
     private val limit: Int = 50,
     private val getCount: Boolean = false,
     private val useOffset: Boolean = true,
-    initialState: InfiniteScrollState<T> = InfiniteScrollState.Loading(Pagination()),
+    initialState: InfiniteScrollState<T> = InfiniteScrollState.Initial(),
 ) : ViewModel() {
     private val _state = MutableStateFlow(initialState)
     private val updateQueue = mutableListOf<T>()
+    private val deleteQueue = mutableListOf<Identifier>()
 
     val state: Flow<InfiniteScrollState<T>> = _state
 
@@ -33,35 +35,49 @@ class InfiniteScrollViewModel<T : Identifiable>(
         this.viewModelScope.launch {
             state.collect {
                 if (updateQueue.isNotEmpty() && it !is InfiniteScrollState.Loading) {
-                    // Block adding items to the queue while processing updates / Wait while adding updates
                     semaphore.withPermit {
                         updateQueue.forEach { item -> handleItemUpdate(item) }
                         updateQueue.clear()
                     }
+                }
+                if (deleteQueue.isNotEmpty() && it !is InfiniteScrollState.Loading) {
+                    semaphore.withPermit {
+                        deleteQueue.forEach { itemId -> handleItemDelete(itemId) }
+                        deleteQueue.clear()
+                    }
+                }
+                if (it is InfiniteScrollState.Initial) {
+                    loadMore()
                 }
             }
         }
     }
 
     fun loadMore() {
-        val currentState = _state.value
-        if (currentState !is InfiniteScrollState.Loading) {
+        if (_state.value !is InfiniteScrollState.Loading) {
+            val savedState = _state.value
+            if (savedState.pagination.info.nextPage == null && savedState !is InfiniteScrollState.Initial) return
+            _state.value = InfiniteScrollState.Loading(savedState.pagination)
             this.viewModelScope.launch {
-                val res =
-                    fetchItemsRequest(
+                val res = fetchItemsRequest(
                         PaginationRequest(
-                            offset = if (useOffset) currentState.pagination.items.size.toLong() else 0,
+                            offset = if (useOffset) savedState.pagination.items.size.toLong() else 0,
                             limit = limit.toLong(),
                             getCount = getCount,
                         ),
-                        currentState.pagination.items,
+                        savedState.pagination.items,
                     )
+                if (_state.value != InfiniteScrollState.Loading(savedState.pagination)) return@launch
                 when (res) {
-                    is Success -> _state.emit(InfiniteScrollState.Loaded(res.value))
-                    is Failure -> _state.emit(InfiniteScrollState.Error(currentState.pagination, res.value))
+                    is Success -> _state.emit(InfiniteScrollState.Loaded(res.value.copy(items = savedState.pagination.items + res.value.items)))
+                    is Failure -> _state.emit(InfiniteScrollState.Error(savedState.pagination, res.value))
                 }
             }
         }
+    }
+
+    fun reset() {
+        _state.value = InfiniteScrollState.Initial()
     }
 
     suspend fun handleItemUpdate(item: T) {
@@ -80,38 +96,63 @@ class InfiniteScrollViewModel<T : Identifiable>(
                     _state.emit(
                         InfiniteScrollState.Loading(currentState.pagination.copy(items = updatedItems)),
                     )
+
                 is InfiniteScrollState.Loaded ->
                     _state.emit(
                         InfiniteScrollState.Loaded(currentState.pagination.copy(items = updatedItems)),
                     )
+
                 is InfiniteScrollState.Error ->
                     _state.emit(
-                        InfiniteScrollState.Error(currentState.pagination.copy(items = updatedItems), currentState.problem),
+                        InfiniteScrollState.Error(
+                            currentState.pagination.copy(items = updatedItems),
+                            currentState.problem
+                        ),
                     )
+
+                is InfiniteScrollState.Initial -> {
+                    _state.emit(
+                        InfiniteScrollState.Initial(currentState.pagination.copy(items = updatedItems)),
+                    )
+                }
             }
         }
     }
 
-    fun handleItemDelete(item: T) {
+    suspend fun handleItemDelete(itemId: Identifier) {
         val currentState = _state.value
-        if (currentState is InfiniteScrollState.Loading && !currentState.paginationState.items.any { it.id == item.id }) {
-            updateQueue.add(item)
-        } else {
-            val updatedItems = currentState.pagination.items.filter { it.id != item.id }
-            this.viewModelScope.launch {
-                when (currentState) {
-                    is InfiniteScrollState.Loading ->
-                        _state.emit(
-                            InfiniteScrollState.Loading(currentState.pagination.copy(items = updatedItems)),
-                        )
-                    is InfiniteScrollState.Loaded ->
-                        _state.emit(
-                            InfiniteScrollState.Loaded(currentState.pagination.copy(items = updatedItems)),
-                        )
-                    is InfiniteScrollState.Error ->
-                        _state.emit(
-                            InfiniteScrollState.Error(currentState.pagination.copy(items = updatedItems), currentState.problem),
-                        )
+
+        if (currentState is InfiniteScrollState.Loading && !currentState.paginationState.items.any { it.id.value == itemId.value }) {
+            semaphore.withPermit { deleteQueue.add(itemId) }
+            return
+        }
+
+        val updatedItems = currentState.pagination.items.filter { it.id.value != itemId.value }
+
+        this.viewModelScope.launch {
+            when (currentState) {
+                is InfiniteScrollState.Loading ->
+                    _state.emit(
+                        InfiniteScrollState.Loading(currentState.pagination.copy(items = updatedItems)),
+                    )
+
+                is InfiniteScrollState.Loaded ->
+                    _state.emit(
+                        InfiniteScrollState.Loaded(currentState.pagination.copy(items = updatedItems)),
+                    )
+
+                is InfiniteScrollState.Error ->
+                    _state.emit(
+                        InfiniteScrollState.Error(
+                            currentState.pagination.copy(items = updatedItems),
+                            currentState.problem
+                        ),
+                    )
+
+                is InfiniteScrollState.Initial -> {
+                    _state.emit(
+                        InfiniteScrollState.Initial(currentState.pagination.copy(items = updatedItems)),
+                    )
                 }
             }
         }
@@ -136,6 +177,11 @@ class InfiniteScrollViewModel<T : Identifiable>(
                             currentState.problem,
                         ),
                     )
+                is InfiniteScrollState.Initial -> {
+                    _state.emit(
+                        InfiniteScrollState.Initial(currentState.pagination.copy(items = currentState.pagination.items + item)),
+                    )
+                }
             }
         }
     }

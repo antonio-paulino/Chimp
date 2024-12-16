@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.ui.components.NavBar
+import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.AuthorCard
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
@@ -30,6 +32,9 @@ fun AboutScreen(
     authors: List<Author>,
 ) {
     Scaffold(
+        topBar = {
+            TopBar(content = { Text(text = stringResource(R.string.about)) })
+        },
         bottomBar = {
             NavBar(
                 onHomeNavigation = onHomeNavigation,
@@ -46,7 +51,7 @@ fun AboutScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(innerPadding)
         ) {
             LazyColumn {
                 items(authors.size) { index ->

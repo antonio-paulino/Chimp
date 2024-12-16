@@ -7,6 +7,7 @@ import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.user.User
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
 /**
@@ -58,5 +59,6 @@ interface UserService {
         pagination: PaginationRequest?,
         sort: SortRequest?,
         filterOwned: Boolean,
+        after: Identifier?,
     ): Either<Problem, Pagination<Channel>>
 }

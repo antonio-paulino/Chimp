@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
-import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 class CredentialsActivity : ChannelsActivity() {
@@ -30,7 +29,7 @@ class CredentialsActivity : ChannelsActivity() {
                 CredentialsScreen(
                     state = state,
                     onSuccessfulAuthentication = {
-                        navigateTo(AboutActivity::class.java)
+                        navigateTo(ChannelsActivity::class.java)
                         finish()
                     },
                     onLoginClick = viewModel::onLoginClick,

@@ -8,49 +8,40 @@ import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.failure
 import pt.isel.pdm.chimp.domain.pagination.Pagination
-import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.Sort
-import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.success
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.dto.output.channel.ChannelOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.session.ChannelRepository
+import pt.isel.pdm.chimp.infrastructure.storage.firestore.dto.ChannelPOJO
 
 class FireStoreChannelRepository : ChannelRepository {
     private val db = Firebase.firestore
     private val channelCollection = db.collection("channels")
 
+    // Only supports sorting by id
     override suspend fun getChannels(
-        pagination: PaginationRequest?,
-        sort: SortRequest?,
+        limit: Long,
+        getCount: Boolean,
+        sortDirection: Sort,
         after: Identifier?,
-        filterOwned: Boolean?,
+        filterOwned: Boolean?
     ): Either<Problem, Pagination<Channel>> {
         return try {
-            val pageRequest =
-                pagination?.let {
-                    PaginationRequest(it.limit, it.offset, it.getCount)
-                } ?: PaginationRequest(limit = 10, offset = 0, getCount = false)
-            val sortRequest = sort?.let { SortRequest(it.sortBy, it.direction) } ?: SortRequest("id", Sort.ASC)
-
             val querySnapshot =
                 channelCollection
                     .apply {
-                        if (sortRequest.sortBy != null) {
-                            orderBy(sortRequest.sortBy, sortRequest.direction.toFirestoreSort())
-                        } else {
-                            orderBy("id", sortRequest.direction.toFirestoreSort())
-                        }
+                        orderBy("id", sortDirection.toFirestoreSort())
                         if (after != null) {
                             whereGreaterThan("id", after.value)
                         }
-                        limit(pageRequest.limit)
-                        startAt(pageRequest.offset)
+                        limit(limit)
+                        after?.let { startAfter(it.value) }
                     }
                     .get().await()
 
-            return success(querySnapshot.getPagination(ChannelOutputModel::class.java, ChannelOutputModel::toDomain, pageRequest))
+            return success(querySnapshot.getPagination(ChannelPOJO::class.java, ChannelPOJO::toDomain, limit, getCount))
         } catch (e: Exception) {
             Log.d("FirestoreMessageRepository", "Failed to get channel messages", e)
             failure(Problem.UnexpectedProblem)

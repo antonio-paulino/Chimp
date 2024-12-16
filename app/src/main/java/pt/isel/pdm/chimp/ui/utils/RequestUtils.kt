@@ -10,7 +10,9 @@ import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.Success
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 
 private const val TOO_MANY_REQUESTS_DELAY = 1000L
 
@@ -57,14 +59,16 @@ fun <T> ViewModel.launchRequest(
  * @param onSuccess the function to execute when the request succeeds.
  */
 fun <T> ViewModel.launchRequestRefreshing(
+    sessionManager: SessionManager,
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
-    request: suspend () -> Either<Problem, T>,
-    refresh: suspend () -> Unit,
+    request: suspend (session: Session) -> Either<Problem, T>,
+    refresh: suspend (session: Session) -> Either<Problem, Session>,
     onError: suspend(Problem) -> Unit,
     onSuccess: suspend (Success<T>) -> Unit,
 ): Job {
     return viewModelScope.launch {
         executeRequestRefreshing(
+            sessionManager = sessionManager,
             noConnectionRequest = noConnectionRequest,
             request = request,
             refresh = refresh,
@@ -92,8 +96,7 @@ suspend fun <T> executeRequest(
     onSuccess: suspend(Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
-    val res =
-        if (context.isNetworkAvailable()) {
+    val res = if (context.isNetworkAvailable()) {
             request()
         } else {
             noConnectionRequest?.let { it() }
@@ -130,16 +133,17 @@ suspend fun <T> executeRequest(
  * @param onSuccess the function to execute when the request succeeds.
  */
 suspend fun <T> executeRequestRefreshing(
+    sessionManager: SessionManager,
     noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
-    request: suspend () -> Either<Problem, T>,
-    refresh: (suspend() -> Unit)? = null,
+    request: suspend (session: Session) -> Either<Problem, T>,
+    refresh: (suspend(session: Session) -> Either<Problem, Session>),
     onError: suspend(Problem) -> Unit,
     onSuccess: suspend (Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
     var res =
         if (context.isNetworkAvailable()) {
-            request()
+            request(sessionManager.currentSession?: return)
         } else {
             noConnectionRequest?.let { it() }
         }
@@ -149,14 +153,20 @@ suspend fun <T> executeRequestRefreshing(
         return
     }
 
-    if (res is Failure && res.value.status == 401) {
-        refresh?.let { it() }
-        res = request()
+    if (res.isUnauthorized()) {
+        val refreshRes = refresh(sessionManager.currentSession?: return)
+        if (refreshRes is Failure) {
+            sessionManager.clear()
+            onError(refreshRes.value)
+            return
+        }
+        sessionManager.set((refreshRes as Success<Session>).value)
+        res = request(sessionManager.currentSession?: return)
     }
 
     if (res.isTooManyRequests()) {
         delay(TOO_MANY_REQUESTS_DELAY)
-        executeRequest(request, request, onError, onSuccess)
+        executeRequestRefreshing(sessionManager, noConnectionRequest, request, refresh, onError, onSuccess)
     }
 
     when (res) {

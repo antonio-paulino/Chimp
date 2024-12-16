@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.ui.screens
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -12,17 +13,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseApp
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
+import pt.isel.pdm.chimp.infrastructure.SSEService
+import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
+import kotlin.time.Duration.Companion.seconds
 
 open class ChannelsActivity : ComponentActivity() {
     lateinit var dependencies: DependenciesContainer
@@ -45,16 +51,34 @@ open class ChannelsActivity : ComponentActivity() {
         )
     }
 
+    private fun startListening() {
+        val intent = Intent(this, SSEService::class.java)
+        startService(intent)
+        this.lifecycleScope.launch {
+            dependencies.chimpService.eventService.awaitInitialization(30.seconds)
+            dependencies.chimpService.eventService.channelEventFlow.collect { event ->
+                when (event) {
+                    is Event.ChannelEvent.DeletedEvent -> {
+                        scrollingViewModel.handleItemDelete(event.channelId)
+                    }
+                    is Event.ChannelEvent.UpdatedEvent -> {
+                        scrollingViewModel.handleItemUpdate(event.channel)
+                    }
+                }
+            }
+        }
+        isListening = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         dependencies = application as DependenciesContainer
         FirebaseApp.initializeApp(this)
         setContent {
-            val session by dependencies.sessionManager.session.collectAsState(initial = null)
-            val channelState by channelsViewModel.state.collectAsState(initial = ChannelScreenState.ChannelsListAll)
+            val session by dependencies.sessionManager.session.collectAsState(initial = runBlocking { dependencies.sessionManager.session.first() })
+            val channelState by channelsViewModel.state.collectAsState(initial = ChannelScreenState.ChannelsList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Loading(Pagination<Channel>()))
-            Log.d(TAG, "ChannelsActivity.setContent: $session")
             ChIMPTheme {
                 ChannelsScreen(
                     channelState = channelState,
@@ -64,19 +88,17 @@ open class ChannelsActivity : ComponentActivity() {
                         navigateTo(CredentialsActivity::class.java)
                         finish()
                     },
-                    onLoggedIn = { session ->
+                    onLoggedIn = {
                         if (!isListening) {
-                            channelsViewModel.startListening(lifecycleScope, session)
-                            Log.d(TAG, "this.lifecycleScope: $lifecycleScope")
-                            this.lifecycleScope.launch { // Just for testing purposes, might be removed
-                                dependencies.chimpService.eventService.eventFlow.collect { event ->
-                                    Log.d(TAG, "Event received: $event")
-                                }
-                            }
-                            isListening = true
+                            startListening()
                         }
                     },
                     session = session,
+                    loadMore = { scrollingViewModel.loadMore() },
+                    onChannelSelected = { channel ->
+                        dependencies.entityReferenceManager.set(channel)
+                        // navigateTo(ChannelActivity::class.java)
+                    },
                 )
             }
         }
@@ -109,10 +131,16 @@ open class ChannelsActivity : ComponentActivity() {
         Log.v(TAG, "MainActivity.onStop")
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.v(TAG, "MainActivity.onResume")
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (isListening) {
-            channelsViewModel.stopListening()
+            val intent = Intent(this, SSEService::class.java)
+            stopService(intent)
             isListening = false
         }
         Log.v(TAG, "MainActivity.onDestroy")
