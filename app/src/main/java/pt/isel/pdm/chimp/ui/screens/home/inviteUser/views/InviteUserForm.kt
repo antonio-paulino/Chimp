@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.inviteUser.views
+package pt.isel.pdm.chimp.ui.screens.home.inviteUser.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

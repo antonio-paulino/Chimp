@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens
+package pt.isel.pdm.chimp.ui.screens.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

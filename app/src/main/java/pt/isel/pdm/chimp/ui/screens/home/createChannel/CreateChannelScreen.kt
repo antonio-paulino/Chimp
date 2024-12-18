@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.createChannel
+package pt.isel.pdm.chimp.ui.screens.home.createChannel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,7 +25,7 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.TopBar
-import pt.isel.pdm.chimp.ui.screens.createChannel.views.CreateChannelForm
+import pt.isel.pdm.chimp.ui.screens.home.createChannel.views.CreateChannelForm
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 import pt.isel.pdm.chimp.ui.utils.getMessage
 

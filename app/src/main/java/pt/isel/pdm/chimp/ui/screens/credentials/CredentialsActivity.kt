@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
-import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
+import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 class CredentialsActivity : ChannelsActivity() {

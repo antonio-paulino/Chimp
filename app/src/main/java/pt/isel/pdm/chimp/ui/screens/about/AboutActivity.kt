@@ -10,9 +10,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
-import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
+import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.showErrorToast
 

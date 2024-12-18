@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.inviteUser
+package pt.isel.pdm.chimp.ui.screens.home.inviteUser
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,9 +13,11 @@ import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 sealed interface InviteUserScreenState {
     data class CreatingInvite(val expirationDate: ExpirationOptions) : InviteUserScreenState
 
-    data class InviteCreationError(val expirationDate: ExpirationOptions, val problem: Problem) : InviteUserScreenState
+    data class InviteCreationError(val expirationDate: ExpirationOptions, val problem: Problem) :
+        InviteUserScreenState
 
-    data class InviteCreated(val expirationDate: ExpirationOptions, val invite: ImInvitation) : InviteUserScreenState
+    data class InviteCreated(val expirationDate: ExpirationOptions, val invite: ImInvitation) :
+        InviteUserScreenState
 }
 
 class InviteUserViewModel internal constructor(
@@ -34,13 +36,26 @@ class InviteUserViewModel internal constructor(
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
-                _state.value = InviteUserScreenState.InviteCreationError(expirationOptions, Problem.NoConnection)
+                _state.value = InviteUserScreenState.InviteCreationError(
+                    expirationOptions,
+                    Problem.NoConnection
+                )
                 null
             },
             request = { services.authService.createInvitation(sessionManager.session.first()!!, expirationOptions.expirationDate) },
             refresh = services.authService::refresh,
-            onError = { _state.emit(InviteUserScreenState.InviteCreationError(ExpirationOptions.THIRTY_MINUTES, it)) },
-            onSuccess = { _state.emit(InviteUserScreenState.InviteCreated(expirationOptions, it.value)) },
+            onError = { _state.emit(
+                InviteUserScreenState.InviteCreationError(
+                    ExpirationOptions.THIRTY_MINUTES,
+                    it
+                )
+            ) },
+            onSuccess = { _state.emit(
+                InviteUserScreenState.InviteCreated(
+                    expirationOptions,
+                    it.value
+                )
+            ) },
         )
     }
 }

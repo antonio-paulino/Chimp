@@ -34,7 +34,7 @@
             tools:ignore="DiscouragedApi">
         </activity>
         <activity
-            android:name=".ui.screens.ChannelsActivity"
+            android:name=".ui.screens.home.ChannelsActivity"
             android:exported="true"
             android:screenOrientation="fullSensor"
             android:launchMode="singleInstance"
@@ -46,14 +46,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.screens.inviteUser.InviteUserActivity"
+            android:name=".ui.screens.home.inviteUser.InviteUserActivity"
             android:exported="false"
             android:screenOrientation="fullSensor"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Chimp"
             tools:ignore="DiscouragedApi">
         </activity>
-        <activity android:name=".ui.screens.createChannel.CreateChannelActivity"
+        <activity android:name=".ui.screens.home.createChannel.CreateChannelActivity"
             android:exported="false"
             android:screenOrientation="fullSensor"
             android:launchMode="singleInstance"

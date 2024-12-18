@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.inviteUser
+package pt.isel.pdm.chimp.ui.screens.home.inviteUser
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -6,7 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
-import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
+import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 class InviteUserActivity : ChannelsActivity() {

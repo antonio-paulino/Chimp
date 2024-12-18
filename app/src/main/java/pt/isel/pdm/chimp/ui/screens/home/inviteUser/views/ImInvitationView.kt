@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.inviteUser.views
+package pt.isel.pdm.chimp.ui.screens.home.inviteUser.views
 
 import android.content.Context
 import android.widget.Toast
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -90,7 +91,7 @@ fun ImInvitationViewPreview() {
             invite =
                 ImInvitation(
                     token = UUID.randomUUID(),
-                    expiresAt = java.time.LocalDateTime.now(),
+                    expiresAt = LocalDateTime.now(),
                 ),
         )
     }

@@ -1,10 +1,10 @@
-package pt.isel.pdm.chimp.ui.screens.createChannel
+package pt.isel.pdm.chimp.ui.screens.home.createChannel
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
+import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 class CreateChannelActivity : ChannelsActivity() {

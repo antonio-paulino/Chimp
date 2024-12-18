@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens
+package pt.isel.pdm.chimp.ui.screens.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -24,9 +24,9 @@ import pt.isel.pdm.chimp.infrastructure.SSEService
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
-import pt.isel.pdm.chimp.ui.screens.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
-import pt.isel.pdm.chimp.ui.screens.inviteUser.InviteUserActivity
+import pt.isel.pdm.chimp.ui.screens.home.createChannel.CreateChannelActivity
+import pt.isel.pdm.chimp.ui.screens.home.inviteUser.InviteUserActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme

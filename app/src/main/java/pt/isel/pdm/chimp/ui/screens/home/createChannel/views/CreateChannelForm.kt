@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.createChannel.views
+package pt.isel.pdm.chimp.ui.screens.home.createChannel.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

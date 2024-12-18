@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.inviteUser
+package pt.isel.pdm.chimp.ui.screens.home.inviteUser
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
-import pt.isel.pdm.chimp.ui.screens.inviteUser.views.InviteUserForm
+import pt.isel.pdm.chimp.ui.screens.home.inviteUser.views.InviteUserForm
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 import pt.isel.pdm.chimp.ui.utils.getMessage
