@@ -10,7 +10,7 @@ data class MessagePOJO(
     var author: UserPOJO = UserPOJO(),
     var content: String = "",
     var createdAt: String = "",
-    var editedAt: String? = null
+    var editedAt: String? = null,
 ) {
     fun toDomain() =
         Message(

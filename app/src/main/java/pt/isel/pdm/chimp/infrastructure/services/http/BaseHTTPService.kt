@@ -60,12 +60,14 @@ open class BaseHTTPService(
                     try {
                         failure(body<Problem.ServiceProblem>())
                     } catch (e: Exception) {
-                        failure(Problem.ServiceProblem(
-                            status = HttpStatusCode.Unauthorized.value,
-                            type = "unauthorized",
-                            title = "Unauthorized",
-                            detail = "The request is unauthorized",
-                        ))
+                        failure(
+                            Problem.ServiceProblem(
+                                status = HttpStatusCode.Unauthorized.value,
+                                type = "unauthorized",
+                                title = "Unauthorized",
+                                detail = "The request is unauthorized",
+                            ),
+                        )
                     }
                 }
 

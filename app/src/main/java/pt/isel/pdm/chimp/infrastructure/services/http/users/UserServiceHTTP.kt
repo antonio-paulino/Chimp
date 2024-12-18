@@ -52,7 +52,7 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
         pagination: PaginationRequest?,
         sort: SortRequest?,
         filterOwned: Boolean,
-        after: Identifier?
+        after: Identifier?,
     ): Either<Problem, Pagination<Channel>> {
         return get<ChannelsPaginatedOutputModel>(
             USER_CHANNELS_ROUTE

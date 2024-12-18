@@ -17,7 +17,6 @@ import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.R
 
 class SSEService : Service() {
-
     private val serviceScope = CoroutineScope(Dispatchers.IO)
 
     private lateinit var dependencies: DependenciesContainer
@@ -30,20 +29,22 @@ class SSEService : Service() {
 
     private fun startForegroundService() {
         val channelId = "SSEServiceChannel"
-        val channel = NotificationChannel(
-            channelId,
-            "SSE Service Channel",
-            NotificationManager.IMPORTANCE_LOW
-        )
+        val channel =
+            NotificationChannel(
+                channelId,
+                "SSE Service Channel",
+                NotificationManager.IMPORTANCE_LOW,
+            )
 
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
 
-        val notification: Notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("SSE Service")
-            .setContentText("Listening for events")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
+        val notification: Notification =
+            NotificationCompat.Builder(this, channelId)
+                .setContentTitle("SSE Service")
+                .setContentText("Listening for events")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .build()
 
         startForeground(1, notification)
     }

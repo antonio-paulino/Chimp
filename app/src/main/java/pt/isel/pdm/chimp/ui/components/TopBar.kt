@@ -11,18 +11,22 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(content: @Composable () -> Unit, actions: @Composable () -> Unit = {}) {
+fun TopBar(
+    content: @Composable () -> Unit,
+    actions: @Composable () -> Unit = {},
+) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors().copy(
-            scrolledContainerColor = Color.Transparent,
-            titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors().copy(
+                scrolledContainerColor = Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
         title = {
             content()
         },
         actions = {
             actions()
-        }
+        },
     )
 }
 
@@ -31,6 +35,6 @@ fun TopBar(content: @Composable () -> Unit, actions: @Composable () -> Unit = {}
 fun TopBarPreview() {
     TopBar(
         content = { Text("Title") },
-        actions = { Text("Actions") }
+        actions = { Text("Actions") },
     )
 }
