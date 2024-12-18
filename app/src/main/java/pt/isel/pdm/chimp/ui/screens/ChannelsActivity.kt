@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseApp
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
@@ -24,6 +24,7 @@ import pt.isel.pdm.chimp.infrastructure.SSEService
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
+import pt.isel.pdm.chimp.ui.screens.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
@@ -51,39 +52,25 @@ open class ChannelsActivity : ComponentActivity() {
         )
     }
 
-    private fun startListening() {
-        val intent = Intent(this, SSEService::class.java)
-        startService(intent)
-        this.lifecycleScope.launch {
-            dependencies.chimpService.eventService.awaitInitialization(30.seconds)
-            dependencies.chimpService.eventService.channelEventFlow.collect { event ->
-                when (event) {
-                    is Event.ChannelEvent.DeletedEvent -> {
-                        scrollingViewModel.handleItemDelete(event.channelId)
-                    }
-                    is Event.ChannelEvent.UpdatedEvent -> {
-                        scrollingViewModel.handleItemUpdate(event.channel)
-                    }
-                }
-            }
-        }
-        isListening = true
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         dependencies = application as DependenciesContainer
         FirebaseApp.initializeApp(this)
         setContent {
-            val session by dependencies.sessionManager.session.collectAsState(initial = runBlocking { dependencies.sessionManager.session.first() })
+            val session by dependencies.sessionManager.session.collectAsState(
+                initial =
+                    runBlocking {
+                        dependencies.sessionManager.session.firstOrNull()
+                    },
+            )
             val channelState by channelsViewModel.state.collectAsState(initial = ChannelScreenState.ChannelsList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Loading(Pagination<Channel>()))
             ChIMPTheme {
                 ChannelsScreen(
                     channelState = channelState,
                     scrollState = scrollState,
-                    onAboutNavigation = { navigateTo(AboutActivity::class.java) },
+                    session = session,
                     onNotLoggedIn = {
                         navigateTo(CredentialsActivity::class.java)
                         finish()
@@ -93,12 +80,14 @@ open class ChannelsActivity : ComponentActivity() {
                             startListening()
                         }
                     },
-                    session = session,
-                    loadMore = { scrollingViewModel.loadMore() },
+                    loadMore = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
-                        dependencies.entityReferenceManager.set(channel)
+                        dependencies.entityReferenceManager.setChannel(channel)
                         // navigateTo(ChannelActivity::class.java)
                     },
+                    onLogout = channelsViewModel::logout,
+                    onAboutNavigation = { navigateTo(AboutActivity::class.java, animate = false) },
+                    onCreateChannelNavigation = { navigateTo(CreateChannelActivity::class.java) },
                 )
             }
         }
@@ -121,19 +110,20 @@ open class ChannelsActivity : ComponentActivity() {
         return viewModels<T>(factoryProducer = { factory })
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.v(TAG, "MainActivity.onStart")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.v(TAG, "MainActivity.onStop")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.v(TAG, "MainActivity.onResume")
+    private fun startListening() {
+        val intent = Intent(this, SSEService::class.java)
+        startService(intent)
+        this.lifecycleScope.launch {
+            dependencies.chimpService.eventService.awaitInitialization(30.seconds)
+            dependencies.chimpService.eventService.channelEventFlow.collect { event ->
+                when (event) {
+                    is Event.ChannelEvent.DeletedEvent -> handleChannelDeleted(event)
+                    is Event.ChannelEvent.UpdatedEvent -> handleChannelUpdated(event)
+                    is Event.ChannelEvent.CreatedEvent -> handleChannelCreated(event)
+                }
+            }
+        }
+        isListening = true
     }
 
     override fun onDestroy() {
@@ -144,5 +134,48 @@ open class ChannelsActivity : ComponentActivity() {
             isListening = false
         }
         Log.v(TAG, "MainActivity.onDestroy")
+    }
+
+    private suspend fun handleChannelDeleted(event: Event.ChannelEvent.DeletedEvent) {
+        scrollingViewModel.handleItemDelete(event.channelId)
+        val referencedChannel = dependencies.entityReferenceManager.channel.firstOrNull()
+        if (referencedChannel != null && referencedChannel.id == event.channelId) {
+            dependencies.entityReferenceManager.setChannel(null)
+        }
+        dependencies.storage.channelRepository.deleteChannel(event.channelId)
+    }
+
+    private suspend fun handleChannelUpdated(event: Event.ChannelEvent.UpdatedEvent) {
+        if (event.channel.members.none { it.id == dependencies.sessionManager.session.firstOrNull()?.user?.id }) {
+            scrollingViewModel.handleItemDelete(event.channel.id)
+            dependencies.storage.channelRepository.deleteChannel(event.channel.id)
+        } else {
+            val state = scrollingViewModel.state.firstOrNull()
+            val paginationItems = state?.pagination?.items
+            val finished = state?.pagination?.info?.nextPage == null
+            if (
+                paginationItems?.any { it.id == event.channel.id } == false &&
+                paginationItems.lastOrNull()?.id?.value!! > event.channel.id.value ||
+                finished
+            ) {
+                scrollingViewModel.handleItemCreate(event.channel)
+            } else {
+                scrollingViewModel.handleItemUpdate(event.channel)
+            }
+            dependencies.storage.channelRepository.updateChannels(listOf(event.channel))
+        }
+        val referencedChannel = dependencies.entityReferenceManager.channel.firstOrNull()
+        if (referencedChannel != null && referencedChannel.id == event.channel.id) {
+            dependencies.entityReferenceManager.setChannel(event.channel)
+        }
+    }
+
+    private suspend fun handleChannelCreated(event: Event.ChannelEvent.CreatedEvent) {
+        scrollingViewModel.handleItemCreate(event.channel)
+        dependencies.storage.channelRepository.updateChannels(listOf(event.channel))
+        val referencedChannel = dependencies.entityReferenceManager.channel.firstOrNull()
+        if (referencedChannel != null && referencedChannel.id == event.channel.id) {
+            dependencies.entityReferenceManager.setChannel(event.channel)
+        }
     }
 }

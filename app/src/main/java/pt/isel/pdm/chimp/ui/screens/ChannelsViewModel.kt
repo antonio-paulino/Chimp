@@ -17,56 +17,72 @@ import pt.isel.pdm.chimp.infrastructure.storage.Storage
 import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 
-interface ChannelScreenState {
+sealed interface ChannelScreenState {
     data object ChannelsList : ChannelScreenState
+
+    data class ChannelsListError(val problem: Problem) : ChannelScreenState
 }
 
 open class ChannelsViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
     private val storage: Storage,
+    initialScreenState: ChannelScreenState = ChannelScreenState.ChannelsList,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ChannelScreenState> = MutableStateFlow(ChannelScreenState.ChannelsList)
+    private val _state: MutableStateFlow<ChannelScreenState> = MutableStateFlow(initialScreenState)
 
     val state = _state
+
+    fun logout() {
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = {
+                _state.value = ChannelScreenState.ChannelsListError(Problem.NoConnection)
+                null
+            },
+            request = services.authService::logout,
+            refresh = services.authService::refresh,
+            onError = { _state.emit(ChannelScreenState.ChannelsListError(it)) },
+            onSuccess = { sessionManager.clear() },
+        )
+    }
 
     suspend fun fetchChannels(
         paginationRequest: PaginationRequest,
         currentItems: List<Channel>,
     ): Either<Problem, Pagination<Channel>> {
         var result: Either<Problem, Pagination<Channel>> = failure(Problem.UnexpectedProblem)
-        val job = launchRequestRefreshing(
-            sessionManager = sessionManager,
-            noConnectionRequest = {
-                storage.channelRepository.getChannels(
-                    limit = paginationRequest.limit,
-                    getCount = false,
-                    after = currentItems.lastOrNull()?.id,
-                    filterOwned = false,
-                )
-            },
-            request = { session ->
-                services.userService.getUserChannels(
-                    session = session,
-                    pagination = paginationRequest,
-                    sort = null,
-                    after = currentItems.lastOrNull()?.id,
-                    filterOwned = false,
-                )
-            },
-            refresh = { session ->
-                services.authService.refresh(session)
-            },
-            onError = {
-                result = failure(it)
-            },
-            onSuccess = {
-                result = it
-                if (ChimpApplication.applicationContext().isNetworkAvailable()) {
-                    storage.channelRepository.updateChannels(it.value.items)
-                }
-            },
-        )
+        val job =
+            launchRequestRefreshing(
+                sessionManager = sessionManager,
+                noConnectionRequest = {
+                    storage.channelRepository.getChannels(
+                        limit = paginationRequest.limit,
+                        getCount = false,
+                        after = currentItems.lastOrNull()?.id,
+                        filterOwned = false,
+                    )
+                },
+                request = { session ->
+                    services.userService.getUserChannels(
+                        session = session,
+                        pagination = paginationRequest,
+                        sort = null,
+                        after = currentItems.lastOrNull()?.id,
+                        filterOwned = false,
+                    )
+                },
+                refresh = services.authService::refresh,
+                onError = {
+                    result = failure(it)
+                },
+                onSuccess = {
+                    result = it
+                    if (ChimpApplication.applicationContext().isNetworkAvailable()) {
+                        storage.channelRepository.updateChannels(it.value.items)
+                    }
+                },
+            )
         job.join()
         Log.d(TAG, "ChannelsViewModel.fetchChannels: $result")
         return result

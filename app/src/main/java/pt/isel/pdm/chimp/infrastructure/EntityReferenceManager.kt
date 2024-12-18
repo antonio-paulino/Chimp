@@ -23,11 +23,11 @@ interface EntityReferenceManager {
     val user: Flow<User?>
     val invitation: Flow<ChannelInvitation?>
 
-    fun set(message: Message?)
+    fun setMessage(message: Message?)
 
-    fun set(channel: Channel?)
+    fun setChannel(channel: Channel?)
 
-    fun set(user: User?)
+    fun setUser(user: User?)
 
-    fun set(invitation: ChannelInvitation?)
+    fun setInvitation(invitation: ChannelInvitation?)
 }

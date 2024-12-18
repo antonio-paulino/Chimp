@@ -14,10 +14,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.isel.pdm.chimp.ui.screens.credentials.components.PasswordTextField
+import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.ui.components.inputs.PasswordTextField
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.allValid
 
@@ -37,13 +39,13 @@ fun LoginView(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Login",
+                text = stringResource(id = R.string.login),
                 style = MaterialTheme.typography.titleMedium,
             )
             TextField(
                 value = emailOrUsername,
                 onValueChange = onEmailOrUsernameChange,
-                label = { Text("Email or Username") },
+                label = { Text(stringResource(id = R.string.email_or_username)) },
                 modifier = Modifier.size(280.dp, 56.dp),
                 singleLine = true,
             )
@@ -52,7 +54,7 @@ fun LoginView(
                 onPasswordChange = onPasswordChange,
             )
             Text(
-                text = "Don't have an account? Register",
+                text = stringResource(id = R.string.dont_have_an_account),
                 modifier = Modifier.clickable { onRegisterClick() },
                 style = MaterialTheme.typography.titleSmall.copy(color = MaterialTheme.colorScheme.onBackground),
             )
@@ -61,7 +63,9 @@ fun LoginView(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled = listOf(emailOrUsername, password).allValid(),
             ) {
-                Text("Login")
+                Text(
+                    text = stringResource(id = R.string.login),
+                )
             }
         }
     }

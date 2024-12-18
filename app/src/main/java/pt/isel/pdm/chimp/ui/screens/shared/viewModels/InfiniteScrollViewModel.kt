@@ -59,7 +59,8 @@ class InfiniteScrollViewModel<T : Identifiable>(
             if (savedState.pagination.info.nextPage == null && savedState !is InfiniteScrollState.Initial) return
             _state.value = InfiniteScrollState.Loading(savedState.pagination)
             this.viewModelScope.launch {
-                val res = fetchItemsRequest(
+                val res =
+                    fetchItemsRequest(
                         PaginationRequest(
                             offset = if (useOffset) savedState.pagination.items.size.toLong() else 0,
                             limit = limit.toLong(),
@@ -69,7 +70,10 @@ class InfiniteScrollViewModel<T : Identifiable>(
                     )
                 if (_state.value != InfiniteScrollState.Loading(savedState.pagination)) return@launch
                 when (res) {
-                    is Success -> _state.emit(InfiniteScrollState.Loaded(res.value.copy(items = savedState.pagination.items + res.value.items)))
+                    is Success ->
+                        _state.emit(
+                            InfiniteScrollState.Loaded(res.value.copy(items = savedState.pagination.items + res.value.items)),
+                        )
                     is Failure -> _state.emit(InfiniteScrollState.Error(savedState.pagination, res.value))
                 }
             }
@@ -106,7 +110,7 @@ class InfiniteScrollViewModel<T : Identifiable>(
                     _state.emit(
                         InfiniteScrollState.Error(
                             currentState.pagination.copy(items = updatedItems),
-                            currentState.problem
+                            currentState.problem,
                         ),
                     )
 
@@ -145,7 +149,7 @@ class InfiniteScrollViewModel<T : Identifiable>(
                     _state.emit(
                         InfiniteScrollState.Error(
                             currentState.pagination.copy(items = updatedItems),
-                            currentState.problem
+                            currentState.problem,
                         ),
                     )
 
@@ -158,17 +162,28 @@ class InfiniteScrollViewModel<T : Identifiable>(
         }
     }
 
-    fun handleItemCreate(item: T) {
+    fun handleItemCreate(
+        item: T,
+        prepend: Boolean = false,
+    ) {
         val currentState = _state.value
         this.viewModelScope.launch {
             when (currentState) {
                 is InfiniteScrollState.Loading ->
                     _state.emit(
-                        InfiniteScrollState.Loading(currentState.pagination.copy(items = currentState.pagination.items + item)),
+                        InfiniteScrollState.Loading(
+                            currentState.pagination.copy(
+                                items = if (prepend) listOf(item) + currentState.pagination.items else currentState.pagination.items + item,
+                            ),
+                        ),
                     )
                 is InfiniteScrollState.Loaded ->
                     _state.emit(
-                        InfiniteScrollState.Loaded(currentState.pagination.copy(items = currentState.pagination.items + item)),
+                        InfiniteScrollState.Loaded(
+                            currentState.pagination.copy(
+                                items = if (prepend) listOf(item) + currentState.pagination.items else currentState.pagination.items + item,
+                            ),
+                        ),
                     )
                 is InfiniteScrollState.Error ->
                     _state.emit(

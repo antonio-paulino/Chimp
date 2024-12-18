@@ -8,8 +8,13 @@ import androidx.activity.ComponentActivity
  * @param clazz The activity class to navigate
  * @receiver The context to navigate from
  */
-fun <T> ComponentActivity.navigateTo(clazz: Class<T>) {
+fun <T> ComponentActivity.navigateTo(
+    clazz: Class<T>,
+    animate: Boolean = true,
+) {
     val intent = Intent(this, clazz)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+    if (!animate) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+    }
     startActivity(intent)
 }

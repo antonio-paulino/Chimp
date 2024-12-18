@@ -7,10 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarVisuals
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+
+class SnackBarVisuals(override val message: String, private val isError: Boolean) : SnackbarVisuals {
+    override val actionLabel: String
+        get() = if (isError) "Error" else "Ok"
+
+    override val duration: SnackbarDuration = SnackbarDuration.Short
+
+    override val withDismissAction: Boolean
+        get() = true
+}
 
 @SuppressLint("InflateParams")
 fun showSuccessToast(
@@ -52,5 +64,6 @@ fun Problem.getMessage(): String {
         is Problem.ServiceProblem -> this.detail
         is Problem.TooManyRequestsProblem -> "Too many requests"
         is Problem.UnexpectedProblem -> "Unexpected problem"
+        is Problem.NoConnection -> "No connection available"
     }
 }

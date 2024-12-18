@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.domain.Either
@@ -96,14 +97,14 @@ suspend fun <T> executeRequest(
     onSuccess: suspend(Success<T>) -> Unit,
 ) {
     val context = ChimpApplication.applicationContext()
-    val res = if (context.isNetworkAvailable()) {
+    val res =
+        if (context.isNetworkAvailable()) {
             request()
         } else {
             noConnectionRequest?.let { it() }
         }
 
     if (res == null) {
-        showErrorToast("No connection available")
         return
     }
 
@@ -143,25 +144,24 @@ suspend fun <T> executeRequestRefreshing(
     val context = ChimpApplication.applicationContext()
     var res =
         if (context.isNetworkAvailable()) {
-            request(sessionManager.currentSession?: return)
+            request(sessionManager.session.firstOrNull() ?: return)
         } else {
             noConnectionRequest?.let { it() }
         }
 
     if (res == null) {
-        showErrorToast("No connection available")
         return
     }
 
     if (res.isUnauthorized()) {
-        val refreshRes = refresh(sessionManager.currentSession?: return)
+        val refreshRes = refresh(sessionManager.session.firstOrNull() ?: return)
         if (refreshRes is Failure) {
             sessionManager.clear()
             onError(refreshRes.value)
             return
         }
         sessionManager.set((refreshRes as Success<Session>).value)
-        res = request(sessionManager.currentSession?: return)
+        res = request(sessionManager.session.firstOrNull() ?: return)
     }
 
     if (res.isTooManyRequests()) {

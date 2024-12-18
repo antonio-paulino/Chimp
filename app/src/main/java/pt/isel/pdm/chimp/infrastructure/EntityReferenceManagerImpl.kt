@@ -18,19 +18,19 @@ class EntityReferenceManagerImpl : EntityReferenceManager {
     override val user: Flow<User?> = _user
     override val invitation: Flow<ChannelInvitation?> = _invitation
 
-    override fun set(message: Message?) {
+    override fun setMessage(message: Message?) {
         _message.value = message
     }
 
-    override fun set(channel: Channel?) {
+    override fun setChannel(channel: Channel?) {
         _channel.value = channel
     }
 
-    override fun set(user: User?) {
+    override fun setUser(user: User?) {
         _user.value = user
     }
 
-    override fun set(invitation: ChannelInvitation?) {
+    override fun setInvitation(invitation: ChannelInvitation?) {
         _invitation.value = invitation
     }
 }

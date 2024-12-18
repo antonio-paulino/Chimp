@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.infrastructure.session
+package pt.isel.pdm.chimp.infrastructure.storage
 
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
@@ -20,7 +20,7 @@ interface ChannelRepository {
     suspend fun getChannels(
         limit: Long = 10,
         getCount: Boolean = false,
-        sortDirection : Sort = Sort.ASC,
+        sortDirection: Sort = Sort.ASC,
         after: Identifier?,
         filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>>
@@ -29,4 +29,9 @@ interface ChannelRepository {
      * Updates or creates channels in the Firestore database.
      */
     suspend fun updateChannels(channels: List<Channel>): Either<Problem, Unit>
+
+    /**
+     * Deletes a channel from the Firestore database.
+     */
+    suspend fun deleteChannel(channelIdentifier: Identifier): Either<Problem, Unit>
 }

@@ -11,6 +11,7 @@ import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.domain.success
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.dto.output.messages.MessageOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.storage.MessageRepository
@@ -26,23 +27,16 @@ class FireStoreMessageRepository : MessageRepository {
         limit: Long,
         getCount: Boolean,
         sortDirection: Sort,
-        before: LocalDateTime?
+        before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>> {
         return try {
             val querySnapshot =
                 messageCollection
                     .whereEqualTo("channelId", channel.id.value)
-                    .apply {
-                        orderBy("createdAt", sortDirection.toFirestoreSort())
-                        if (before != null) {
-                            startAfter(before)
-                        } else {
-                            startAfter(LocalDateTime.MIN)
-                        }
-                        limit(limit)
-                    }
+                    .orderBy("createdAt", sortDirection.toFirestoreSort())
+                    .whereLessThan("createdAt", before ?: LocalDateTime.now())
+                    .limit(limit)
                     .get().await()
-
             return success(querySnapshot.getPagination(MessagePOJO::class.java, MessagePOJO::toDomain, limit, getCount))
         } catch (e: Exception) {
             Log.d("FirestoreMessageRepository", "Failed to get channel messages", e)
@@ -61,6 +55,18 @@ class FireStoreMessageRepository : MessageRepository {
             success(Unit)
         } catch (e: Exception) {
             Log.d("FirestoreMessageRepository", "Failed to update messages", e)
+            failure(Problem.UnexpectedProblem)
+        }
+    }
+
+    override suspend fun deleteMessage(messageIdentifier: Identifier): Either<Problem, Unit> {
+        return try {
+            messageCollection.document(messageIdentifier.value.toString())
+                .delete()
+                .await()
+            success(Unit)
+        } catch (e: Exception) {
+            Log.d("FirestoreMessageRepository", "Failed to delete message", e)
             failure(Problem.UnexpectedProblem)
         }
     }

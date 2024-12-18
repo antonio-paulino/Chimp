@@ -13,32 +13,26 @@ import pt.isel.pdm.chimp.domain.success
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.dto.output.channel.ChannelOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
-import pt.isel.pdm.chimp.infrastructure.session.ChannelRepository
+import pt.isel.pdm.chimp.infrastructure.storage.ChannelRepository
 import pt.isel.pdm.chimp.infrastructure.storage.firestore.dto.ChannelPOJO
 
 class FireStoreChannelRepository : ChannelRepository {
     private val db = Firebase.firestore
     private val channelCollection = db.collection("channels")
 
-    // Only supports sorting by id
     override suspend fun getChannels(
         limit: Long,
         getCount: Boolean,
         sortDirection: Sort,
         after: Identifier?,
-        filterOwned: Boolean?
+        filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>> {
         return try {
             val querySnapshot =
                 channelCollection
-                    .apply {
-                        orderBy("id", sortDirection.toFirestoreSort())
-                        if (after != null) {
-                            whereGreaterThan("id", after.value)
-                        }
-                        limit(limit)
-                        after?.let { startAfter(it.value) }
-                    }
+                    .orderBy("id", sortDirection.toFirestoreSort())
+                    .whereGreaterThan("id", after?.value ?: 0)
+                    .limit(limit)
                     .get().await()
 
             return success(querySnapshot.getPagination(ChannelPOJO::class.java, ChannelPOJO::toDomain, limit, getCount))
@@ -60,6 +54,18 @@ class FireStoreChannelRepository : ChannelRepository {
             success(Unit)
         } catch (e: Exception) {
             Log.d("FirestoreChannelRepository", "Failed to update channels", e)
+            failure(Problem.UnexpectedProblem)
+        }
+    }
+
+    override suspend fun deleteChannel(channelIdentifier: Identifier): Either<Problem, Unit> {
+        return try {
+            channelCollection.document(channelIdentifier.value.toString())
+                .delete()
+                .await()
+            success(Unit)
+        } catch (e: Exception) {
+            Log.d("FirestoreChannelRepository", "Failed to delete channel", e)
             failure(Problem.UnexpectedProblem)
         }
     }

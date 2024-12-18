@@ -83,7 +83,7 @@ fun NavIcon(
             modifier = Modifier.width(72.dp),
             colors =
                 if (currentScreen == text) {
-                    IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 } else {
                     IconButtonDefaults.iconButtonColors()
                 },

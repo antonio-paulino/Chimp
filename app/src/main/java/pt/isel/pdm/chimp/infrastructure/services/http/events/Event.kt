@@ -23,6 +23,7 @@ internal const val MESSAGE_DELETED_EVENT = "message-deleted"
 internal const val INVITATION_CREATED_EVENT = "invitation-created"
 internal const val INVITATION_UPDATED_EVENT = "invitation-updated"
 internal const val INVITATION_DELETED_EVENT = "invitation-deleted"
+internal const val CHANNEL_CREATED_EVENT = "channel-created"
 internal const val CHANNEL_DELETED_EVENT = "channel-deleted"
 internal const val CHANNEL_UPDATED_EVENT = "channel-updated"
 internal const val KEEP_ALIVE_EVENT = "keep-alive"
@@ -71,6 +72,8 @@ sealed class Event(val id: EventId) {
     }
 
     sealed class ChannelEvent(channelEventId: EventId, channelId: Identifier) : Event(channelEventId) {
+        data class CreatedEvent(val eventId: EventId, val channel: Channel) : ChannelEvent(eventId, channel.id)
+
         data class DeletedEvent(val eventId: EventId, val channelId: Identifier) : ChannelEvent(eventId, channelId)
 
         data class UpdatedEvent(val eventId: EventId, val channel: Channel) : ChannelEvent(eventId, channel.id)
@@ -85,6 +88,7 @@ internal fun RawEvent.toEvent(): Event {
         INVITATION_CREATED_EVENT -> Event.InvitationEvent.CreatedEvent(id, data.toInvitation())
         INVITATION_UPDATED_EVENT -> Event.InvitationEvent.UpdatedEvent(id, data.toInvitation())
         INVITATION_DELETED_EVENT -> Event.InvitationEvent.DeletedEvent(id, data.toIdentifier())
+        CHANNEL_CREATED_EVENT -> Event.ChannelEvent.CreatedEvent(id, data.toChannel())
         CHANNEL_DELETED_EVENT -> Event.ChannelEvent.DeletedEvent(id, data.toIdentifier())
         CHANNEL_UPDATED_EVENT -> Event.ChannelEvent.UpdatedEvent(id, data.toChannel())
         KEEP_ALIVE_EVENT -> Event.KeepAliveEvent(id)

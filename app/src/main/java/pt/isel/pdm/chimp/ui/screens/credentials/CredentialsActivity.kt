@@ -15,17 +15,14 @@ class CredentialsActivity : ChannelsActivity() {
         CredentialsViewModel(
             dependencies.chimpService,
             dependencies.sessionManager,
-            dependencies.entityReferenceManager,
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.v(TAG, "CredentialsActivity.onCreate")
         super.onCreate(savedInstanceState)
         setContent {
             ChIMPTheme {
                 val state by viewModel.state.collectAsState(initial = CredentialsScreenState.Login())
-                Log.v(TAG, "CredentialsActivity.setContent: $state")
                 CredentialsScreen(
                     state = state,
                     onSuccessfulAuthentication = {

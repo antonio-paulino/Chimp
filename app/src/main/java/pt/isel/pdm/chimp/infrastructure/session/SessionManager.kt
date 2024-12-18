@@ -9,7 +9,6 @@ import pt.isel.pdm.chimp.domain.sessions.Session
  */
 interface SessionManager {
     val session: Flow<Session?>
-    val currentSession: Session?
 
     fun set(session: Session)
 

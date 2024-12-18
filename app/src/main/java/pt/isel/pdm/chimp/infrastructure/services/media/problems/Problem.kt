@@ -38,5 +38,7 @@ sealed class Problem(
 
     data object TooManyRequestsProblem : Problem(429, "too-many-requests", "Too many requests", "Too many requests, please try again later")
 
+    data object NoConnection : Problem(0, "no-connection", "No connection", "No connection available")
+
     data object UnexpectedProblem : Problem(0, "unexpected", "Unexpected problem", "An issue occurred while processing the request")
 }

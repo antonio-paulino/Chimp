@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.credentials.components
+package pt.isel.pdm.chimp.ui.components.inputs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +9,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.wrappers.email.EmailValidationError
@@ -31,7 +33,7 @@ fun EmailTextField(
         TextField(
             value = email,
             onValueChange = onEmailChange,
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email_label)) },
             singleLine = true,
             modifier = Modifier.size(280.dp, 56.dp),
         )

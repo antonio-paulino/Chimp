@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.credentials.components
+package pt.isel.pdm.chimp.ui.components.inputs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,19 +9,21 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.wrappers.name.NameValidationError
 import pt.isel.pdm.chimp.ui.components.Errors
 
 @Composable
-fun UsernameTextField(
+fun NameTextField(
     modifier: Modifier = Modifier,
-    username: TextFieldValue,
-    onUsernameChange: (TextFieldValue) -> Unit,
-    usernameValidation: Either<List<NameValidationError>, Unit>? = null,
+    name: TextFieldValue,
+    onNameChange: (TextFieldValue) -> Unit,
+    nameValidation: Either<List<NameValidationError>, Unit>? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(0.8f),
@@ -29,14 +31,14 @@ fun UsernameTextField(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TextField(
-            value = username,
-            onValueChange = onUsernameChange,
-            label = { Text("Username") },
+            value = name,
+            onValueChange = onNameChange,
+            label = { Text(stringResource(id = R.string.name_label)) },
             singleLine = true,
             modifier = Modifier.size(280.dp, 56.dp),
         )
-        if (usernameValidation is Failure) {
-            Errors(errors = usernameValidation.value.map { it.toErrorMessage() })
+        if (nameValidation is Failure) {
+            Errors(errors = nameValidation.value.map { it.toErrorMessage() })
         }
     }
 }

@@ -31,36 +31,38 @@ fun AboutScreen(
     onInvitationsNavigation: () -> Unit,
     authors: List<Author>,
 ) {
-    Scaffold(
-        topBar = {
-            TopBar(content = { Text(text = stringResource(R.string.about)) })
-        },
-        bottomBar = {
-            NavBar(
-                onHomeNavigation = onHomeNavigation,
-                onSearchNavigation = onSearchNavigation,
-                onInvitationsNavigation = onInvitationsNavigation,
-                onAboutNavigation = {},
-                currentScreen = stringResource(R.string.about),
-            )
-        },
-        containerColor = Color.Transparent,
-    ) { innerPadding ->
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-        ) {
-            LazyColumn {
-                items(authors.size) { index ->
-                    AuthorCard(
-                        Modifier.padding(vertical = 6.dp),
-                        author = authors[index],
-                        onSendMail = onSendMail,
-                        onOpenUrl = onOpenUrl,
-                    )
+    ChIMPTheme {
+        Scaffold(
+            topBar = {
+                TopBar(content = { Text(text = stringResource(R.string.about)) })
+            },
+            bottomBar = {
+                NavBar(
+                    onHomeNavigation = onHomeNavigation,
+                    onSearchNavigation = onSearchNavigation,
+                    onInvitationsNavigation = onInvitationsNavigation,
+                    onAboutNavigation = {},
+                    currentScreen = stringResource(R.string.about),
+                )
+            },
+            containerColor = Color.Transparent,
+        ) { innerPadding ->
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+            ) {
+                LazyColumn {
+                    items(authors.size) { index ->
+                        AuthorCard(
+                            Modifier.padding(vertical = 6.dp),
+                            author = authors[index],
+                            onSendMail = onSendMail,
+                            onOpenUrl = onOpenUrl,
+                        )
+                    }
                 }
             }
         }

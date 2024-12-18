@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.credentials.components
+package pt.isel.pdm.chimp.ui.components.inputs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.wrappers.password.PasswordValidationError
@@ -40,11 +42,11 @@ fun PasswordTextField(
             onValueChange = {
                 onPasswordChange(it)
             },
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password_label)) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 Text(
-                    text = if (passwordVisible) "Hide" else "Show",
+                    text = if (passwordVisible) stringResource(R.string.hide) else stringResource(R.string.show),
                     modifier =
                         Modifier.clickable { onPasswordVisibleChange(!passwordVisible) }
                             .padding(12.dp),

@@ -5,6 +5,7 @@ import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.Sort
+import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import java.time.LocalDateTime
 
@@ -34,4 +35,9 @@ interface MessageRepository {
      * Updates or creates messages in the Firestore database.
      */
     suspend fun updateMessages(messages: List<Message>): Either<Problem, Unit>
+
+    /**
+     * Deletes a message from the Firestore database.
+     */
+    suspend fun deleteMessage(messageIdentifier: Identifier): Either<Problem, Unit>
 }

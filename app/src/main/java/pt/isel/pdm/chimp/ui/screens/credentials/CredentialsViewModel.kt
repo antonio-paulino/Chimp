@@ -9,23 +9,31 @@ import pt.isel.pdm.chimp.domain.invitations.ImInvitation
 import pt.isel.pdm.chimp.domain.wrappers.email.toEmail
 import pt.isel.pdm.chimp.domain.wrappers.name.toName
 import pt.isel.pdm.chimp.domain.wrappers.password.toPassword
-import pt.isel.pdm.chimp.infrastructure.EntityReferenceManager
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.ChimpService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import pt.isel.pdm.chimp.ui.utils.launchRequest
-import pt.isel.pdm.chimp.ui.utils.showErrorToast
 import java.time.LocalDateTime
 import java.util.UUID
 
 sealed interface CredentialsScreenState {
     data class Login(val emailOrUsername: String = "", val password: String = "") : CredentialsScreenState
 
+    data class LoginError(val emailOrUsername: String = "", val password: String = "", val problem: Problem) : CredentialsScreenState
+
     data class Register(
         val email: String = "",
         val username: String = "",
         val password: String = "",
         val token: String = "",
+    ) : CredentialsScreenState
+
+    data class RegisterError(
+        val email: String = "",
+        val username: String = "",
+        val password: String = "",
+        val token: String = "",
+        val problem: Problem,
     ) : CredentialsScreenState
 
     data class Loading(val message: String = "") : CredentialsScreenState
@@ -36,7 +44,6 @@ sealed interface CredentialsScreenState {
 class CredentialsViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
-    private val entityReferenceManager: EntityReferenceManager,
 ) : ViewModel() {
     private val _state: MutableStateFlow<CredentialsScreenState> = MutableStateFlow(CredentialsScreenState.Login())
     val state: Flow<CredentialsScreenState> = _state
@@ -47,7 +54,7 @@ class CredentialsViewModel(
     ) {
         launchRequest(
             noConnectionRequest = {
-                showErrorToast("No connection")
+                _state.emit(CredentialsScreenState.LoginError(emailOrUsername, password, Problem.NoConnection))
                 null
             },
             request = {
@@ -59,12 +66,7 @@ class CredentialsViewModel(
                 }
             },
             onError = { problem ->
-                if (problem.status == 400) {
-                    showErrorToast("Invalid credentials, please try again")
-                } else {
-                    showErrorToast(problem.detail)
-                }
-                _state.emit(CredentialsScreenState.Login(emailOrUsername, password))
+                _state.emit(CredentialsScreenState.LoginError(emailOrUsername, password, problem))
             },
             onSuccess = { session ->
                 sessionManager.set(session.value)
@@ -80,9 +82,10 @@ class CredentialsViewModel(
         token: String,
     ) {
         var registerSuccess = false
-        val job = launchRequest(
+        val job =
+            launchRequest(
                 noConnectionRequest = {
-                    showErrorToast("No connection")
+                    _state.emit(CredentialsScreenState.RegisterError(email, username, password, token, Problem.NoConnection))
                     null
                 },
                 request = {
@@ -95,12 +98,7 @@ class CredentialsViewModel(
                     )
                 },
                 onError = { problem ->
-                    when (problem) {
-                        is Problem.ServiceProblem -> showErrorToast(problem.detail)
-                        is Problem.InputValidationProblem -> showErrorToast(problem.detail)
-                        else -> showErrorToast("Sign up failed")
-                    }
-                    _state.emit(CredentialsScreenState.Register(email, username, password, token))
+                    _state.emit(CredentialsScreenState.RegisterError(email, username, password, token, problem))
                 },
                 onSuccess = { registerSuccess = true },
             )

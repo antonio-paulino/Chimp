@@ -27,7 +27,7 @@ class AboutActivity : ComponentActivity() {
                 AboutScreen(
                     onSendMail = { sendMail(it) },
                     onOpenUrl = { openUrl(it) },
-                    onHomeNavigation = { navigateTo(ChannelsActivity::class.java) },
+                    onHomeNavigation = { navigateTo(ChannelsActivity::class.java, false) },
                     onSearchNavigation = { TODO() },
                     onInvitationsNavigation = { TODO() },
                     authors = authors,

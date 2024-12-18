@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -63,7 +64,8 @@ class EventServiceHTTP(
         session: SessionManager,
     ) {
         check(job == null) { "Event service already initialized" }
-        job = scope.launch {
+        job =
+            scope.launch {
                 _eventFlow = listenEvents(session, scope)
             }
         Log.d(TAG, "Event service initialized")
@@ -136,7 +138,7 @@ class EventServiceHTTP(
                     httpClient.prepareRequest {
                         url(url)
                         header("Accept", "text/event-stream")
-                        header("Authorization", "Bearer ${session.currentSession?.accessToken?.token.toString()}")
+                        header("Authorization", "Bearer ${session.session.firstOrNull()?.accessToken?.token}")
                         lastEventId?.let { header("Last-Event-ID", it) }
                     }.execute { response ->
                         val channel = response.bodyAsChannel()
