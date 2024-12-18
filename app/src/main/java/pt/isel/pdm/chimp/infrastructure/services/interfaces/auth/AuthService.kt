@@ -63,5 +63,8 @@ interface AuthService {
      *
      * @param session The session of the user creating the invitation
      */
-    suspend fun createInvitation(session: Session, expirationDate: LocalDateTime): Either<Problem, ImInvitation>
+    suspend fun createInvitation(
+        session: Session,
+        expirationDate: LocalDateTime,
+    ): Either<Problem, ImInvitation>
 }

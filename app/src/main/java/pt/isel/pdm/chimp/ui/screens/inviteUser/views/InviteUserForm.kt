@@ -31,7 +31,7 @@ fun InviteUserForm(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             ExpirationInput(
                 expiration = expiration,
@@ -52,7 +52,6 @@ fun InviteUserForm(
         }
     }
 }
-
 
 @Preview
 @Composable

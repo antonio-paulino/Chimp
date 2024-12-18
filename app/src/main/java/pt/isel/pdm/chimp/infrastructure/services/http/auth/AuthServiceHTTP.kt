@@ -69,7 +69,10 @@ class AuthServiceHTTP(
             null,
         ).handle { it.toDomain() }
 
-    override suspend fun createInvitation(session: Session, expirationDate: LocalDateTime): Either<Problem, ImInvitation> =
+    override suspend fun createInvitation(
+        session: Session,
+        expirationDate: LocalDateTime,
+    ): Either<Problem, ImInvitation> =
         post<ImInvitationCreationInputModel, ImInvitationOutputModel>(
             INVITATIONS_ROUTE,
             session.accessToken.token.toString(),

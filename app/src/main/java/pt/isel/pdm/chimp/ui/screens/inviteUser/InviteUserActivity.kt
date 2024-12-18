@@ -22,7 +22,9 @@ class InviteUserActivity : ChannelsActivity() {
         enableEdgeToEdge()
         setContent {
             ChIMPTheme {
-                val state by inviteUserViewModel.state.collectAsState(initial = InviteUserScreenState.CreatingInvite(ExpirationOptions.THIRTY_MINUTES))
+                val state by inviteUserViewModel.state.collectAsState(
+                    initial = InviteUserScreenState.CreatingInvite(ExpirationOptions.THIRTY_MINUTES),
+                )
                 CreateUserInviteScreen(
                     state = state,
                     onCreateInvite = inviteUserViewModel::createInvite,

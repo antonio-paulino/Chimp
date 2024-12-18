@@ -21,8 +21,10 @@ sealed interface InviteUserScreenState {
 class InviteUserViewModel internal constructor(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
-    initialScreenState: InviteUserScreenState = InviteUserScreenState.CreatingInvite(
-        ExpirationOptions.THIRTY_MINUTES),
+    initialScreenState: InviteUserScreenState =
+        InviteUserScreenState.CreatingInvite(
+            ExpirationOptions.THIRTY_MINUTES,
+        ),
 ) : ViewModel() {
     private val _state: MutableStateFlow<InviteUserScreenState> = MutableStateFlow(initialScreenState)
 

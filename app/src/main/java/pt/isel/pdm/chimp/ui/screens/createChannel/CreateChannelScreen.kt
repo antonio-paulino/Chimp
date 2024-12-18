@@ -75,7 +75,6 @@ fun CreateChannelScreen(
         }
     }
 
-
     LaunchedEffect(state) {
         if (state is CreateChannelScreenState.CreatingChannelError) {
             snackBarHostState.showSnackbar(

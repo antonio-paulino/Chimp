@@ -40,9 +40,9 @@ fun ExpirationInput(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             },
             modifier =
-            Modifier
-                .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
-                .clickable { expanded.value = !expanded.value },
+                Modifier
+                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                    .clickable { expanded.value = !expanded.value },
         )
         DropdownMenu(
             expanded = expanded.value,
@@ -66,7 +66,8 @@ enum class ExpirationOptions(val expirationDate: LocalDateTime) {
     ONE_HOUR(LocalDateTime.now().plusHours(1)),
     ONE_DAY(LocalDateTime.now().plusDays(1)),
     ONE_WEEK(LocalDateTime.now().plusDays(7)),
-    THIRTY_DAYS(LocalDateTime.now().plusDays(30));
+    THIRTY_DAYS(LocalDateTime.now().plusDays(30)),
+    ;
 
     @Composable
     fun toStringResourceRepresentation(): String {
