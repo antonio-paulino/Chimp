@@ -15,16 +15,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import pt.isel.pdm.chimp.R
-import pt.isel.pdm.chimp.domain.channel.ChannelRole
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoleInput(
-    role: ChannelRole,
-    setRole: (ChannelRole) -> Unit,
+fun ExpirationInput(
+    expiration: ExpirationOptions,
+    setExpiration: (ExpirationOptions) -> Unit,
 ) {
     val expanded = remember { mutableStateOf(false) }
-    val roles = ChannelRole.entries.filter { it != ChannelRole.OWNER }
+    val expirationOptions = ExpirationOptions.entries.toTypedArray()
     ExposedDropdownMenuBox(
         expanded = expanded.value,
         onExpandedChange = {
@@ -32,35 +32,50 @@ fun RoleInput(
         },
     ) {
         OutlinedTextField(
-            value = role.toStringResourceRepresentation(),
+            value = expiration.toStringResourceRepresentation(),
             onValueChange = { },
             readOnly = true,
-            label = { Text(stringResource(R.string.role_label)) },
+            label = { Text(stringResource(R.string.expiration_label)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             },
             modifier =
-                Modifier
-                    .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
-                    .clickable {
-                        expanded.value = !expanded.value
-                    },
+            Modifier
+                .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                .clickable { expanded.value = !expanded.value },
         )
         DropdownMenu(
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false },
         ) {
-            roles.forEach { channelRole ->
+            expirationOptions.forEach { option ->
                 DropdownMenuItem(
-                    text = {
-                        Text(channelRole.toStringResourceRepresentation())
-                    },
+                    text = { Text(option.toStringResourceRepresentation()) },
                     onClick = {
-                        setRole(channelRole)
+                        setExpiration(option)
                         expanded.value = false
                     },
                 )
             }
+        }
+    }
+}
+
+enum class ExpirationOptions(val expirationDate: LocalDateTime) {
+    THIRTY_MINUTES(LocalDateTime.now().plusMinutes(30)),
+    ONE_HOUR(LocalDateTime.now().plusHours(1)),
+    ONE_DAY(LocalDateTime.now().plusDays(1)),
+    ONE_WEEK(LocalDateTime.now().plusDays(7)),
+    THIRTY_DAYS(LocalDateTime.now().plusDays(30));
+
+    @Composable
+    fun toStringResourceRepresentation(): String {
+        return when (this) {
+            THIRTY_MINUTES -> "30 " + stringResource(R.string.minutes)
+            ONE_HOUR -> "1 " + stringResource(R.string.hour)
+            ONE_DAY -> "1 " + stringResource(R.string.day)
+            ONE_WEEK -> "7 " + stringResource(R.string.days)
+            THIRTY_DAYS -> "30 " + stringResource(R.string.days)
         }
     }
 }

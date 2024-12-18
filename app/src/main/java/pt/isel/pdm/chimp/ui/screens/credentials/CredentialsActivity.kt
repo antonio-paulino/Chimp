@@ -3,6 +3,7 @@ package pt.isel.pdm.chimp.ui.screens.credentials
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
@@ -20,6 +21,7 @@ class CredentialsActivity : ChannelsActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             ChIMPTheme {
                 val state by viewModel.state.collectAsState(initial = CredentialsScreenState.Login())

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.ChannelsActivity
@@ -21,7 +22,7 @@ import pt.isel.pdm.chimp.ui.utils.showErrorToast
 class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.v(TAG, "AboutActivity.onCreate")
+        enableEdgeToEdge()
         setContent {
             ChIMPTheme {
                 AboutScreen(

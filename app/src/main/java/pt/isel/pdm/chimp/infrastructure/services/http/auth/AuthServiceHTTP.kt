@@ -10,6 +10,7 @@ import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.domain.wrappers.password.Password
 import pt.isel.pdm.chimp.dto.input.AuthenticationInputModel
+import pt.isel.pdm.chimp.dto.input.ImInvitationCreationInputModel
 import pt.isel.pdm.chimp.dto.input.UserCreationInputModel
 import pt.isel.pdm.chimp.dto.output.credentials.CredentialsOutputModel
 import pt.isel.pdm.chimp.dto.output.invitations.ImInvitationOutputModel
@@ -23,6 +24,7 @@ import pt.isel.pdm.chimp.infrastructure.services.http.REGISTER_ROUTE
 import pt.isel.pdm.chimp.infrastructure.services.http.handle
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.auth.AuthService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+import java.time.LocalDateTime
 
 /**
  * Implementation of the [AuthService] interface that uses HTTP to communicate with the backend.
@@ -67,10 +69,10 @@ class AuthServiceHTTP(
             null,
         ).handle { it.toDomain() }
 
-    override suspend fun createInvitation(session: Session): Either<Problem, ImInvitation> =
-        post<Unit, ImInvitationOutputModel>(
+    override suspend fun createInvitation(session: Session, expirationDate: LocalDateTime): Either<Problem, ImInvitation> =
+        post<ImInvitationCreationInputModel, ImInvitationOutputModel>(
             INVITATIONS_ROUTE,
             session.accessToken.token.toString(),
-            null,
+            ImInvitationCreationInputModel(expirationDate),
         ).handle { it.toDomain() }
 }

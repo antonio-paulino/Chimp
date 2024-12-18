@@ -8,6 +8,7 @@ import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.domain.wrappers.password.Password
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
+import java.time.LocalDateTime
 
 /*
  * Interface that defines the operations that can be performed on the authentication service
@@ -62,5 +63,5 @@ interface AuthService {
      *
      * @param session The session of the user creating the invitation
      */
-    suspend fun createInvitation(session: Session): Either<Problem, ImInvitation>
+    suspend fun createInvitation(session: Session, expirationDate: LocalDateTime): Either<Problem, ImInvitation>
 }

@@ -26,6 +26,7 @@ import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
+import pt.isel.pdm.chimp.ui.screens.inviteUser.InviteUserActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -88,6 +89,7 @@ open class ChannelsActivity : ComponentActivity() {
                     onLogout = channelsViewModel::logout,
                     onAboutNavigation = { navigateTo(AboutActivity::class.java, animate = false) },
                     onCreateChannelNavigation = { navigateTo(CreateChannelActivity::class.java) },
+                    onInviteUserNavigation = { navigateTo(InviteUserActivity::class.java) },
                 )
             }
         }

@@ -26,7 +26,6 @@ import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.screens.createChannel.views.CreateChannelForm
-import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 import pt.isel.pdm.chimp.ui.utils.getMessage
 
@@ -37,46 +36,45 @@ fun CreateChannelScreen(
     onBack: () -> Unit,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
-    ChIMPTheme {
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackBarHostState) },
-            topBar = {
-                TopBar(
-                    content = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            IconButton(onClick = onBack) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                            Text(stringResource(id = R.string.create_channel))
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+        topBar = {
+            TopBar(
+                content = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.Transparent),
-            ) {
-                when (state) {
-                    is CreateChannelScreenState.CreatingChannel, is CreateChannelScreenState.CreatingChannelError -> {
-                        state as CreateChannelScreenState.CreatingChannel
-                        CreateChannelForm(
-                            initialName = state.name,
-                            initialIsPublic = state.isPublic,
-                            initialRole = state.defaultRole,
-                            onCreateChannel = onCreateChannel,
-                        )
+                        Text(stringResource(id = R.string.create_channel))
                     }
-                    is CreateChannelScreenState.Loading -> {
-                        LoadingSpinner(stringResource(id = R.string.creating_channel))
-                    }
-                    CreateChannelScreenState.Success -> onBack()
+                },
+            )
+        },
+    ) { innerPadding ->
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.Transparent),
+        ) {
+            when (state) {
+                is CreateChannelScreenState.CreatingChannel, is CreateChannelScreenState.CreatingChannelError -> {
+                    state as CreateChannelScreenState.CreatingChannel
+                    CreateChannelForm(
+                        initialName = state.name,
+                        initialIsPublic = state.isPublic,
+                        initialRole = state.defaultRole,
+                        onCreateChannel = onCreateChannel,
+                    )
                 }
+                is CreateChannelScreenState.Loading -> {
+                    LoadingSpinner(stringResource(id = R.string.creating_channel))
+                }
+                CreateChannelScreenState.Success -> onBack()
             }
         }
     }
+
 
     LaunchedEffect(state) {
         if (state is CreateChannelScreenState.CreatingChannelError) {

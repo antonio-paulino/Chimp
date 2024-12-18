@@ -40,4 +40,14 @@
     <string name="guest">Guest</string>
     <string name="creating_channel">Creating channel…</string>
     <string name="members">members</string>
+    <string name="create_user_invite">Create User Invite</string>
+    <string name="expiration_label">Expiration</string>
+    <string name="minutes">Minutes</string>
+    <string name="hour">Hour</string>
+    <string name="day">Day</string>
+    <string name="days">Days</string>
+    <string name="owner">Owner</string>
+    <string name="invitation_token">Token:</string>
+    <string name="invitation_expires_at">Expires:</string>
+    <string name="invitation_info">Invitation Info</string>
 </resources>

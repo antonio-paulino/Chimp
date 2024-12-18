@@ -53,6 +53,7 @@ fun ChannelsScreen(
     onAboutNavigation: () -> Unit,
     onLogout: () -> Unit,
     onCreateChannelNavigation: () -> Unit,
+    onInviteUserNavigation: () -> Unit,
 ) {
     if (session == null) {
         onNotLoggedIn()
@@ -71,6 +72,7 @@ fun ChannelsScreen(
                         ChannelsScreenDropDown(
                             onLogout = onLogout,
                             onCreateChannel = onCreateChannelNavigation,
+                            onInviteUserNavigation = onInviteUserNavigation,
                         )
                     },
                 )
@@ -123,6 +125,7 @@ fun ChannelsScreen(
 fun ChannelsScreenDropDown(
     onLogout: () -> Unit,
     onCreateChannel: () -> Unit,
+    onInviteUserNavigation: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -172,7 +175,7 @@ fun ChannelsScreenDropDown(
                     )
                 }
             },
-            onClick = { TODO() },
+            onClick = { onInviteUserNavigation() },
         )
         DropdownMenuItem(
             text = {
