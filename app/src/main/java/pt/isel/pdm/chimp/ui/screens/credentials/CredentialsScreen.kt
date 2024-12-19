@@ -13,7 +13,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.screens.credentials.views.LoginView
@@ -70,19 +72,21 @@ fun CredentialsScreen(
         }
     }
 
+    val invalidCredentialsMessage = stringResource(id = R.string.invalid_credentials)
     LaunchedEffect(state) {
         when (state) {
             is CredentialsScreenState.LoginError -> {
                 val message =
                     if (state.problem is Problem.InputValidationProblem) {
-                        "Invalid Credentials"
+                        invalidCredentialsMessage
                     } else {
                         state.problem.getMessage()
                     }
-                snackBarHostState.showSnackbar(SnackBarVisuals(message, isError = true))
+                snackBarHostState.showSnackbar(
+                    SnackBarVisuals(message))
             }
             is CredentialsScreenState.RegisterError -> {
-                snackBarHostState.showSnackbar(SnackBarVisuals(state.problem.getMessage(), isError = true))
+                snackBarHostState.showSnackbar(SnackBarVisuals(state.problem.getMessage()))
             }
             else -> {}
         }

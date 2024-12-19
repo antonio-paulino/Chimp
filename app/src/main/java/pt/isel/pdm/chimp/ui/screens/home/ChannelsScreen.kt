@@ -2,8 +2,10 @@ package pt.isel.pdm.chimp.ui.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -48,9 +50,10 @@ fun ChannelsScreen(
     channelState: ChannelScreenState,
     onNotLoggedIn: () -> Unit,
     onLoggedIn: (Session) -> Unit,
-    loadMore: () -> Unit,
+    onBottomScroll: () -> Unit,
     onChannelSelected: (Channel) -> Unit,
     onAboutNavigation: () -> Unit,
+    onInvitationsNavigation: () -> Unit,
     onLogout: () -> Unit,
     onCreateChannelNavigation: () -> Unit,
     onInviteUserNavigation: () -> Unit,
@@ -81,7 +84,7 @@ fun ChannelsScreen(
                 NavBar(
                     onHomeNavigation = {},
                     onSearchNavigation = { TODO() },
-                    onInvitationsNavigation = { TODO() },
+                    onInvitationsNavigation = onInvitationsNavigation,
                     onAboutNavigation = onAboutNavigation,
                     currentScreen = stringResource(R.string.home),
                 )
@@ -101,7 +104,7 @@ fun ChannelsScreen(
                     -> {
                         ChannelsList(
                             scrollState = scrollState,
-                            loadMore = loadMore,
+                            onBottomScroll = onBottomScroll,
                             onChannelSelected = onChannelSelected,
                         )
                     }
@@ -112,8 +115,7 @@ fun ChannelsScreen(
             if (channelState is ChannelScreenState.ChannelsListError) {
                 snackBarHostState.showSnackbar(
                     SnackBarVisuals(
-                        message = channelState.problem.detail,
-                        isError = true,
+                        message = channelState.problem.detail
                     ),
                 )
             }
@@ -139,6 +141,7 @@ fun ChannelsScreenDropDown(
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false },
+        modifier = Modifier.height(IntrinsicSize.Min),
     ) {
         DropdownMenuItem(
             text = {

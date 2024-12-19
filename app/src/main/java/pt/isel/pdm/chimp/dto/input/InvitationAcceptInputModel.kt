@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.dto.input
 
 import kotlinx.serialization.Serializable
+import pt.isel.pdm.chimp.domain.invitations.ChannelInvitationStatus
 
 /**
  * Input model for accepting or rejecting an invitation.
@@ -14,6 +15,9 @@ data class InvitationAcceptInputModel(
     constructor(
         accept: Boolean,
     ) : this(
-        accept.toString(),
+        when (accept) {
+            true -> ChannelInvitationStatus.ACCEPTED.name
+            false -> ChannelInvitationStatus.REJECTED.name
+        }
     )
 }

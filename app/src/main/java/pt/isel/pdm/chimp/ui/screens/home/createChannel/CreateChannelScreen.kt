@@ -80,7 +80,6 @@ fun CreateChannelScreen(
             snackBarHostState.showSnackbar(
                 SnackBarVisuals(
                     message = state.problem.getMessage(),
-                    isError = true,
                 ),
             )
         }

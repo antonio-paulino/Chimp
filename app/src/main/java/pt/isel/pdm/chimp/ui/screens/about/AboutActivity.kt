@@ -9,10 +9,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import pt.isel.pdm.chimp.R
-import pt.isel.pdm.chimp.ui.navigation.navigateTo
+import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
+import pt.isel.pdm.chimp.ui.screens.invitations.InvitationsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.showErrorToast
 
@@ -28,9 +29,9 @@ class AboutActivity : ComponentActivity() {
                 AboutScreen(
                     onSendMail = { sendMail(it) },
                     onOpenUrl = { openUrl(it) },
-                    onHomeNavigation = { navigateTo(ChannelsActivity::class.java, false) },
+                    onHomeNavigation = { navigateToNoAnimation(ChannelsActivity::class.java) },
                     onSearchNavigation = { TODO() },
-                    onInvitationsNavigation = { TODO() },
+                    onInvitationsNavigation = { navigateToNoAnimation(InvitationsActivity::class.java) },
                     authors = authors,
                 )
             }
@@ -71,20 +72,20 @@ class AboutActivity : ComponentActivity() {
 
     companion object {
         private const val SUBJECT = "ChIMP"
-    }
 
-    private val authors =
-        listOf(
-            Author(
-                number = "50493",
-                name = "Bernardo Pereira",
-                image = R.drawable.bernardo_pereira,
-                socials =
+        private val authors =
+            listOf(
+                Author(
+                    number = "50493",
+                    name = "Bernardo Pereira",
+                    image = R.drawable.bernardo_pereira,
+                    socials =
                     Socials(
                         linkedInUrl = R.string.linkedin_link_bernardo_pereira,
                         githubUrl = R.string.github_link_bernardo_pereira,
                         mailUrl = R.string.mail_link_bernardo_pereira,
                     ),
-            ),
-        )
+                ),
+            )
+    }
 }

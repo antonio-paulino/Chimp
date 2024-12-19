@@ -1,10 +1,8 @@
 package pt.isel.pdm.chimp.ui.screens.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.isel.pdm.chimp.ChimpApplication
-import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.failure
@@ -84,7 +82,6 @@ open class ChannelsViewModel(
                 },
             )
         job.join()
-        Log.d(TAG, "ChannelsViewModel.fetchChannels: $result")
         return result
     }
 }

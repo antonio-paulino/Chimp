@@ -83,7 +83,6 @@ fun CreateUserInviteScreen(
             snackBarHostState.showSnackbar(
                 SnackBarVisuals(
                     message = state.problem.getMessage(),
-                    isError = true,
                 ),
             )
         }

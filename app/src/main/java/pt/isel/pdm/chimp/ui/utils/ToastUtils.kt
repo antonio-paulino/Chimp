@@ -14,9 +14,11 @@ import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
-class SnackBarVisuals(override val message: String, private val isError: Boolean) : SnackbarVisuals {
-    override val actionLabel: String
-        get() = if (isError) "Error" else "Ok"
+class SnackBarVisuals(
+    override val message: String
+) : SnackbarVisuals {
+    override val actionLabel: String?
+        get() = null
 
     override val duration: SnackbarDuration = SnackbarDuration.Short
 

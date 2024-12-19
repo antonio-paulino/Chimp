@@ -23,10 +23,12 @@ import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.infrastructure.SSEService
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
+import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.home.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.home.inviteUser.InviteUserActivity
+import pt.isel.pdm.chimp.ui.screens.invitations.InvitationsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -81,13 +83,14 @@ open class ChannelsActivity : ComponentActivity() {
                             startListening()
                         }
                     },
-                    loadMore = scrollingViewModel::loadMore,
+                    onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
                         dependencies.entityReferenceManager.setChannel(channel)
                         // navigateTo(ChannelActivity::class.java)
                     },
                     onLogout = channelsViewModel::logout,
-                    onAboutNavigation = { navigateTo(AboutActivity::class.java, animate = false) },
+                    onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },
+                    onInvitationsNavigation = { navigateToNoAnimation(InvitationsActivity::class.java) },
                     onCreateChannelNavigation = { navigateTo(CreateChannelActivity::class.java) },
                     onInviteUserNavigation = { navigateTo(InviteUserActivity::class.java) },
                 )

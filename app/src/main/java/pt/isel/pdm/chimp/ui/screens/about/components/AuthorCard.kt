@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * Shows information about the author.
@@ -31,7 +31,7 @@ fun AuthorCard(
     onOpenUrl: (Uri) -> Unit = {},
 ) {
     Card(
-        border = BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.20f)),
         colors =
             CardColors(
                 containerColor = MaterialTheme.colorScheme.surface,

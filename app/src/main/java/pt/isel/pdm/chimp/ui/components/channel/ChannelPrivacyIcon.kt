@@ -16,7 +16,7 @@ import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
 
 @Composable
-fun ChannelPrivacyIcon(channel: Channel) {
+fun ChannelPrivacyIcon(channel: Channel, modifier: Modifier = Modifier) {
     if (!channel.isPublic) {
         Icon(
             tint = MaterialTheme.colorScheme.onBackground,
@@ -24,11 +24,10 @@ fun ChannelPrivacyIcon(channel: Channel) {
             contentDescription = stringResource(R.string.private_channel),
         )
     } else {
-        // Placeholder for alignment
         Box(
             modifier =
                 Modifier
-                    .size(24.dp) // Adjust size as needed
+                    .size(24.dp)
                     .background(Color.Transparent),
         )
     }
