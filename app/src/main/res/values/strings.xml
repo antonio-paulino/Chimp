@@ -54,4 +54,7 @@
     <string name="invalid_credentials">Invalid Credentials</string>
     <string name="invitation_accepted">Invitation Accepted</string>
     <string name="invitation_rejected">Invitation Rejected</string>
+    <string name="search_channels">Search for channels...</string>
+    <string name="join_channel">Join</string>
+    <string name="joined_channel">Joined</string>
 </resources>

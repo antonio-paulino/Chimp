@@ -66,10 +66,9 @@ class ChannelServiceHTTP(
         pagination: PaginationRequest?,
         sort: SortRequest?,
         after: Identifier?,
-        filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>> {
         return get<ChannelsPaginatedOutputModel>(
-            CHANNELS_ROUTE + buildQuery(name, pagination, sort, after = after, filterOwned = filterOwned),
+            CHANNELS_ROUTE + buildQuery(name, pagination, sort, after = after),
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
     }

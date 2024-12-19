@@ -11,6 +11,7 @@ import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
+import pt.isel.pdm.chimp.ui.screens.search.ChannelSearchActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -51,6 +52,7 @@ open class InvitationsActivity : ChannelsActivity() {
                     onScrollToBottom = { scrollingViewModel.loadMore() },
                     onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },
                     onHomeNavigation = { navigateToNoAnimation(ChannelsActivity::class.java) },
+                    onSearchNavigation = { navigateToNoAnimation(ChannelSearchActivity::class.java) },
                 )
             }
         }

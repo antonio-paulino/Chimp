@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.ui.screens.home
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.domain.Either
@@ -29,7 +30,7 @@ open class ChannelsViewModel(
 ) : ViewModel() {
     private val _state: MutableStateFlow<ChannelScreenState> = MutableStateFlow(initialScreenState)
 
-    val state = _state
+    val state: Flow<ChannelScreenState> = _state
 
     fun logout() {
         launchRequestRefreshing(

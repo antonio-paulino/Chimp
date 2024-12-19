@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.screens.invitations
+package pt.isel.pdm.chimp.ui.screens.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -15,24 +14,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import pt.isel.pdm.chimp.R
-import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
+import pt.isel.pdm.chimp.domain.channel.Channel
+import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.ui.components.NavBar
 import pt.isel.pdm.chimp.ui.components.TopBar
-import pt.isel.pdm.chimp.ui.components.invitations.ChannelInvitationsList
+import pt.isel.pdm.chimp.ui.components.channel.ChannelResultsList
+import pt.isel.pdm.chimp.ui.components.inputs.ChannelSearchBar
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 
 @Composable
-fun InvitationsScreen(
-    state: InvitationsScreenState,
-    scrollState: InfiniteScrollState<ChannelInvitation>,
-    onAcceptInvitation: (ChannelInvitation) -> Unit,
-    onRejectInvitation: (ChannelInvitation) -> Unit,
+fun ChannelSearchScreen(
+    state: ChannelSearchListScreenState,
+    scrollState: InfiniteScrollState<Channel>,
+    user: User,
+    searchField: String,
+    onSearchValueChange: (String) -> Unit,
+    doSearch: () -> Unit,
     onScrollToBottom: () -> Unit,
-    onAboutNavigation: () -> Unit,
+    onJoinChannel: (Channel) -> Unit,
     onHomeNavigation: () -> Unit,
-    onSearchNavigation: () -> Unit,
+    onInvitationsNavigation: () -> Unit,
+    onAboutNavigation: () -> Unit,
 ) {
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }
@@ -41,16 +45,16 @@ fun InvitationsScreen(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             topBar = {
                 TopBar(
-                    content = { Text(text = stringResource(R.string.invitations)) },
+                    content = { ChannelSearchBar(searchField, onSearchValueChange, doSearch) },
                 )
             },
             bottomBar = {
                 NavBar(
                     onHomeNavigation = onHomeNavigation,
-                    onSearchNavigation = onSearchNavigation,
-                    onInvitationsNavigation = {},
+                    onSearchNavigation = {},
+                    onInvitationsNavigation = onInvitationsNavigation,
                     onAboutNavigation = onAboutNavigation,
-                    currentScreen = stringResource(R.string.invitations),
+                    currentScreen = stringResource(R.string.search)
                 )
             },
             containerColor = Color.Transparent,
@@ -62,32 +66,26 @@ fun InvitationsScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
             ) {
-                ChannelInvitationsList(
+                ChannelResultsList(
                     scrollState = scrollState,
                     onBottomScroll = onScrollToBottom,
-                    onAcceptInvitation = { onAcceptInvitation(it) },
-                    onRejectInvitation = { onRejectInvitation(it) },
+                    onJoinChannel = onJoinChannel,
+                    user = user
                 )
             }
         }
 
-        val acceptedInvitationString = stringResource(R.string.invitation_accepted)
-        val rejectedInvitationString = stringResource(R.string.invitation_rejected)
+        val joinedChannelMessage = stringResource(R.string.joined_channel)
         LaunchedEffect(state) {
             when (state) {
-                is InvitationsScreenState.InvitationsListError -> {
+                is ChannelSearchListScreenState.ChannelSearchListError -> {
                     snackBarHostState.showSnackbar(
                         SnackBarVisuals(message = state.problem.detail),
                     )
                 }
-                is InvitationsScreenState.AcceptedInvitation -> {
+                is ChannelSearchListScreenState.JoinedChannel -> {
                     snackBarHostState.showSnackbar(
-                        SnackBarVisuals(message = acceptedInvitationString),
-                    )
-                }
-                is InvitationsScreenState.RejectedInvitation -> {
-                    snackBarHostState.showSnackbar(
-                        SnackBarVisuals(message = rejectedInvitationString),
+                        SnackBarVisuals(message = joinedChannelMessage + " ${state.channel.name}"),
                     )
                 }
                 else -> {}

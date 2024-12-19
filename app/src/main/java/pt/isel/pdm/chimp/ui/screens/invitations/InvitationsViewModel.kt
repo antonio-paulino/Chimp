@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.ui.screens.invitations
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.failure
@@ -29,10 +30,10 @@ open class InvitationsViewModel(
 ) : ViewModel() {
     private val _state: MutableStateFlow<InvitationsScreenState> = MutableStateFlow(initialScreenState)
 
-    val state = _state
+    val state: Flow<InvitationsScreenState> = _state
 
     fun acceptInvitation(invitation: ChannelInvitation) {
-        state.value = InvitationsScreenState.InvitationsList
+        _state.value = InvitationsScreenState.InvitationsList
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -54,7 +55,7 @@ open class InvitationsViewModel(
     }
 
     fun rejectInvitation(invitation: ChannelInvitation) {
-        state.value = InvitationsScreenState.InvitationsList
+        _state.value = InvitationsScreenState.InvitationsList
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {

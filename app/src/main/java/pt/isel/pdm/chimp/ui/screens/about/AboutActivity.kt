@@ -14,6 +14,7 @@ import pt.isel.pdm.chimp.ui.screens.about.components.Author
 import pt.isel.pdm.chimp.ui.screens.about.components.Socials
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.invitations.InvitationsActivity
+import pt.isel.pdm.chimp.ui.screens.search.ChannelSearchActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.showErrorToast
 
@@ -30,7 +31,7 @@ class AboutActivity : ComponentActivity() {
                     onSendMail = { sendMail(it) },
                     onOpenUrl = { openUrl(it) },
                     onHomeNavigation = { navigateToNoAnimation(ChannelsActivity::class.java) },
-                    onSearchNavigation = { TODO() },
+                    onSearchNavigation = { navigateToNoAnimation(ChannelSearchActivity::class.java) },
                     onInvitationsNavigation = { navigateToNoAnimation(InvitationsActivity::class.java) },
                     authors = authors,
                 )

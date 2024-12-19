@@ -68,7 +68,6 @@ interface ChannelService {
         pagination: PaginationRequest?,
         sort: SortRequest?,
         after: Identifier?,
-        filterOwned: Boolean?,
     ): Either<Problem, Pagination<Channel>>
 
     /**

@@ -46,6 +46,7 @@ class CredentialsViewModel(
     private val sessionManager: SessionManager,
 ) : ViewModel() {
     private val _state: MutableStateFlow<CredentialsScreenState> = MutableStateFlow(CredentialsScreenState.Login())
+
     val state: Flow<CredentialsScreenState> = _state
 
     fun doLogin(

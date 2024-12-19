@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.ui.screens.home.inviteUser
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
@@ -30,7 +31,7 @@ class InviteUserViewModel internal constructor(
 ) : ViewModel() {
     private val _state: MutableStateFlow<InviteUserScreenState> = MutableStateFlow(initialScreenState)
 
-    val state = _state
+    val state: Flow<InviteUserScreenState> = _state
 
     fun createInvite(expirationOptions: ExpirationOptions) {
         launchRequestRefreshing(

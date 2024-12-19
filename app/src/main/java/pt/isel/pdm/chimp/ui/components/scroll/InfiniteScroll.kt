@@ -33,6 +33,7 @@ fun <T : Identifiable> InfiniteScroll(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    filterCondition: (T) -> Boolean = { true },
     renderItem: @Composable (T) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -63,7 +64,9 @@ fun <T : Identifiable> InfiniteScroll(
                     count = scrollState.pagination.items.size,
                     key = { index -> scrollState.pagination.items[index].id.value },
                 ) { itemIndex ->
-                    renderItem(scrollState.pagination.items[itemIndex])
+                    if (filterCondition(scrollState.pagination.items[itemIndex])) {
+                        renderItem(scrollState.pagination.items[itemIndex])
+                    }
                     if (itemIndex == scrollState.pagination.items.size - 1) {
                         if (scrollState is InfiniteScrollState.Loading) {
                             Box(

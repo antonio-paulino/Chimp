@@ -57,6 +57,7 @@ fun ChannelsScreen(
     onLogout: () -> Unit,
     onCreateChannelNavigation: () -> Unit,
     onInviteUserNavigation: () -> Unit,
+    onSearchNavigation: () -> Unit,
 ) {
     if (session == null) {
         onNotLoggedIn()
@@ -83,7 +84,7 @@ fun ChannelsScreen(
             bottomBar = {
                 NavBar(
                     onHomeNavigation = {},
-                    onSearchNavigation = { TODO() },
+                    onSearchNavigation = onSearchNavigation,
                     onInvitationsNavigation = onInvitationsNavigation,
                     onAboutNavigation = onAboutNavigation,
                     currentScreen = stringResource(R.string.home),
