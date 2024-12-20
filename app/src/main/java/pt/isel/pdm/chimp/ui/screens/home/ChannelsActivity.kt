@@ -25,6 +25,7 @@ import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
+import pt.isel.pdm.chimp.ui.screens.channel.ChannelActivity
 import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.home.createChannel.CreateChannelActivity
@@ -38,7 +39,7 @@ import kotlin.time.Duration.Companion.seconds
 
 open class ChannelsActivity : ComponentActivity() {
     lateinit var dependencies: DependenciesContainer
-    private var isListening = false
+    var isListening = false
 
     private val channelsViewModel by initializeViewModel { dependencies ->
         ChannelsViewModel(
@@ -88,7 +89,7 @@ open class ChannelsActivity : ComponentActivity() {
                     onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
                         dependencies.entityReferenceManager.setChannel(channel)
-                        navigateTo(EditChannelActivity::class.java)
+                        navigateTo(ChannelActivity::class.java)
                     },
                     onLogout = channelsViewModel::logout,
                     onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },

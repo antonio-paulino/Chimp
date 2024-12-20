@@ -96,6 +96,13 @@
             android:theme="@style/Theme.Chimp"
             tools:ignore="DiscouragedApi">
         </activity>
+        <activity android:name=".ui.screens.channel.ChannelActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Chimp"
+            tools:ignore="DiscouragedApi">
+        </activity>
         <service
             android:name=".infrastructure.SSEService"
             android:exported="false"

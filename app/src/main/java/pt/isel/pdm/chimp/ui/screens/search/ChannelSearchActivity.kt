@@ -95,7 +95,7 @@ open class ChannelSearchActivity : ChannelsActivity() {
         scrollingViewModel.handleItemUpdate(event.channel)
     }
 
-    private suspend fun handleChannelCreated(event: Event.ChannelEvent.CreatedEvent) {
+    private fun handleChannelCreated(event: Event.ChannelEvent.CreatedEvent) {
         scrollingViewModel.handleItemCreate(event.channel)
     }
 }
