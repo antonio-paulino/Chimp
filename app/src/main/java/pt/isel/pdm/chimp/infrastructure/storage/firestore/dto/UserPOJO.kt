@@ -11,4 +11,8 @@ data class UserPOJO(
     var email: String = "",
 ) {
     fun toDomain() = User(id.toIdentifier(), name.toName(), email.toEmail())
+
+    companion object {
+        fun fromDomain(user: User) = UserPOJO(user.id.value, user.name.value, user.email.value)
+    }
 }

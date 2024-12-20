@@ -61,7 +61,7 @@ fun <T> ViewModel.launchRequest(
  */
 fun <T> ViewModel.launchRequestRefreshing(
     sessionManager: SessionManager,
-    noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
+    noConnectionRequest: (suspend (session: Session) -> Either<Problem, T>?)? = null,
     request: suspend (session: Session) -> Either<Problem, T>,
     refresh: suspend (session: Session) -> Either<Problem, Session>,
     onError: suspend(Problem) -> Unit,
@@ -135,7 +135,7 @@ suspend fun <T> executeRequest(
  */
 suspend fun <T> executeRequestRefreshing(
     sessionManager: SessionManager,
-    noConnectionRequest: (suspend () -> Either<Problem, T>?)? = null,
+    noConnectionRequest: (suspend (session: Session) -> Either<Problem, T>?)? = null,
     request: suspend (session: Session) -> Either<Problem, T>,
     refresh: (suspend(session: Session) -> Either<Problem, Session>),
     onError: suspend(Problem) -> Unit,
@@ -146,7 +146,7 @@ suspend fun <T> executeRequestRefreshing(
         if (context.isNetworkAvailable()) {
             request(sessionManager.session.firstOrNull() ?: return)
         } else {
-            noConnectionRequest?.let { it() }
+            noConnectionRequest?.let { it(sessionManager.session.firstOrNull() ?: return) }
         }
 
     if (res == null) {

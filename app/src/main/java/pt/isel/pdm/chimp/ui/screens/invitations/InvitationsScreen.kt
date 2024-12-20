@@ -58,9 +58,9 @@ fun InvitationsScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
             ) {
                 ChannelInvitationsList(
                     scrollState = scrollState,

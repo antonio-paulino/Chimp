@@ -22,12 +22,12 @@ data class MessageCreationOutputModel(
 ) {
     fun toDomain(
         channel: Channel,
-        user: User,
+        author: User,
         content: String,
     ) = Message(
         id = id.toIdentifier(),
         channelId = channel.id,
-        user = user,
+        author = author,
         content = content,
         createdAt = LocalDateTime.parse(createdAt),
         editedAt = editedAt?.let { LocalDateTime.parse(it) },

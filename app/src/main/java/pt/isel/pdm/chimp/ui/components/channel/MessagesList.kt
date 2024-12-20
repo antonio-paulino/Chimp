@@ -12,7 +12,7 @@ fun MessagesList(
     scrollState: InfiniteScrollState<Message>,
     onBottomScroll: () -> Unit,
 ) {
-    InfiniteScroll<Message>(
+    InfiniteScroll(
         scrollState = scrollState,
         onBottomScroll = onBottomScroll,
         contentPadding = PaddingValues(16.dp),

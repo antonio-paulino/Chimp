@@ -2,8 +2,10 @@ package pt.isel.pdm.chimp.infrastructure.storage.firestore
 
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
@@ -13,11 +15,12 @@ import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.domain.success
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
-import pt.isel.pdm.chimp.dto.output.messages.MessageOutputModel
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.storage.MessageRepository
 import pt.isel.pdm.chimp.infrastructure.storage.firestore.dto.MessagePOJO
+import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class FireStoreMessageRepository : MessageRepository {
     private val db = Firebase.firestore
@@ -30,14 +33,20 @@ class FireStoreMessageRepository : MessageRepository {
         sortDirection: Sort,
         before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>> {
+        val source =
+            if (!ChimpApplication.applicationContext().isNetworkAvailable()) {
+                Source.CACHE
+            } else {
+                Source.DEFAULT
+            }
         return try {
             val querySnapshot =
                 messageCollection
                     .whereEqualTo("channelId", channel.id.value)
                     .orderBy("createdAt", sortDirection.toFirestoreSort())
-                    .whereLessThan("createdAt", before ?: LocalDateTime.now())
+                    .whereLessThan("createdAt", before?.toEpochSecond(ZoneOffset.UTC) ?: Long.MAX_VALUE)
                     .limit(limit)
-                    .get().await()
+                    .get(source).await()
             return success(querySnapshot.getPagination(MessagePOJO::class.java, MessagePOJO::toDomain, limit, getCount))
         } catch (e: Exception) {
             Log.d(TAG, "Failed to get channel messages", e)
@@ -47,12 +56,12 @@ class FireStoreMessageRepository : MessageRepository {
 
     override suspend fun updateMessages(messages: List<Message>): Either<Problem, Unit> {
         return try {
-            val pendingSets =
-                messages.map { message ->
-                    messageCollection.document(message.id.value.toString())
-                        .set(MessageOutputModel.fromDomain(message))
-                }
-            pendingSets.forEach { it.await() }
+            val batch = db.batch()
+            messages.forEach { message ->
+                val docRef = messageCollection.document(message.id.value.toString())
+                batch.set(docRef, MessagePOJO.fromDomain(message))
+            }
+            batch.commit().await()
             success(Unit)
         } catch (e: Exception) {
             Log.d(TAG, "Failed to update messages", e)

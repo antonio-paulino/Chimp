@@ -18,13 +18,11 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.domain.messages.Message
 
 @Composable
-fun MessageView(
-    message: Message,
-) {
+fun MessageView(message: Message) {
     MessageContainer {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             MessageAuthorView(message = message)
             MessageContentView(message = message)
@@ -33,20 +31,16 @@ fun MessageView(
 }
 
 @Composable
-fun MessageAuthorView(
-    message: Message,
-) {
+fun MessageAuthorView(message: Message) {
     Text(
-        text = message.user.name.value,
+        text = message.author.name.value,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onBackground,
     )
 }
 
 @Composable
-fun MessageContentView(
-    message: Message,
-) {
+fun MessageContentView(message: Message) {
     Text(
         text = message.content,
         style = MaterialTheme.typography.bodyMedium,
@@ -58,17 +52,18 @@ fun MessageContentView(
 fun MessageContainer(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
-){
+)  {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.20f), MaterialTheme.shapes.medium)
-            .padding(16.dp)
-            .height(IntrinsicSize.Min),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.background)
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.20f), MaterialTheme.shapes.medium)
+                .padding(16.dp)
+                .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         content()
     }

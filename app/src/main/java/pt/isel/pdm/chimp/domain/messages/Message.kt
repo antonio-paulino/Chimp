@@ -14,7 +14,7 @@ import java.time.temporal.ChronoUnit
  *
  * @property id The unique identifier of the message.
  * @property channelId The unique identifier of the channel where the message was sent.
- * @property user The user that sent the message.
+ * @property author The user that sent the message.
  * @property content The content of the message.
  * @property createdAt The date and time when the message was sent.
  * @property editedAt The date and time when the message was last edited.
@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit
 data class Message(
     override val id: Identifier = Identifier(0),
     val channelId: Identifier,
-    val user: User,
+    val author: User,
     val content: String,
     val createdAt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
     val editedAt: LocalDateTime? = null,
@@ -33,7 +33,7 @@ data class Message(
         operator fun invoke(
             id: Long = 0,
             channelId: Long,
-            user: User,
+            author: User,
             content: String,
             createdAt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
             editedAt: LocalDateTime? = null,
@@ -41,7 +41,7 @@ data class Message(
             Message(
                 id.toIdentifier(),
                 channelId.toIdentifier(),
-                user,
+                author,
                 content,
                 createdAt,
                 editedAt,

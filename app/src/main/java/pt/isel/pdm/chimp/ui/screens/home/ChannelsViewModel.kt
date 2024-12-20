@@ -54,8 +54,9 @@ open class ChannelsViewModel(
         val job =
             launchRequestRefreshing(
                 sessionManager = sessionManager,
-                noConnectionRequest = {
+                noConnectionRequest = { session ->
                     storage.channelRepository.getChannels(
+                        user = session.user,
                         limit = paginationRequest.limit,
                         getCount = false,
                         after = currentItems.lastOrNull()?.id,

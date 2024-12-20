@@ -18,7 +18,6 @@ import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
 open class InvitationsActivity : ChannelsActivity() {
-
     private val invitationsViewModel by initializeViewModel { dependencies ->
         InvitationsViewModel(
             dependencies.chimpService,

@@ -11,4 +11,9 @@ data class ChannelMemberPOJO(
     var role: String = "",
 ) {
     fun toDomain() = ChannelMember(id.toIdentifier(), name.toName(), ChannelRole.valueOf(role))
+
+    companion object {
+        fun fromDomain(channelMember: ChannelMember) =
+            ChannelMemberPOJO(channelMember.id.value, channelMember.name.value, channelMember.role.name)
+    }
 }

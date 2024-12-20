@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -25,7 +23,6 @@ import pt.isel.pdm.chimp.domain.Identifiable
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
-import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 
 @Composable
 fun <T : Identifiable> InfiniteScroll(
@@ -40,12 +37,10 @@ fun <T : Identifiable> InfiniteScroll(
     renderItem: @Composable (T) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val snackBarHost = remember { SnackbarHostState() }
 
     ChIMPTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            snackbarHost = { SnackbarHost(snackBarHost) },
             containerColor = Color.Transparent,
         ) { innerPadding ->
             val filteredItems = scrollState.pagination.items.filter(filterCondition)
@@ -103,15 +98,5 @@ fun <T : Identifiable> InfiniteScroll(
 
     if (isAtBottom.value && scrollState !is InfiniteScrollState.Loading && scrollState.pagination.info.nextPage != null) {
         onBottomScroll()
-    }
-
-    LaunchedEffect(scrollState) {
-        if (scrollState is InfiniteScrollState.Error) {
-            snackBarHost.showSnackbar(
-                SnackBarVisuals(
-                    scrollState.problem.detail,
-                ),
-            )
-        }
     }
 }

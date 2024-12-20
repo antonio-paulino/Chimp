@@ -9,11 +9,11 @@ class SessionManagerMem : SessionManager {
 
     override val session: Flow<Session?> = _session
 
-    override fun set(session: Session) {
+    override suspend fun set(session: Session) {
         _session.value = session
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         _session.value = null
     }
 }

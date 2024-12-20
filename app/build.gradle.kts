@@ -74,9 +74,10 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.androidx.datastore)
     implementation(libs.ktor.serialization.kotlinx.json)
-
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.firestore)
+    implementation(libs.work.manager)
+    implementation(libs.guava)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -29,7 +29,7 @@ data class MessageOutputModel(
         Message(
             id = id.toIdentifier(),
             channelId = channelId.toIdentifier(),
-            user = author.toDomain(),
+            author = author.toDomain(),
             content = content,
             createdAt = LocalDateTime.parse(createdAt),
             editedAt = editedAt?.let { LocalDateTime.parse(it) },
@@ -40,7 +40,7 @@ data class MessageOutputModel(
             MessageOutputModel(
                 id = message.id.value,
                 channelId = message.channelId.value,
-                author = UserOutputModel.fromDomain(message.user),
+                author = UserOutputModel.fromDomain(message.author),
                 content = message.content,
                 createdAt = message.createdAt.toString(),
                 editedAt = message.editedAt?.toString(),

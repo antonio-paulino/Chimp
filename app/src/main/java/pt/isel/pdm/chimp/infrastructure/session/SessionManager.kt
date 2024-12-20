@@ -10,7 +10,7 @@ import pt.isel.pdm.chimp.domain.sessions.Session
 interface SessionManager {
     val session: Flow<Session?>
 
-    fun set(session: Session)
+    suspend fun set(session: Session)
 
-    fun clear()
+    suspend fun clear()
 }

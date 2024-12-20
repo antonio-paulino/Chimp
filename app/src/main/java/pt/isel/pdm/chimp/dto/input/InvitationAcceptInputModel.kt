@@ -18,6 +18,6 @@ data class InvitationAcceptInputModel(
         when (accept) {
             true -> ChannelInvitationStatus.ACCEPTED.name
             false -> ChannelInvitationStatus.REJECTED.name
-        }
+        },
     )
 }

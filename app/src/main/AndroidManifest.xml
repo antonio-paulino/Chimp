@@ -3,8 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".ChimpApplication"
@@ -103,12 +102,5 @@
             android:theme="@style/Theme.Chimp"
             tools:ignore="DiscouragedApi">
         </activity>
-        <service
-            android:name=".infrastructure.SSEService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-        />
     </application>
-
 </manifest>

@@ -26,7 +26,7 @@ data class MessageUpdateOutputModel(
         id = id,
         channelId = channel.id,
         content = content,
-        user = author,
+        author = author,
         createdAt = createdAt,
         editedAt = LocalDateTime.parse(editedAt),
     )

@@ -2,23 +2,19 @@ package pt.isel.pdm.chimp.ui.screens.channel
 
 import ChannelScreen
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.channel.channelInvitations.ChannelInvitationsActivity
 import pt.isel.pdm.chimp.ui.screens.channel.channelMembers.ChannelMembersActivity
 import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
-import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
@@ -26,7 +22,6 @@ import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
 open class ChannelActivity : ChannelsActivity() {
-
     private val viewModel by initializeViewModel { dependencies ->
         ChannelViewModel(
             dependencies.chimpService,
@@ -52,15 +47,15 @@ open class ChannelActivity : ChannelsActivity() {
         setContent {
             val session by dependencies.sessionManager.session.collectAsState(
                 initial =
-                runBlocking {
-                    dependencies.sessionManager.session.firstOrNull()
-                }
+                    runBlocking {
+                        dependencies.sessionManager.session.firstOrNull()
+                    },
             )
             val channel by dependencies.entityReferenceManager.channel.collectAsState(
                 initial =
-                runBlocking {
-                    dependencies.entityReferenceManager.channel.firstOrNull()
-                }
+                    runBlocking {
+                        dependencies.entityReferenceManager.channel.firstOrNull()
+                    },
             )
             viewModel.setChannel(channel)
             val state by viewModel.state.collectAsState(initial = ChannelScreenState.MessagesList)
@@ -76,16 +71,16 @@ open class ChannelActivity : ChannelsActivity() {
                         viewModel.createMessage(
                             channel!!,
                             message,
-                            session!!
+                            session!!,
                         )
                     },
                     onEditChannel = {
                         navigateTo(EditChannelActivity::class.java)
                     },
                     onInviteMember =
-                    {
-                        //navigateTo(::class.java)
-                    },
+                        {
+                            // navigateTo(::class.java)
+                        },
                     onChannelDelete = {
                         viewModel.deleteChannel(channel!!, session!!)
                     },
@@ -110,9 +105,7 @@ open class ChannelActivity : ChannelsActivity() {
     }
 
     private fun handleMessageCreated(event: Event.MessageEvent.CreatedEvent) {
-        if (event.message.channelId == viewModel.channel?.id) {
-            scrollingViewModel.handleItemCreate(event.message)
-        }
+        scrollingViewModel.handleItemCreate(event.message, prepend = true)
     }
 
     private suspend fun handleMessageDeleted(event: Event.MessageEvent.DeletedEvent) {

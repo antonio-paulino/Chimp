@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,10 +12,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -24,7 +23,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,14 +38,12 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.messages.Message
-import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.channel.MessagesList
 import pt.isel.pdm.chimp.ui.screens.channel.ChannelScreenState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
-
 
 @Composable
 fun ChannelScreen(
@@ -80,12 +76,10 @@ fun ChannelScreen(
                             IconButton(onClick = onBack) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back"
+                                    contentDescription = "Back",
                                 )
                             }
-                            if (channel != null) {
-                                Text(channel.name.value)
-                            }
+                            Text(channel.name.value)
                         }
                     },
                     actions = {
@@ -102,7 +96,7 @@ fun ChannelScreen(
             bottomBar = {
                 BottomBar(
                     state = state,
-                    onSendMessage = onSendMessage
+                    onSendMessage = onSendMessage,
                 )
             },
             containerColor = Color.Transparent,
@@ -110,23 +104,21 @@ fun ChannelScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
             ) {
-
                 MessagesList(
                     scrollState = scrollState,
                     onBottomScroll = onBottomScroll,
                 )
             }
-
         }
         LaunchedEffect(state) {
             if (state is ChannelScreenState.ChannelMessagesError) {
                 snackBarHostState.showSnackbar(
                     SnackBarVisuals(
-                        message = state.problem.detail
+                        message = state.problem.detail,
                     ),
                 )
             }
@@ -137,26 +129,30 @@ fun ChannelScreen(
 @Composable
 fun BottomBar(
     state: ChannelScreenState,
-    onSendMessage: (String) -> Unit
+    onSendMessage: (String) -> Unit,
 ) {
     var message by remember {
         mutableStateOf(
-            (state as? ChannelScreenState.EditingMessage)?.message?.content ?: ""
+            (state as? ChannelScreenState.EditingMessage)?.message?.content ?: "",
         )
     }
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
             value = message,
             onValueChange = { message = it },
             modifier = Modifier.weight(1f),
-            placeholder = { Text("Type a message") }
+            placeholder = { Text("Type a message") },
         )
-        IconButton(onClick = { onSendMessage(message); message = "" }) {
+        IconButton(onClick = {
+            onSendMessage(message)
+            message = ""
+        }) {
             Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
         }
     }

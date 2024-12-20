@@ -13,23 +13,29 @@ import pt.isel.pdm.chimp.domain.failure
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
+import pt.isel.pdm.chimp.domain.pagination.Sort
+import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.sessions.Session
-import pt.isel.pdm.chimp.infrastructure.services.http.messages.MessageEditedTime
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.ChimpService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import pt.isel.pdm.chimp.infrastructure.storage.Storage
-import pt.isel.pdm.chimp.ui.screens.home.ChannelsScreenState
 import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 
 sealed interface ChannelScreenState {
     data class ChannelMessageCreated(val message: Message) : ChannelScreenState
+
     data class ChannelMessagesError(val problem: Problem) : ChannelScreenState
+
     data object MessagesList : ChannelScreenState
+
     data class EditingMessage(val message: Message) : ChannelScreenState
+
     data object ChannelMessageUpdated : ChannelScreenState
+
     data object ChannelMessageDeleted : ChannelScreenState
+
     data object ChannelDeleted : ChannelScreenState
 }
 
@@ -38,9 +44,8 @@ class ChannelViewModel(
     private val sessionManager: SessionManager,
     private val storage: Storage,
     initialScreenState: ChannelScreenState = ChannelScreenState.MessagesList,
-    channel: Channel?
+    channel: Channel?,
 ) : ViewModel() {
-
     private val _channel = mutableStateOf(channel)
 
     val channel: Channel?
@@ -54,15 +59,18 @@ class ChannelViewModel(
 
     val state: Flow<ChannelScreenState> = _state
 
-
-    fun createMessage(channel: Channel, message: String, session: Session) {
+    fun createMessage(
+        channel: Channel,
+        message: String,
+        session: Session,
+    ) {
         launchRequestRefreshing(
-
             sessionManager = sessionManager,
             noConnectionRequest = {
-                _state.value = ChannelScreenState.ChannelMessagesError(
-                    Problem.NoConnection
-                )
+                _state.value =
+                    ChannelScreenState.ChannelMessagesError(
+                        Problem.NoConnection,
+                    )
                 null
             },
             request = {
@@ -71,30 +79,33 @@ class ChannelViewModel(
             onError = { problem ->
                 _state.emit(
                     ChannelScreenState.ChannelMessagesError(
-                        problem
-                    )
+                        problem,
+                    ),
                 )
             },
             onSuccess = {
                 _state.emit(
                     ChannelScreenState.ChannelMessageCreated(
-                        it.value
-                    )
+                        it.value,
+                    ),
                 )
             },
-            refresh = services.authService::refresh
+            refresh = services.authService::refresh,
         )
-
     }
 
-    fun updateMessage(message: Message, content: String, session: Session) {
+    fun updateMessage(
+        message: Message,
+        content: String,
+        session: Session,
+    ) {
         launchRequestRefreshing(
-
             sessionManager = sessionManager,
             noConnectionRequest = {
-                _state.value = ChannelScreenState.ChannelMessagesError(
-                    Problem.NoConnection
-                )
+                _state.value =
+                    ChannelScreenState.ChannelMessagesError(
+                        Problem.NoConnection,
+                    )
                 null
             },
             request = {
@@ -103,28 +114,31 @@ class ChannelViewModel(
             onError = { problem ->
                 _state.emit(
                     ChannelScreenState.ChannelMessagesError(
-                        problem
-                    )
+                        problem,
+                    ),
                 )
             },
             onSuccess = {
                 _state.emit(
-                    ChannelScreenState.ChannelMessageUpdated
+                    ChannelScreenState.ChannelMessageUpdated,
                 )
             },
-            refresh = services.authService::refresh
+            refresh = services.authService::refresh,
         )
-
     }
 
-    fun deleteMessage(message: Message, session: Session) {
+    fun deleteMessage(
+        message: Message,
+        session: Session,
+    ) {
         viewModelScope.launch {
             launchRequestRefreshing(
                 sessionManager = sessionManager,
                 noConnectionRequest = {
-                    _state.value = ChannelScreenState.ChannelMessagesError(
-                        Problem.NoConnection
-                    )
+                    _state.value =
+                        ChannelScreenState.ChannelMessagesError(
+                            Problem.NoConnection,
+                        )
                     null
                 },
                 request = {
@@ -133,27 +147,31 @@ class ChannelViewModel(
                 onError = { problem ->
                     _state.emit(
                         ChannelScreenState.ChannelMessagesError(
-                            problem
-                        )
+                            problem,
+                        ),
                     )
                 },
                 onSuccess = {
                     _state.emit(
-                        ChannelScreenState.ChannelMessageDeleted
+                        ChannelScreenState.ChannelMessageDeleted,
                     )
                 },
-                refresh = services.authService::refresh
+                refresh = services.authService::refresh,
             )
         }
     }
 
-    fun deleteChannel(channel: Channel, session: Session) {
+    fun deleteChannel(
+        channel: Channel,
+        session: Session,
+    ) {
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
-                _state.value = ChannelScreenState.ChannelMessagesError(
-                    Problem.NoConnection
-                )
+                _state.value =
+                    ChannelScreenState.ChannelMessagesError(
+                        Problem.NoConnection,
+                    )
                 null
             },
             request = {
@@ -162,16 +180,16 @@ class ChannelViewModel(
             onError = { problem ->
                 _state.emit(
                     ChannelScreenState.ChannelMessagesError(
-                        problem
-                    )
+                        problem,
+                    ),
                 )
             },
             onSuccess = {
                 _state.emit(
-                    ChannelScreenState.ChannelDeleted
+                    ChannelScreenState.ChannelDeleted,
                 )
             },
-            refresh = services.authService::refresh
+            refresh = services.authService::refresh,
         )
     }
 
@@ -179,43 +197,45 @@ class ChannelViewModel(
         paginationRequest: PaginationRequest,
         currentItems: List<Message>,
     ): Either<Problem, Pagination<Message>> {
-
         if (channel == null) {
             return failure(Problem.UnexpectedProblem)
         }
-
         var result: Either<Problem, Pagination<Message>> = failure(Problem.UnexpectedProblem)
-        val job = launchRequestRefreshing(
-            sessionManager = sessionManager,
-            noConnectionRequest = {
-                storage.messageRepository.getChannelMessages(
-                    channel!!,
-                    paginationRequest.limit,
-                    getCount = false,
-                    before = currentItems.lastOrNull()?.createdAt,
-                )
-            },
-            request = { session ->
-                services.messageService.getChannelMessages(
-                    channel!!,
-                    session,
-                    paginationRequest,
-                    sort = null,
-                    before = currentItems.lastOrNull()?.createdAt,
-
+        val job =
+            launchRequestRefreshing(
+                sessionManager = sessionManager,
+                noConnectionRequest = {
+                    storage.messageRepository.getChannelMessages(
+                        channel!!,
+                        paginationRequest.limit,
+                        getCount = false,
+                        before = currentItems.lastOrNull()?.createdAt,
                     )
-            },
-            refresh = services.authService::refresh,
-            onError = {
-                result = failure(it)
-            },
-            onSuccess = {
-                result = it
-                if (ChimpApplication.applicationContext().isNetworkAvailable()) {
-                    storage.messageRepository.updateMessages(it.value.items)
-                }
-            }
-        )
+                },
+                request = { session ->
+                    services.messageService.getChannelMessages(
+                        channel!!,
+                        session,
+                        paginationRequest,
+                        sort =
+                            SortRequest(
+                                "createdAt",
+                                Sort.DESC,
+                            ),
+                        before = currentItems.lastOrNull()?.createdAt,
+                    )
+                },
+                refresh = services.authService::refresh,
+                onError = {
+                    result = failure(it)
+                },
+                onSuccess = {
+                    result = it
+                    if (ChimpApplication.applicationContext().isNetworkAvailable()) {
+                        storage.messageRepository.updateMessages(it.value.items)
+                    }
+                },
+            )
         job.join()
         return result
     }

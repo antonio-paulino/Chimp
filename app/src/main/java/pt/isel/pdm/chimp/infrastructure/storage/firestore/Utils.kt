@@ -29,7 +29,7 @@ internal fun QuerySnapshot.getPaginationInfo(pageRequest: PaginationRequest): Pa
     val total = if (pageRequest.getCount) this.size().toLong() else null
     val totalPages = if (total != null) (total + pageRequest.limit - 1) / pageRequest.limit else null
     val currentPage = pageRequest.offset / pageRequest.limit + 1
-    val nextPage = if (totalPages != null && currentPage < totalPages) currentPage + 1 else null
+    val nextPage = if (this.size().toLong() == pageRequest.limit) currentPage + 1 else null
     val prevPage = if (currentPage > 1) currentPage - 1 else null
 
     return PaginationInfo(

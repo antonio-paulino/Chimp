@@ -49,7 +49,7 @@ fun EditChannelScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         BackButton(onBack)
-                        Text(stringResource(id = R.string.create_channel))
+                        Text(stringResource(id = R.string.edit_channel))
                     }
                 },
             )
@@ -68,6 +68,7 @@ fun EditChannelScreen(
                         onSubmit = { name, isPublic, defaultRole ->
                             onEditChannel(channel, name, isPublic, defaultRole)
                         },
+                        submitLabel = stringResource(id = R.string.edit_channel),
                     )
                 }
                 is EditChannelScreenState.EditingChannelError -> {

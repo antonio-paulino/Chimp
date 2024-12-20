@@ -1,14 +1,17 @@
 package pt.isel.pdm.chimp.ui.screens.home
 
-import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,17 +19,14 @@ import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
-import pt.isel.pdm.chimp.infrastructure.SSEService
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.channel.ChannelActivity
-import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.home.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.home.inviteUser.InviteUserActivity
@@ -39,7 +39,6 @@ import kotlin.time.Duration.Companion.seconds
 
 open class ChannelsActivity : ComponentActivity() {
     lateinit var dependencies: DependenciesContainer
-    var isListening = false
 
     private val channelsViewModel by initializeViewModel { dependencies ->
         ChannelsViewModel(
@@ -58,11 +57,13 @@ open class ChannelsActivity : ComponentActivity() {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         dependencies = application as DependenciesContainer
         FirebaseApp.initializeApp(this)
+        checkNotificationPermission()
         setContent {
             val session by dependencies.sessionManager.session.collectAsState(
                 initial =
@@ -82,9 +83,7 @@ open class ChannelsActivity : ComponentActivity() {
                         finish()
                     },
                     onLoggedIn = {
-                        if (!isListening) {
-                            startListening()
-                        }
+                        startListening()
                     },
                     onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
@@ -120,8 +119,6 @@ open class ChannelsActivity : ComponentActivity() {
     }
 
     private fun startListening() {
-        val intent = Intent(this, SSEService::class.java)
-        startService(intent)
         this.lifecycleScope.launch {
             dependencies.chimpService.eventService.awaitInitialization(30.seconds)
             dependencies.chimpService.eventService.channelEventFlow.collect { event ->
@@ -132,17 +129,16 @@ open class ChannelsActivity : ComponentActivity() {
                 }
             }
         }
-        isListening = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isListening) {
-            val intent = Intent(this, SSEService::class.java)
-            stopService(intent)
-            isListening = false
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNotificationPermission() {
+        val sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        val hasRequestedPermission = sharedPreferences.getBoolean("requested_notification_permission", false)
+        if (!hasRequestedPermission && ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+            sharedPreferences.edit().putBoolean("requested_notification_permission", true).apply()
         }
-        Log.v(TAG, "MainActivity.onDestroy")
     }
 
     private suspend fun handleChannelDeleted(event: Event.ChannelEvent.DeletedEvent) {
