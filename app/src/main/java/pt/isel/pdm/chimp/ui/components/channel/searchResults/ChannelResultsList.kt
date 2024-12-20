@@ -1,4 +1,4 @@
-package pt.isel.pdm.chimp.ui.components.channel
+package pt.isel.pdm.chimp.ui.components.channel.searchResults
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -19,6 +19,7 @@ fun ChannelResultsList(
         scrollState = scrollState,
         onBottomScroll = onBottomScroll,
         contentPadding = PaddingValues(16.dp),
+        itemSpacing = PaddingValues(top = 16.dp),
         filterCondition = { channel -> channel.members.none { it.id == user.id } },
         reverse = false,
     ) { channel ->

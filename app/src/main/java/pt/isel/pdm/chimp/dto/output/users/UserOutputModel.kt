@@ -6,6 +6,13 @@ import pt.isel.pdm.chimp.domain.wrappers.email.toEmail
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.toName
 
+/**
+ * Output model for a user, received from the server.
+ *
+ * @property id The identifier of the user.
+ * @property name The name of the user.
+ * @property email The email of the user.
+ */
 @Serializable
 data class UserOutputModel(
     val id: Long,

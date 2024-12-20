@@ -39,7 +39,7 @@
     <string name="member">Member</string>
     <string name="guest">Guest</string>
     <string name="creating_channel">Creating channel…</string>
-    <string name="members">members</string>
+    <string name="members">Members</string>
     <string name="create_user_invite">Create User Invite</string>
     <string name="expiration_label">Expiration</string>
     <string name="minutes">Minutes</string>
@@ -54,7 +54,14 @@
     <string name="invalid_credentials">Invalid Credentials</string>
     <string name="invitation_accepted">Invitation Accepted</string>
     <string name="invitation_rejected">Invitation Rejected</string>
-    <string name="search_channels">Search for channels...</string>
+    <string name="search_channels">Search for channels…</string>
     <string name="join_channel">Join</string>
     <string name="joined_channel">Joined</string>
+    <string name="member_removed">Removed</string>
+    <string name="role_updated">role updated</string>
+    <string name="delete">Delete</string>
+    <string name="invitation_removed">Invitation deleted for</string>
+    <string name="invitation_role_updated">Invitation role updated to</string>
+    <string name="editing_channel">Updating channel…</string>
+    <string name="edit_channel">Edit Channel</string>
 </resources>

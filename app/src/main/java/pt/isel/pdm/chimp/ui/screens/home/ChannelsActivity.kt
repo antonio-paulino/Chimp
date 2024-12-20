@@ -25,6 +25,7 @@ import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
+import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
 import pt.isel.pdm.chimp.ui.screens.credentials.CredentialsActivity
 import pt.isel.pdm.chimp.ui.screens.home.createChannel.CreateChannelActivity
 import pt.isel.pdm.chimp.ui.screens.home.inviteUser.InviteUserActivity
@@ -68,7 +69,7 @@ open class ChannelsActivity : ComponentActivity() {
                         dependencies.sessionManager.session.firstOrNull()
                     },
             )
-            val channelState by channelsViewModel.state.collectAsState(initial = ChannelScreenState.ChannelsList)
+            val channelState by channelsViewModel.state.collectAsState(initial = ChannelsScreenState.ChannelsList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Loading(Pagination<Channel>()))
             ChIMPTheme {
                 ChannelsScreen(
@@ -87,7 +88,7 @@ open class ChannelsActivity : ComponentActivity() {
                     onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
                         dependencies.entityReferenceManager.setChannel(channel)
-                        // navigateTo(ChannelActivity::class.java)
+                        navigateTo(EditChannelActivity::class.java)
                     },
                     onLogout = channelsViewModel::logout,
                     onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },
@@ -162,8 +163,7 @@ open class ChannelsActivity : ComponentActivity() {
             val finished = state?.pagination?.info?.nextPage == null
             if (
                 paginationItems?.any { it.id == event.channel.id } == false &&
-                paginationItems.lastOrNull()?.id?.value!! > event.channel.id.value ||
-                finished
+                ((paginationItems.lastOrNull()?.id?.value ?: 0) > event.channel.id.value || finished)
             ) {
                 scrollingViewModel.handleItemCreate(event.channel)
             } else {

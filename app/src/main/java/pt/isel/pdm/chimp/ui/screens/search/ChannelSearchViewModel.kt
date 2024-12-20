@@ -19,22 +19,24 @@ import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 sealed interface ChannelSearchListScreenState {
     data object ChannelSearchList : ChannelSearchListScreenState
 
+    data object Loading : ChannelSearchListScreenState
+
     data class ChannelSearchListError(val problem: Problem) : ChannelSearchListScreenState
 
     data class JoinedChannel(val channel: Channel) : ChannelSearchListScreenState
 }
 
-class DebouncedSearchField(
-    initialValue: String,
+class DebouncedFlow<T>(
+    initialValue: T,
     private val debounceTime: Long,
 ) {
     private val _debouncedState = MutableStateFlow(initialValue)
 
     @OptIn(FlowPreview::class)
-    val debouncedState: Flow<String>
+    val debouncedState: Flow<T>
         get() = _debouncedState.debounce(debounceTime)
 
-    fun setValue(value: String) {
+    fun setValue(value: T) {
         _debouncedState.value = value
     }
 }
@@ -48,10 +50,11 @@ open class ChannelSearchViewModel(
 
     val state: Flow<ChannelSearchListScreenState> = _state
 
-    private val _searchQuery = DebouncedSearchField(
-        initialValue = "",
-        debounceTime = 200,
-    )
+    private val _searchQuery =
+        DebouncedFlow(
+            initialValue = "",
+            debounceTime = 200,
+        )
 
     val searchQuery: Flow<String>
         get() = _searchQuery.debouncedState
@@ -60,8 +63,11 @@ open class ChannelSearchViewModel(
         _searchQuery.setValue(query)
     }
 
-    fun joinChannel(channel: Channel, onJoin: suspend() -> Unit) {
-        _state.value = ChannelSearchListScreenState.ChannelSearchList
+    fun joinChannel(
+        channel: Channel,
+        onJoin: suspend() -> Unit,
+    ) {
+        _state.value = ChannelSearchListScreenState.Loading
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -76,7 +82,10 @@ open class ChannelSearchViewModel(
             },
             refresh = services.authService::refresh,
             onError = { _state.emit(ChannelSearchListScreenState.ChannelSearchListError(it)) },
-            onSuccess = { _state.emit(ChannelSearchListScreenState.JoinedChannel(channel)); onJoin() },
+            onSuccess = {
+                _state.emit(ChannelSearchListScreenState.JoinedChannel(channel))
+                onJoin()
+            },
         )
     }
 
@@ -85,25 +94,26 @@ open class ChannelSearchViewModel(
         currentItems: List<Channel>,
     ): Either<Problem, Pagination<Channel>> {
         var result: Either<Problem, Pagination<Channel>> = failure(Problem.UnexpectedProblem)
-        val job = launchRequestRefreshing(
-            sessionManager = sessionManager,
-            noConnectionRequest = {
-                _state.emit(ChannelSearchListScreenState.ChannelSearchListError(Problem.NoConnection))
-                null
-            },
-            request = { session ->
-                services.channelService.getChannels(
-                    name = searchQuery.firstOrNull(),
-                    session = session,
-                    pagination = paginationRequest,
-                    sort = null,
-                    after = currentItems.lastOrNull()?.id,
-                )
-            },
-            refresh = services.authService::refresh,
-            onError = { result = failure(it) },
-            onSuccess = { result = it },
-        )
+        val job =
+            launchRequestRefreshing(
+                sessionManager = sessionManager,
+                noConnectionRequest = {
+                    _state.emit(ChannelSearchListScreenState.ChannelSearchListError(Problem.NoConnection))
+                    null
+                },
+                request = { session ->
+                    services.channelService.getChannels(
+                        name = searchQuery.firstOrNull(),
+                        session = session,
+                        pagination = paginationRequest,
+                        sort = null,
+                        after = currentItems.lastOrNull()?.id,
+                    )
+                },
+                refresh = services.authService::refresh,
+                onError = { result = failure(it) },
+                onSuccess = { result = it },
+            )
         job.join()
         return result
     }

@@ -3,7 +3,6 @@ package pt.isel.pdm.chimp.ui.components.inputs
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -33,12 +32,14 @@ fun NameTextField(
         TextField(
             value = name,
             onValueChange = onNameChange,
+            isError = nameValidation is Failure,
             label = { Text(stringResource(id = R.string.name_label)) },
             singleLine = true,
-            modifier = Modifier.size(280.dp, 56.dp),
+            supportingText = {
+                if (nameValidation is Failure) {
+                    Errors(errors = nameValidation.value.map { it.toErrorMessage() })
+                }
+            },
         )
-        if (nameValidation is Failure) {
-            Errors(errors = nameValidation.value.map { it.toErrorMessage() })
-        }
     }
 }

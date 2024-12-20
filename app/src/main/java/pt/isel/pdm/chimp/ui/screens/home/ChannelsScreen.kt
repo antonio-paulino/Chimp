@@ -47,7 +47,7 @@ import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 fun ChannelsScreen(
     session: Session?,
     scrollState: InfiniteScrollState<Channel>,
-    channelState: ChannelScreenState,
+    channelState: ChannelsScreenState,
     onNotLoggedIn: () -> Unit,
     onLoggedIn: (Session) -> Unit,
     onBottomScroll: () -> Unit,
@@ -99,24 +99,19 @@ fun ChannelsScreen(
                         .fillMaxSize()
                         .padding(innerPadding),
             ) {
-                when (channelState) {
-                    is ChannelScreenState.ChannelsList,
-                    is ChannelScreenState.ChannelsListError,
-                    -> {
-                        ChannelsList(
-                            scrollState = scrollState,
-                            onBottomScroll = onBottomScroll,
-                            onChannelSelected = onChannelSelected,
-                        )
-                    }
-                }
+                ChannelsList(
+                    scrollState = scrollState,
+                    onBottomScroll = onBottomScroll,
+                    onChannelSelected = onChannelSelected,
+                    user = session.user,
+                )
             }
         }
         LaunchedEffect(channelState) {
-            if (channelState is ChannelScreenState.ChannelsListError) {
+            if (channelState is ChannelsScreenState.ChannelsListError) {
                 snackBarHostState.showSnackbar(
                     SnackBarVisuals(
-                        message = channelState.problem.detail
+                        message = channelState.problem.detail,
                     ),
                 )
             }

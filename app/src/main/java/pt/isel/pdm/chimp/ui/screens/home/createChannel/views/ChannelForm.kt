@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material3.Button
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.Success
@@ -30,11 +31,12 @@ import pt.isel.pdm.chimp.ui.components.inputs.RoleInput
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
 @Composable
-fun CreateChannelForm(
+fun ChannelForm(
     initialName: String,
     initialIsPublic: Boolean,
     initialRole: ChannelRole,
-    onCreateChannel: (Name, Boolean, ChannelRole) -> Unit,
+    onSubmit: (Name, Boolean, ChannelRole) -> Unit,
+    submitLabel: String = stringResource(id = R.string.create_channel),
 ) {
     val (name, setName) = remember { mutableStateOf(TextFieldValue(initialName)) }
     val (isPublic, setIsPublic) = remember { mutableStateOf(initialIsPublic) }
@@ -57,15 +59,23 @@ fun CreateChannelForm(
                 },
                 nameValidation = nameValidation,
             )
+            RoleInput(role = role, onRoleChange = setRole)
             ChannelPrivacyInput(isPublic = isPublic, setIsPublic = setIsPublic)
-            RoleInput(role = role, setRole = setRole)
             Button(
-                onClick = { onCreateChannel(Name(name.text), isPublic, role) },
+                onClick = { onSubmit(Name(name.text), isPublic, role) },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled = nameValidation is Success && name.text.isNotBlank(),
             ) {
                 Text(
-                    text = stringResource(id = R.string.create_channel),
+                    color =
+                        if (nameValidation is Success && name.text.isNotBlank()) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground.copy(
+                                alpha = 0.5f,
+                            )
+                        },
+                    text = submitLabel,
                 )
             }
         }
@@ -75,10 +85,10 @@ fun CreateChannelForm(
 @Preview
 @Composable
 fun CreateChannelFormPreview() {
-    CreateChannelForm(
+    ChannelForm(
         initialName = "Channel Name",
         initialIsPublic = true,
         initialRole = ChannelRole.MEMBER,
-        onCreateChannel = { _, _, _ -> },
+        onSubmit = { _, _, _ -> },
     )
 }

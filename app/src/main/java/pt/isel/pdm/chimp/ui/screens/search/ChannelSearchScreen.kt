@@ -18,7 +18,7 @@ import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.ui.components.NavBar
 import pt.isel.pdm.chimp.ui.components.TopBar
-import pt.isel.pdm.chimp.ui.components.channel.ChannelResultsList
+import pt.isel.pdm.chimp.ui.components.channel.searchResults.ChannelResultsList
 import pt.isel.pdm.chimp.ui.components.inputs.ChannelSearchBar
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -26,9 +26,10 @@ import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 
 @Composable
 fun ChannelSearchScreen(
+    onNotLoggedIn: () -> Unit,
     state: ChannelSearchListScreenState,
     scrollState: InfiniteScrollState<Channel>,
-    user: User,
+    user: User?,
     searchField: String,
     onSearchValueChange: (String) -> Unit,
     doSearch: () -> Unit,
@@ -38,9 +39,12 @@ fun ChannelSearchScreen(
     onInvitationsNavigation: () -> Unit,
     onAboutNavigation: () -> Unit,
 ) {
+    if (user == null) {
+        onNotLoggedIn()
+        return
+    }
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }
-
         Scaffold(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             topBar = {
@@ -54,7 +58,7 @@ fun ChannelSearchScreen(
                     onSearchNavigation = {},
                     onInvitationsNavigation = onInvitationsNavigation,
                     onAboutNavigation = onAboutNavigation,
-                    currentScreen = stringResource(R.string.search)
+                    currentScreen = stringResource(R.string.search),
                 )
             },
             containerColor = Color.Transparent,
@@ -62,15 +66,15 @@ fun ChannelSearchScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
             ) {
                 ChannelResultsList(
                     scrollState = scrollState,
                     onBottomScroll = onScrollToBottom,
                     onJoinChannel = onJoinChannel,
-                    user = user
+                    user = user,
                 )
             }
         }

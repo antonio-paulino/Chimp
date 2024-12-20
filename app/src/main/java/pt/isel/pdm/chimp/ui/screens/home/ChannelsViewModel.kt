@@ -16,32 +16,32 @@ import pt.isel.pdm.chimp.infrastructure.storage.Storage
 import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 
-sealed interface ChannelScreenState {
-    data object ChannelsList : ChannelScreenState
+sealed interface ChannelsScreenState {
+    data object ChannelsList : ChannelsScreenState
 
-    data class ChannelsListError(val problem: Problem) : ChannelScreenState
+    data class ChannelsListError(val problem: Problem) : ChannelsScreenState
 }
 
 open class ChannelsViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
     private val storage: Storage,
-    initialScreenState: ChannelScreenState = ChannelScreenState.ChannelsList,
+    initialScreenState: ChannelsScreenState = ChannelsScreenState.ChannelsList,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ChannelScreenState> = MutableStateFlow(initialScreenState)
+    private val _state: MutableStateFlow<ChannelsScreenState> = MutableStateFlow(initialScreenState)
 
-    val state: Flow<ChannelScreenState> = _state
+    val state: Flow<ChannelsScreenState> = _state
 
     fun logout() {
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
-                _state.value = ChannelScreenState.ChannelsListError(Problem.NoConnection)
+                _state.value = ChannelsScreenState.ChannelsListError(Problem.NoConnection)
                 null
             },
             request = services.authService::logout,
             refresh = services.authService::refresh,
-            onError = { _state.emit(ChannelScreenState.ChannelsListError(it)) },
+            onError = { _state.emit(ChannelsScreenState.ChannelsListError(it)) },
             onSuccess = { sessionManager.clear() },
         )
     }

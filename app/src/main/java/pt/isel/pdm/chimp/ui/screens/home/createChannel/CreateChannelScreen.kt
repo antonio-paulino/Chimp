@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -25,7 +21,8 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.TopBar
-import pt.isel.pdm.chimp.ui.screens.home.createChannel.views.CreateChannelForm
+import pt.isel.pdm.chimp.ui.components.buttons.BackButton
+import pt.isel.pdm.chimp.ui.screens.home.createChannel.views.ChannelForm
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 import pt.isel.pdm.chimp.ui.utils.getMessage
 
@@ -44,9 +41,7 @@ fun CreateChannelScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                        }
+                        BackButton(onBack)
                         Text(stringResource(id = R.string.create_channel))
                     }
                 },
@@ -58,13 +53,20 @@ fun CreateChannelScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.Transparent),
         ) {
             when (state) {
-                is CreateChannelScreenState.CreatingChannel, is CreateChannelScreenState.CreatingChannelError -> {
-                    state as CreateChannelScreenState.CreatingChannel
-                    CreateChannelForm(
+                is CreateChannelScreenState.CreatingChannel -> {
+                    ChannelForm(
                         initialName = state.name,
                         initialIsPublic = state.isPublic,
                         initialRole = state.defaultRole,
-                        onCreateChannel = onCreateChannel,
+                        onSubmit = onCreateChannel,
+                    )
+                }
+                is CreateChannelScreenState.CreatingChannelError -> {
+                    ChannelForm(
+                        initialName = state.name,
+                        initialIsPublic = state.isPublic,
+                        initialRole = state.defaultRole,
+                        onSubmit = onCreateChannel,
                     )
                 }
                 is CreateChannelScreenState.Loading -> {

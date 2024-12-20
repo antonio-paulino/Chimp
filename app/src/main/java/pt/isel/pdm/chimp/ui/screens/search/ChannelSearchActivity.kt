@@ -21,7 +21,6 @@ import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
 open class ChannelSearchActivity : ChannelsActivity() {
-
     private val viewModel by initializeViewModel { dependencies ->
         ChannelSearchViewModel(
             dependencies.chimpService,
@@ -46,21 +45,30 @@ open class ChannelSearchActivity : ChannelsActivity() {
         setContent {
             val channelsState = viewModel.state.collectAsState(initial = ChannelSearchListScreenState.ChannelSearchList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Initial())
-            val user = runBlocking { dependencies.sessionManager.session.firstOrNull()!!.user }
+            val session by dependencies.sessionManager.session.collectAsState(
+                initial =
+                    runBlocking {
+                        dependencies.sessionManager.session.firstOrNull()
+                    },
+            )
             val searchField = viewModel.searchQuery.collectAsState(initial = "")
             ChIMPTheme {
                 ChannelSearchScreen(
+                    onNotLoggedIn = { finish() },
                     state = channelsState.value,
                     scrollState = scrollState,
-                    user = user,
+                    user = session?.user,
                     searchField = searchField.value,
                     onSearchValueChange = viewModel::setSearchQuery,
                     doSearch = scrollingViewModel::reset,
                     onScrollToBottom = scrollingViewModel::loadMore,
-                    onJoinChannel =  { channel -> viewModel.joinChannel(channel, onJoin = { scrollingViewModel.handleItemDelete(channel.id) }) },
+                    onJoinChannel = {
+                            channel ->
+                        viewModel.joinChannel(channel, onJoin = { scrollingViewModel.handleItemDelete(channel.id) })
+                    },
                     onHomeNavigation = { navigateToNoAnimation(ChannelsActivity::class.java) },
                     onInvitationsNavigation = { navigateToNoAnimation(InvitationsActivity::class.java) },
-                    onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java)}
+                    onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },
                 )
             }
         }
@@ -84,7 +92,7 @@ open class ChannelSearchActivity : ChannelsActivity() {
     }
 
     private suspend fun handleChannelUpdated(event: Event.ChannelEvent.UpdatedEvent) {
-        scrollingViewModel.handleItemCreate(event.channel)
+        scrollingViewModel.handleItemUpdate(event.channel)
     }
 
     private suspend fun handleChannelCreated(event: Event.ChannelEvent.CreatedEvent) {

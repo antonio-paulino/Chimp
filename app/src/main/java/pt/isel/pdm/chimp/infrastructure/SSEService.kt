@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.R
 
@@ -54,7 +55,7 @@ class SSEService : Service() {
             dependencies.chimpService.eventService.initialize(scope = this, session = dependencies.sessionManager)
             delay(1000)
             dependencies.chimpService.eventService.eventFlow.collect { event ->
-                Log.d("SSEService", "Received event: $event")
+                Log.d(TAG, "Received event: $event")
             }
         }
     }

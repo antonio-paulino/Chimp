@@ -21,8 +21,9 @@ fun ChannelSearchBar(
     val (searchFieldValue, setSearchFieldValue) = remember { mutableStateOf(searchField) }
 
     TextField(
-        modifier = Modifier
-            .fillMaxSize(0.9f),
+        modifier =
+            Modifier
+                .fillMaxSize(0.9f),
         value = searchFieldValue,
         shape = MaterialTheme.shapes.medium,
         textStyle = MaterialTheme.typography.labelLarge,
@@ -32,7 +33,6 @@ fun ChannelSearchBar(
         },
         placeholder = { Text(stringResource(id = R.string.search_channels)) },
     )
-
 
     LaunchedEffect(searchField) {
         doSearch()

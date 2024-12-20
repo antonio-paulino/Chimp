@@ -9,9 +9,7 @@ import androidx.activity.ComponentActivity
  * @param clazz The activity class to navigate
  * @receiver The context to navigate from
  */
-fun <T> ComponentActivity.navigateToNoAnimation(
-    clazz: Class<T>,
-) {
+fun <T> ComponentActivity.navigateToNoAnimation(clazz: Class<T>) {
     val intent = Intent(this, clazz)
     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
     startActivity(intent)
@@ -23,9 +21,7 @@ fun <T> ComponentActivity.navigateToNoAnimation(
  * @param clazz The activity class to navigate
  * @receiver The context to navigate from
  */
-fun <T> ComponentActivity.navigateTo(
-    clazz: Class<T>,
-) {
+fun <T> ComponentActivity.navigateTo(clazz: Class<T>) {
     val intent = Intent(this, clazz)
     startActivity(intent)
 }

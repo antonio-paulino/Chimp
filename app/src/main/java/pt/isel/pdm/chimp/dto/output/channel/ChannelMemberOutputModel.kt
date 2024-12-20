@@ -6,6 +6,14 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.toName
 
+/**
+ * Output model for a channel member, received from the server.
+ *
+ * @property id The identifier of the member.
+ * @property name The name of the member.
+ * @property role The role of the member.
+ *
+ */
 @Serializable
 data class ChannelMemberOutputModel(
     val id: Long,

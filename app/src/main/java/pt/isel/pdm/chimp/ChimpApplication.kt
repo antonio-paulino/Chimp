@@ -65,7 +65,7 @@ class ChimpApplication : Application(), DependenciesContainer {
             return instance!!.applicationContext
         }
 
-        private const val NGROK_TUNNEL = "e965-94-62-132-208.ngrok-free.app"
+        private const val NGROK_TUNNEL = "0152-94-62-132-208.ngrok-free.app"
         private const val API_BASE_URL = "https://$NGROK_TUNNEL/api"
     }
 }

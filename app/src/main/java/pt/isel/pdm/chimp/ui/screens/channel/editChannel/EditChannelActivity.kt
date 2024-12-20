@@ -1,0 +1,41 @@
+package pt.isel.pdm.chimp.ui.screens.channel.editChannel
+
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
+import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
+
+class EditChannelActivity : ChannelsActivity() {
+    private val editChannelViewModel by initializeViewModel { dependencies ->
+        EditChannelViewModel(
+            dependencies.chimpService,
+            dependencies.sessionManager,
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            ChIMPTheme {
+                val state by editChannelViewModel.state.collectAsState(initial = EditChannelScreenState.EditingChannel)
+                val channel by dependencies.entityReferenceManager.channel.collectAsState(
+                    initial =
+                        runBlocking {
+                            dependencies.entityReferenceManager.channel.firstOrNull()
+                        },
+                )
+                EditChannelScreen(
+                    channel = channel,
+                    onChannelNull = { finish() },
+                    state = state,
+                    onEditChannel = editChannelViewModel::updateChannel,
+                    onBack = { finish() },
+                )
+            }
+        }
+    }
+}

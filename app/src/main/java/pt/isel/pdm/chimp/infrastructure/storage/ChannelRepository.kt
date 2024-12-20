@@ -26,12 +26,12 @@ interface ChannelRepository {
     ): Either<Problem, Pagination<Channel>>
 
     /**
-     * Updates or creates channels in the Firestore database.
+     * Updates or creates channels in the database.
      */
     suspend fun updateChannels(channels: List<Channel>): Either<Problem, Unit>
 
     /**
-     * Deletes a channel from the Firestore database.
+     * Deletes a channel from the database.
      */
     suspend fun deleteChannel(channelIdentifier: Identifier): Either<Problem, Unit>
 }

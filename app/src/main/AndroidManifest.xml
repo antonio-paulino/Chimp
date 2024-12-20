@@ -45,6 +45,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.screens.channel.channelMembers.ChannelMembersActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Chimp"
+            tools:ignore="DiscouragedApi">
+        </activity>
+        <activity android:name=".ui.screens.channel.channelInvitations.ChannelInvitationsActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Chimp"
+            tools:ignore="DiscouragedApi">
+        </activity>
+        <activity android:name=".ui.screens.channel.editChannel.EditChannelActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Chimp"
+            tools:ignore="DiscouragedApi">
+        </activity>
         <activity android:name=".ui.screens.search.ChannelSearchActivity"
             android:exported="false"
             android:screenOrientation="fullSensor"

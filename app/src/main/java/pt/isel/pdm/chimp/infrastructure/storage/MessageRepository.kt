@@ -32,12 +32,12 @@ interface MessageRepository {
     ): Either<Problem, Pagination<Message>>
 
     /**
-     * Updates or creates messages in the Firestore database.
+     * Updates or creates messages in the database.
      */
     suspend fun updateMessages(messages: List<Message>): Either<Problem, Unit>
 
     /**
-     * Deletes a message from the Firestore database.
+     * Deletes a message from the database.
      */
     suspend fun deleteMessage(messageIdentifier: Identifier): Either<Problem, Unit>
 }

@@ -3,7 +3,6 @@ package pt.isel.pdm.chimp.ui.components.inputs
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -33,12 +32,14 @@ fun EmailTextField(
         TextField(
             value = email,
             onValueChange = onEmailChange,
+            isError = emailValidation is Failure,
             label = { Text(stringResource(R.string.email_label)) },
             singleLine = true,
-            modifier = Modifier.size(280.dp, 56.dp),
+            supportingText = {
+                if (emailValidation is Failure) {
+                    Errors(errors = emailValidation.value.map { it.toErrorMessage() })
+                }
+            },
         )
-        if (emailValidation is Failure) {
-            Errors(errors = emailValidation.value.map { it.toErrorMessage() })
-        }
     }
 }

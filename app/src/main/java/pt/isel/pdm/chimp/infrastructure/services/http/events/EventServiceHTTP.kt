@@ -59,6 +59,15 @@ class EventServiceHTTP(
         context = ChimpApplication.applicationContext()
     }
 
+    /**
+     * Initializes the event service.
+     *
+     * This method should be called only once in the application's lifecycle,
+     * to start listening to the events from the server.
+     *
+     * @param scope The scope to use for the service.
+     * @param session The session of the user.
+     */
     override fun initialize(
         scope: CoroutineScope,
         session: SessionManager,
@@ -71,6 +80,11 @@ class EventServiceHTTP(
         Log.d(TAG, "Event service initialized")
     }
 
+    /**
+     * Awaits the initialization of the event service.
+     *
+     * @param timeout The maximum time to wait for the initialization.
+     */
     override suspend fun awaitInitialization(timeout: Duration) {
         val startTime = System.currentTimeMillis()
         while (_eventFlow == null) {
@@ -81,12 +95,21 @@ class EventServiceHTTP(
         }
     }
 
+    /**
+     * Destroys the event service.
+     *
+     * This method should be called only once in the application's lifecycle,
+     * to stop listening to the events from the server, when the application is closed.
+     */
     override fun destroy() {
         check(job != null) { "Event service not initialized" }
         job!!.cancel()
         job = null
     }
 
+    /**
+     * The flow of events received from the server.
+     */
     override val eventFlow: Flow<Event> =
         flow {
             checkNotNull(_eventFlow) { "Event service not initialized" }
@@ -95,12 +118,28 @@ class EventServiceHTTP(
             }
         }
 
+    /**
+     * The flow of channel events received from the server.
+     */
     override val channelEventFlow: Flow<Event.ChannelEvent> = eventFlow.filterIsInstance<Event.ChannelEvent>()
 
+    /**
+     * The flow of invitation events received from the server.
+     */
     override val invitationEventFlow: Flow<Event.InvitationEvent> = eventFlow.filterIsInstance<Event.InvitationEvent>()
 
+    /**
+     * The flow of message events received from the server.
+     */
     override val messageEventFlow: Flow<Event.MessageEvent> = eventFlow.filterIsInstance<Event.MessageEvent>()
 
+    /**
+     * Gets the message events by channel.
+     *
+     * @param channel The channel to get the message events from.
+     *
+     * @return The flow of message events from the channel.
+     */
     override fun getMessageEventsByChannel(channel: Channel): Flow<Event.MessageEvent> {
         return flow {
             messageEventFlow.collect { messageEvent ->
@@ -116,8 +155,6 @@ class EventServiceHTTP(
                         }
                     }
                     is Event.MessageEvent.DeletedEvent -> {
-                        // Delete should have no effect on the channel's message flow
-                        // if the message is not from the channel
                         emit(messageEvent)
                     }
                 }
@@ -125,6 +162,16 @@ class EventServiceHTTP(
         }
     }
 
+    /**
+     * Starts listening to the events from the server.
+     *
+     * This function establishes an event source connection with the server and listens to the events.
+     *
+     * Whenever a connection error occurs, this method will attempt to reconnect after a delay.
+     *
+     * @param scope The scope to use for the service.
+     * @param session The session of the user.
+     */
     private fun listenEvents(
         session: SessionManager,
         scope: CoroutineScope,
@@ -172,68 +219,3 @@ class EventServiceHTTP(
         private val reconnectTime = Duration.parse("PT5S")
     }
 }
-
-// fun main() {
-//    runBlocking {
-//        val httpClient = HttpClient(OkHttp) {
-//            install(ContentNegotiation) {
-//                json(
-//                    Json {
-//                        ignoreUnknownKeys = true
-//                        prettyPrint = true
-//                        isLenient = true
-//                    }
-//                )
-//            }
-//        }
-//
-//        val baseUrl = "http://localhost:8080/api"
-//        val eventService = EventServiceHTTP(httpClient, baseUrl)
-//        val authService = AuthServiceHTTP(baseUrl, httpClient)
-//        val scope = CoroutineScope(Job() + Dispatchers.IO)
-//
-//        var session: Session? = null
-//
-//
-//        scope.launch {
-//            session = (authService.login("Instant Messaging", null, "Iseldaw-g07") as Success).value
-//            eventService.startListening(scope, session!!)
-//
-//
-//            launch {
-//                eventService.getMessages().collect { messages ->
-//                    println("messages size = ${messages.size}")
-//                }
-//            }
-//
-//            launch {
-//                eventService.getInvitations().collect { invitations ->
-//                    println("invitations size = ${invitations.size}")
-//                }
-//            }
-//        }
-//
-//        var isActivated = true
-//        while (isActivated) {
-//            val input = readlnOrNull()
-//            if (input == "exit") {
-//                isActivated = false
-//
-//                // Logout and stop listening
-//                session?.let {
-//                    authService.logout(it)
-//                    eventService.stopListening(scope)
-//                }
-//
-//                scope.cancel()
-//
-//                scope.coroutineContext[Job]?.join()
-//
-//                httpClient.close()
-//
-//                println("Application closed.")
-//            }
-//        }
-//    }
-//    println("Main coroutine finished.")
-// }

@@ -5,6 +5,14 @@ import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
 
+/**
+ * Output model for the credentials, received from the server.
+ *
+ * @property sessionID The identifier of the session.
+ * @property user The user.
+ * @property accessToken The access token.
+ * @property refreshToken The refresh token.
+ */
 @Serializable
 data class CredentialsOutputModel(
     val sessionID: Long,

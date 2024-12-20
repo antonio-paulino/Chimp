@@ -36,6 +36,17 @@ import java.time.LocalDateTime
  */
 class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
     BaseHTTPService(httpClient, baseURL), InvitationService {
+    /**
+     * The implementation of the [InvitationService.createChannelInvitation] method.
+     *
+     * @param channel The channel to create the invitation for.
+     * @param invitee The user to invite.
+     * @param expiresAt The expiration date of the invitation.
+     * @param role The role of the invitee.
+     * @param session The session of the user creating the invitation.
+     *
+     * @return An [Either] containing the [ChannelInvitation] if the creation was successful or a [Problem] if it was not.
+     */
     override suspend fun createChannelInvitation(
         channel: Channel,
         invitee: User,
@@ -50,6 +61,15 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
             ChannelInvitationCreationInputModel(invitee.id, expiresAt, role),
         ).handle { it.toDomain(channel, session.user, invitee, role, expiresAt) }
 
+    /**
+     * The implementation of the [InvitationService.getInvitation] method.
+     *
+     * @param channel The channel of the invitation.
+     * @param inviteId The identifier of the invitation.
+     * @param session The session of the user getting the invitation.
+     *
+     * @return An [Either] containing the [ChannelInvitation] if the retrieval was successful or a [Problem] if it was not.
+     */
     override suspend fun getInvitation(
         channel: Channel,
         inviteId: Identifier,
@@ -63,6 +83,17 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
         ).handle { it.toDomain() }
     }
 
+    /**
+     * The implementation of the [InvitationService.getChannelInvitations] method.
+     *
+     * @param channel The channel to get the invitations from.
+     * @param session The session of the user getting the invitations.
+     * @param pagination The pagination request.
+     * @param sort The sort request.
+     * @param after The identifier to get the invitations after.
+     *
+     * @return An [Either] containing the [Pagination] of [ChannelInvitation] if the retrieval was successful or a [Problem] if it was not.
+     */
     override suspend fun getChannelInvitations(
         channel: Channel,
         session: Session,
@@ -77,10 +108,18 @@ class InvitationServiceHTTP(baseURL: String, httpClient: HttpClient) :
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
 
+    /**
+     * The implementation of the [InvitationService.updateInvitation] method.
+     *
+     *  @param invitation The invitation to update.
+     *  @param role The new role of the invitee.
+     *  @param expiresAt The new expiration date of the invitation.
+     *  @param session The session of the user updating the invitation.
+     */
     override suspend fun updateInvitation(
         invitation: ChannelInvitation,
-        role: ChannelRole,
-        expiresAt: LocalDateTime,
+        role: ChannelRole?,
+        expiresAt: LocalDateTime?,
         session: Session,
     ): Either<Problem, Unit> =
         patch<ChannelInvitationUpdateInputModel>(

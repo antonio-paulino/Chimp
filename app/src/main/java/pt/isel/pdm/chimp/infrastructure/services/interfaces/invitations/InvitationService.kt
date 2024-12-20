@@ -90,8 +90,8 @@ interface InvitationService {
      */
     suspend fun updateInvitation(
         invitation: ChannelInvitation,
-        role: ChannelRole,
-        expiresAt: LocalDateTime,
+        role: ChannelRole?,
+        expiresAt: LocalDateTime?,
         session: Session,
     ): Either<Problem, Unit>
 

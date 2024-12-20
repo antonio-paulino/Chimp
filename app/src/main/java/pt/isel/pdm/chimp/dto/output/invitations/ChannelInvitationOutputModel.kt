@@ -9,6 +9,17 @@ import pt.isel.pdm.chimp.dto.output.channel.ChannelOutputModel
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
 import java.time.LocalDateTime
 
+/**
+ * Output model for a channel invitation, received from the server.
+ *
+ * @property id The identifier of the invitation.
+ * @property channel The channel.
+ * @property inviter The inviter.
+ * @property invitee The invitee.
+ * @property status The status of the invitation.
+ * @property role The role of the invitee.
+ * @property expiresAt The expiration date of the invitation.
+ */
 @Serializable
 data class ChannelInvitationOutputModel(
     val id: Long,

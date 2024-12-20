@@ -33,6 +33,11 @@ typealias EventId = String
 
 private const val READ_DELAY = 100L
 
+/**
+ * Reads the events from the server and emits them as a flow.
+ *
+ * @param scope The scope to use for the flow.
+ */
 internal fun ByteReadChannel.readEvents(scope: CoroutineScope): Flow<Event> {
     return flow {
         while (!isClosedForRead && scope.isActive) {
@@ -80,6 +85,11 @@ sealed class Event(val id: EventId) {
     }
 }
 
+/**
+ * Converts a [RawEvent] to a strongly typed [Event].
+ *
+ * @return The strongly typed event.
+ */
 internal fun RawEvent.toEvent(): Event {
     return when (type) {
         MESSAGE_CREATED_EVENT -> Event.MessageEvent.CreatedEvent(id, data.toMessage())

@@ -3,8 +3,10 @@ package pt.isel.pdm.chimp.ui.components.scroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
@@ -33,6 +35,7 @@ fun <T : Identifiable> InfiniteScroll(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    itemSpacing: PaddingValues = PaddingValues(0.dp),
     filterCondition: (T) -> Boolean = { true },
     renderItem: @Composable (T) -> Unit,
 ) {
@@ -45,7 +48,8 @@ fun <T : Identifiable> InfiniteScroll(
             snackbarHost = { SnackbarHost(snackBarHost) },
             containerColor = Color.Transparent,
         ) { innerPadding ->
-            if (scrollState is InfiniteScrollState.Loading && scrollState.pagination.items.isEmpty()) {
+            val filteredItems = scrollState.pagination.items.filter(filterCondition)
+            if (scrollState is InfiniteScrollState.Loading && filteredItems.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
@@ -61,13 +65,12 @@ fun <T : Identifiable> InfiniteScroll(
                 horizontalAlignment = horizontalAlignment,
             ) {
                 items(
-                    count = scrollState.pagination.items.size,
-                    key = { index -> scrollState.pagination.items[index].id.value },
+                    count = filteredItems.size,
+                    key = { index -> filteredItems[index].id.value },
                 ) { itemIndex ->
-                    if (filterCondition(scrollState.pagination.items[itemIndex])) {
-                        renderItem(scrollState.pagination.items[itemIndex])
-                    }
-                    if (itemIndex == scrollState.pagination.items.size - 1) {
+                    renderItem(filteredItems[itemIndex])
+                    Spacer(modifier = Modifier.padding(itemSpacing))
+                    if (itemIndex == filteredItems.size - 1) {
                         if (scrollState is InfiniteScrollState.Loading) {
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
@@ -85,7 +88,7 @@ fun <T : Identifiable> InfiniteScroll(
     val isAtBottom =
         remember {
             derivedStateOf {
-                listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size >= listState.layoutInfo.totalItemsCount
+                listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size + 10 >= listState.layoutInfo.totalItemsCount
             }
         }
     val itemCount = scrollState.pagination.items.size
@@ -107,7 +110,7 @@ fun <T : Identifiable> InfiniteScroll(
             snackBarHost.showSnackbar(
                 SnackBarVisuals(
                     scrollState.problem.detail,
-                )
+                ),
             )
         }
     }

@@ -32,6 +32,17 @@ typealias MessageEditedTime = LocalDateTime
  */
 class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
     BaseHTTPService(httpClient, baseURL), MessageService {
+    /**
+     * The implementation of the [MessageService.getChannelMessages] method.
+     *
+     * @param channel The channel to get the messages from.
+     * @param session The session of the user getting the messages.
+     * @param pagination The pagination information.
+     * @param sort The sorting information.
+     * @param before The date to get the messages before.
+     *
+     * @return An [Either] containing the [Pagination] of [Message] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun getChannelMessages(
         channel: Channel,
         session: Session,
@@ -48,6 +59,15 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
             it.toDomain()
         }
 
+    /**
+     * The implementation of the [MessageService.getMessage] method.
+     *
+     * @param channel The channel to get the message from.
+     * @param messageId The identifier of the message.
+     * @param session The session of the user getting the message.
+     *
+     * @return An [Either] containing the [Message] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun getMessage(
         channel: Channel,
         messageId: Identifier,
@@ -63,6 +83,15 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
         }
     }
 
+    /**
+     * The implementation of the [MessageService.createMessage] method.
+     *
+     * @param channel The channel to create the message in.
+     * @param content The content of the message.
+     * @param session The session of the user creating the message.
+     *
+     * @return An [Either] containing the [Message] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun createMessage(
         channel: Channel,
         content: String,
@@ -75,6 +104,15 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
         ).handle { it.toDomain(channel, session.user, content) }
     }
 
+    /**
+     * The implementation of the [MessageService.updateMessage] method.
+     *
+     * @param message The message to update.
+     * @param content The new content of the message.
+     * @param session The session of the user updating the message.
+     *
+     * @return An [Either] containing the [MessageEditedTime] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun updateMessage(
         message: Message,
         content: String,
@@ -89,6 +127,14 @@ class MessageServiceHTTP(baseURL: String, httpClient: HttpClient) :
         ).handle { LocalDateTime.parse(it.editedAt) }
     }
 
+    /**
+     * The implementation of the [MessageService.deleteMessage] method.
+     *
+     * @param message The message to delete.
+     * @param session The session of the user deleting the message.
+     *
+     * @return An [Either] containing [Unit] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun deleteMessage(
         message: Message,
         session: Session,

@@ -5,6 +5,12 @@ import pt.isel.pdm.chimp.domain.tokens.AccessToken
 import java.time.LocalDateTime
 import java.util.UUID
 
+/**
+ * Output model for an access token, received from the server.
+ *
+ * @property token The token.
+ * @property expiresAt The expiration date of the token.
+ */
 @Serializable
 data class AccessTokenOutputModel(
     val token: String,

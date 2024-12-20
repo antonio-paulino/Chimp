@@ -72,8 +72,8 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.androidx.datastore)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.androidx.compose.material3)
 
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.firestore)

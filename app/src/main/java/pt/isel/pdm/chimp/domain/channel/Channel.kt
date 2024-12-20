@@ -23,4 +23,20 @@ data class Channel(
     val isPublic: Boolean,
     val members: List<ChannelMember>,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-) : Identifiable
+) : Identifiable {
+    fun getMemberRole(user: User): ChannelRole? {
+        return members.find { it.id == user.id }?.role
+    }
+
+    fun isMember(user: User): Boolean {
+        return members.any { it.id == user.id }
+    }
+
+    fun isOwner(user: User): Boolean {
+        return owner.id == user.id
+    }
+
+    fun isGuest(user: User): Boolean {
+        return getMemberRole(user) == ChannelRole.GUEST
+    }
+}

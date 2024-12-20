@@ -8,6 +8,13 @@ import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 
+/**
+ * Output model for creating a channel, received from the server.
+ *
+ * @property id The identifier of the channel.
+ * @property createdAt The creation date of the channel.
+ *
+ */
 @Serializable
 data class ChannelCreationOutputModel(
     val id: Long,

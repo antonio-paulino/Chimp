@@ -16,6 +16,8 @@ import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 sealed interface InvitationsScreenState {
     data object InvitationsList : InvitationsScreenState
 
+    data object Loading : InvitationsScreenState
+
     data object AcceptedInvitation : InvitationsScreenState
 
     data object RejectedInvitation : InvitationsScreenState
@@ -33,7 +35,7 @@ open class InvitationsViewModel(
     val state: Flow<InvitationsScreenState> = _state
 
     fun acceptInvitation(invitation: ChannelInvitation) {
-        _state.value = InvitationsScreenState.InvitationsList
+        _state.value = InvitationsScreenState.Loading
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -55,7 +57,7 @@ open class InvitationsViewModel(
     }
 
     fun rejectInvitation(invitation: ChannelInvitation) {
-        _state.value = InvitationsScreenState.InvitationsList
+        _state.value = InvitationsScreenState.Loading
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -81,7 +83,8 @@ open class InvitationsViewModel(
         currentItems: List<ChannelInvitation>,
     ): Either<Problem, Pagination<ChannelInvitation>> {
         var result: Either<Problem, Pagination<ChannelInvitation>> = failure(Problem.UnexpectedProblem)
-        val job = launchRequestRefreshing(
+        val job =
+            launchRequestRefreshing(
                 sessionManager = sessionManager,
                 noConnectionRequest = {
                     _state.emit(InvitationsScreenState.InvitationsListError(Problem.NoConnection))

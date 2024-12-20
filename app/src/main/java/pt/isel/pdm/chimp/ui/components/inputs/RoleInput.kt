@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.ui.components.inputs
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +22,9 @@ import pt.isel.pdm.chimp.domain.channel.ChannelRole
 @Composable
 fun RoleInput(
     role: ChannelRole,
-    setRole: (ChannelRole) -> Unit,
+    onRoleChange: (ChannelRole) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val expanded = remember { mutableStateOf(false) }
     val roles = ChannelRole.entries.filter { it != ChannelRole.OWNER }
@@ -30,12 +33,14 @@ fun RoleInput(
         onExpandedChange = {
             expanded.value = !expanded.value
         },
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = role.toStringResourceRepresentation(),
             onValueChange = { },
             readOnly = true,
             label = { Text(stringResource(R.string.role_label)) },
+            enabled = enabled,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             },
@@ -44,7 +49,8 @@ fun RoleInput(
                     .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
                     .clickable {
                         expanded.value = !expanded.value
-                    },
+                    }
+                    .fillMaxWidth(0.8f),
         )
         DropdownMenu(
             expanded = expanded.value,
@@ -56,7 +62,7 @@ fun RoleInput(
                         Text(channelRole.toStringResourceRepresentation())
                     },
                     onClick = {
-                        setRole(channelRole)
+                        onRoleChange(channelRole)
                         expanded.value = false
                     },
                 )

@@ -27,6 +27,14 @@ import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
  */
 class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
     BaseHTTPService(httpClient, baseURL), UserService {
+    /**
+     * The implementation of the [UserService.getUserById] method.
+     *
+     * @param userId The id of the user to get.
+     * @param session The session of the user getting the user.
+     *
+     * @return An [Either] containing the [User] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun getUserById(
         userId: Long,
         session: Session,
@@ -36,6 +44,16 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
 
+    /**
+     * The implementation of the [UserService.getUsers] method.
+     *
+     * @param name The name of the users to get.
+     * @param session The session of the user getting the users.
+     * @param pagination The pagination information.
+     * @param sort The sorting information.
+     *
+     * @return An [Either] containing the [Pagination] of [User] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun getUsers(
         name: String?,
         session: Session,
@@ -47,6 +65,17 @@ class UserServiceHTTP(baseURL: String, httpClient: HttpClient) :
             session.accessToken.token.toString(),
         ).handle { it.toDomain() }
 
+    /**
+     * The implementation of the [UserService.getUserChannels] method.
+     *
+     * @param session The session of the user getting the channels.
+     * @param pagination The pagination information.
+     * @param sort The sorting information.
+     * @param filterOwned Whether to filter the channels owned by the user.
+     * @param after The identifier to get the channels after.
+     *
+     * @return An [Either] containing the [Pagination] of [Channel] if the operation was successful or a [Problem] if it was not.
+     */
     override suspend fun getUserChannels(
         session: Session,
         pagination: PaginationRequest?,

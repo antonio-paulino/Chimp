@@ -2,12 +2,12 @@ package pt.isel.pdm.chimp.infrastructure.services.interfaces.channels
 
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
+import pt.isel.pdm.chimp.domain.channel.ChannelMember
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
 import pt.isel.pdm.chimp.domain.sessions.Session
-import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
@@ -123,21 +123,21 @@ interface ChannelService {
     ): Either<Problem, Unit>
 
     /**
-     * Leaves the channel with the given identifier
+     * Removes a user from a channel
      *
      * - The user must be in the channel to leave it.
      * - The user must not be the owner of the channel to leave it.
      * - The user must the owner of the channel or be removing themselves to remove another user.
      *
      * @param channel The channel to leave
-     * @param user The user to remove
+     * @param member The member to remove
      * @param session The session of the user
      *
      * @return Either a [Problem] or success
      */
-    suspend fun removeUserFromChannel(
+    suspend fun removeMemberFromChannel(
         channel: Channel,
-        user: User,
+        member: ChannelMember,
         session: Session,
     ): Either<Problem, Unit>
 
@@ -149,7 +149,7 @@ interface ChannelService {
      * - The role must be one of the following: [ChannelRole.MEMBER] or [ChannelRole.GUEST]
      *
      * @param channel The channel to update the role
-     * @param user The user to update the role of
+     * @param member The member to update the role
      * @param role The new role of the user
      * @param session The session of the user
      *
@@ -157,7 +157,7 @@ interface ChannelService {
      */
     suspend fun updateMemberRole(
         channel: Channel,
-        user: User,
+        member: ChannelMember,
         role: ChannelRole,
         session: Session,
     ): Either<Problem, Unit>

@@ -3,6 +3,7 @@ package pt.isel.pdm.chimp.ui.screens.home.inviteUser.views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material3.Button
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.invitations.ImInvitation
+import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationInput
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -25,6 +26,7 @@ fun InviteUserForm(
     expirationOption: ExpirationOptions,
     onCreateInvite: (ExpirationOptions) -> Unit,
     createdInvite: ImInvitation? = null,
+    loading: Boolean = false,
 ) {
     val (expiration, setExpiration) = remember { mutableStateOf(expirationOption) }
     ChIMPTheme {
@@ -37,14 +39,18 @@ fun InviteUserForm(
                 expiration = expiration,
                 setExpiration = setExpiration,
             )
-            Button(
-                onClick = { onCreateInvite(expiration) },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.create_channel),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
+            if (!loading) {
+                Button(
+                    onClick = { onCreateInvite(expiration) },
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.create_user_invite),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
+            } else {
+                LoadingSpinner()
             }
             createdInvite?.let {
                 ImInvitationView(invite = it)

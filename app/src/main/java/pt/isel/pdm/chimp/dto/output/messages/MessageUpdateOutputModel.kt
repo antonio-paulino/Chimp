@@ -7,6 +7,11 @@ import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.Identifier
 import java.time.LocalDateTime
 
+/**
+ * Output model for an updated message, received from the server.
+ *
+ * @property editedAt The edition date of the message.
+ */
 @Serializable
 data class MessageUpdateOutputModel(
     val editedAt: String,

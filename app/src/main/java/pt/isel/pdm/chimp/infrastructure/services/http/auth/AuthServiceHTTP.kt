@@ -36,6 +36,15 @@ class AuthServiceHTTP(
     baseUrl: String,
     httpClient: HttpClient,
 ) : BaseHTTPService(httpClient, baseUrl), AuthService {
+    /**
+     * The implementation of the [AuthService.login] method.
+     *
+     * @param username The username of the user.
+     * @param email The email of the user.
+     * @param password The password of the user.
+     *
+     * @return An [Either] containing the [Session] if the login was successful or a [Problem] if it was not.
+     */
     override suspend fun login(
         username: String?,
         email: String?,
@@ -47,6 +56,16 @@ class AuthServiceHTTP(
             AuthenticationInputModel(username, password, email),
         ).handle { it.toDomain() }
 
+    /**
+     * The implementation of the [AuthService.register] method.
+     *
+     * @param username The username of the user.
+     * @param email The email of the user.
+     * @param password The password of the user.
+     * @param token The invitation token.
+     *
+     * @return An [Either] containing the [Identifier] of the user if the registration was successful or a [Problem] if it was not.
+     */
     override suspend fun register(
         username: Name,
         email: Email,
@@ -59,9 +78,19 @@ class AuthServiceHTTP(
             UserCreationInputModel(username, password, email, token),
         ).handle { it.id.toIdentifier() }
 
+    /**
+     * The implementation of the [AuthService.logout] method.
+     *
+     * @param session The session to be logged out.
+     *
+     * @return An [Either] containing [Unit] if the logout was successful or a [Problem] if it was not.
+     */
     override suspend fun logout(session: Session): Either<Problem, Unit> =
         post<Unit, Unit>(LOGOUT_ROUTE, session.accessToken.token.toString(), null).handle { }
 
+    /**
+     * The implementation of the [AuthService.refresh] method.
+     */
     override suspend fun refresh(session: Session): Either<Problem, Session> =
         post<Unit, CredentialsOutputModel>(
             REFRESH_ROUTE,
@@ -69,6 +98,14 @@ class AuthServiceHTTP(
             null,
         ).handle { it.toDomain() }
 
+    /**
+     * The implementation of the [AuthService.createInvitation] method.
+     *
+     * @param session The session of the user creating the invitation.
+     * @param expirationDate The expiration date of the invitation.
+     *
+     * @return An [Either] containing the [ImInvitation] if the creation was successful or a [Problem] if it was not.
+     */
     override suspend fun createInvitation(
         session: Session,
         expirationDate: LocalDateTime,

@@ -46,8 +46,7 @@ fun CredentialsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 when (state) {
-                    is CredentialsScreenState.Login, is CredentialsScreenState.LoginError -> {
-                        state as CredentialsScreenState.Login
+                    is CredentialsScreenState.Login -> {
                         LoginView(
                             emailOrUsernameInitialValue = state.emailOrUsername,
                             passwordInitialValue = state.password,
@@ -55,8 +54,24 @@ fun CredentialsScreen(
                             onLogin = doLogin,
                         )
                     }
-                    is CredentialsScreenState.Register, is CredentialsScreenState.RegisterError -> {
-                        state as CredentialsScreenState.Register
+                    is CredentialsScreenState.LoginError -> {
+                        LoginView(
+                            emailOrUsernameInitialValue = state.emailOrUsername,
+                            passwordInitialValue = state.password,
+                            onRegisterClick = onRegisterClick,
+                            onLogin = doLogin,
+                        )
+                    }
+                    is CredentialsScreenState.Register -> {
+                        RegisterView(
+                            emailInitialValue = state.email,
+                            usernameInitialValue = state.username,
+                            passwordInitialValue = state.password,
+                            onLoginClick = onLoginClick,
+                            onRegister = doRegister,
+                        )
+                    }
+                    is CredentialsScreenState.RegisterError -> {
                         RegisterView(
                             emailInitialValue = state.email,
                             usernameInitialValue = state.username,
@@ -83,7 +98,8 @@ fun CredentialsScreen(
                         state.problem.getMessage()
                     }
                 snackBarHostState.showSnackbar(
-                    SnackBarVisuals(message))
+                    SnackBarVisuals(message),
+                )
             }
             is CredentialsScreenState.RegisterError -> {
                 snackBarHostState.showSnackbar(SnackBarVisuals(state.problem.getMessage()))

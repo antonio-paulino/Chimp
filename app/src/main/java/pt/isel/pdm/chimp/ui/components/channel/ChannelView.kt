@@ -6,10 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,18 +24,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
+import pt.isel.pdm.chimp.domain.channel.ChannelRole
+import pt.isel.pdm.chimp.domain.user.User
 
 @Composable
 fun ChannelView(
     channel: Channel,
     onChannelSelected: (Channel) -> Unit,
+    user: User,
 ) {
     ChannelContainer(
-        modifier = Modifier.clickable { onChannelSelected(channel) }
+        modifier = Modifier.clickable { onChannelSelected(channel) },
     ) {
+        ChannelMemberRoleIcon(channel = channel, user = user)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             ChannelNameView(channel = channel)
             ChannelPrivacyIcon(channel = channel)
@@ -39,24 +47,49 @@ fun ChannelView(
         ChannelMembersView(channel = channel)
         ChannelRoleIcon(channel = channel)
     }
-    Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable
-fun ChannelNameView(
+fun ChannelMemberRoleIcon(
     channel: Channel,
+    user: User,
 ) {
+    when (channel.getMemberRole(user)!!) {
+        ChannelRole.OWNER -> {
+            Icon(
+                tint = MaterialTheme.colorScheme.onBackground,
+                imageVector = Icons.Default.Build,
+                contentDescription = stringResource(R.string.guest_role),
+            )
+        }
+        ChannelRole.MEMBER -> {
+            Icon(
+                tint = MaterialTheme.colorScheme.onBackground,
+                imageVector = Icons.Default.Edit,
+                contentDescription = stringResource(R.string.member_role),
+            )
+        }
+        ChannelRole.GUEST -> {
+            Icon(
+                tint = MaterialTheme.colorScheme.onBackground,
+                imageVector = Icons.Default.Email,
+                contentDescription = stringResource(R.string.guest_role),
+            )
+        }
+    }
+}
+
+@Composable
+fun ChannelNameView(channel: Channel) {
     Text(
         text = channel.name.value,
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.onBackground,
     )
 }
 
 @Composable
-fun ChannelMembersView(
-    channel: Channel,
-) {
+fun ChannelMembersView(channel: Channel) {
     Text(
         text = "  ${channel.members.size} ${stringResource(id = R.string.members)}",
         style = MaterialTheme.typography.labelLarge,
@@ -67,18 +100,19 @@ fun ChannelMembersView(
 @Composable
 fun ChannelContainer(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.20f), MaterialTheme.shapes.medium)
-            .padding(16.dp)
-            .height(IntrinsicSize.Min),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.background)
+                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.20f), MaterialTheme.shapes.medium)
+                .padding(16.dp)
+                .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         content()
     }

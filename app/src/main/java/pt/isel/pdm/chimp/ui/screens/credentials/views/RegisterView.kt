@@ -109,7 +109,7 @@ fun RegisterView(
             )
             Button(
                 onClick = {
-                    onRegister(email.text, username.text, password.text, token.text)
+                    onRegister(email.text.trim(), username.text.trim(), password.text.trim(), token.text.trim())
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled =

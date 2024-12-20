@@ -81,11 +81,11 @@ class AboutActivity : ComponentActivity() {
                     name = "Bernardo Pereira",
                     image = R.drawable.bernardo_pereira,
                     socials =
-                    Socials(
-                        linkedInUrl = R.string.linkedin_link_bernardo_pereira,
-                        githubUrl = R.string.github_link_bernardo_pereira,
-                        mailUrl = R.string.mail_link_bernardo_pereira,
-                    ),
+                        Socials(
+                            linkedInUrl = R.string.linkedin_link_bernardo_pereira,
+                            githubUrl = R.string.github_link_bernardo_pereira,
+                            mailUrl = R.string.mail_link_bernardo_pereira,
+                        ),
                 ),
             )
     }

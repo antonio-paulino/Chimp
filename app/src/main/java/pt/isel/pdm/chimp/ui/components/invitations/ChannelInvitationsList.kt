@@ -18,6 +18,7 @@ fun ChannelInvitationsList(
         scrollState = scrollState,
         onBottomScroll = onBottomScroll,
         contentPadding = PaddingValues(16.dp),
+        itemSpacing = PaddingValues(top = 16.dp),
         reverse = false,
     ) { invitation ->
         ChannelInvitationView(

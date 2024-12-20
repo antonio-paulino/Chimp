@@ -33,11 +33,12 @@ sealed interface CreateChannelScreenState {
 class CreateChannelViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
-    initialScreenState: CreateChannelScreenState = CreateChannelScreenState.CreatingChannel(
-        "",
-        false,
-        ChannelRole.MEMBER
-    ),
+    initialScreenState: CreateChannelScreenState =
+        CreateChannelScreenState.CreatingChannel(
+            "",
+            false,
+            ChannelRole.MEMBER,
+        ),
 ) : ViewModel() {
     private val _state: MutableStateFlow<CreateChannelScreenState> = MutableStateFlow(initialScreenState)
 

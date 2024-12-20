@@ -8,6 +8,14 @@ import pt.isel.pdm.chimp.domain.wrappers.name.toName
 import pt.isel.pdm.chimp.dto.output.users.UserOutputModel
 import java.time.LocalDateTime
 
+/**
+ * Output model for a channel, received from the server.
+ *
+ * @property id The identifier of the channel.
+ * @property name The name of the channel.
+ * @property defaultRole The default role of the channel.
+ * @property owner The owner of the channel.
+ */
 @Serializable
 data class ChannelOutputModel(
     val id: Long,

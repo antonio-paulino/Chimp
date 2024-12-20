@@ -6,14 +6,14 @@ import java.time.LocalDateTime
 
 @Serializable
 data class ChannelInvitationUpdateInputModel(
-    val role: String,
-    val expiresAt: String,
+    val role: String?,
+    val expiresAt: String?,
 ) {
     constructor(
-        role: ChannelRole,
-        expiresAt: LocalDateTime,
+        role: ChannelRole?,
+        expiresAt: LocalDateTime?,
     ) : this(
-        role.name,
-        expiresAt.toString(),
+        role = role?.name,
+        expiresAt = expiresAt?.toString(),
     )
 }

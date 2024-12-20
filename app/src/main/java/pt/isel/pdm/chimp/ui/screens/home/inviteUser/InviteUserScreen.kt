@@ -58,12 +58,23 @@ fun CreateUserInviteScreen(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
                 when (state) {
-                    is InviteUserScreenState.CreatingInvite, is InviteUserScreenState.InviteCreationError -> {
-                        state as InviteUserScreenState.CreatingInvite
+                    is InviteUserScreenState.CreatingInvite -> {
                         InviteUserForm(
                             expirationOption = state.expirationDate,
                             onCreateInvite = onCreateInvite,
-                            createdInvite = null,
+                        )
+                    }
+                    is InviteUserScreenState.InviteCreationError -> {
+                        InviteUserForm(
+                            expirationOption = state.expirationDate,
+                            onCreateInvite = onCreateInvite,
+                        )
+                    }
+                    is InviteUserScreenState.Loading -> {
+                        InviteUserForm(
+                            expirationOption = state.expirationDate,
+                            onCreateInvite = onCreateInvite,
+                            loading = true,
                         )
                     }
                     is InviteUserScreenState.InviteCreated -> {

@@ -13,6 +13,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 
@@ -213,8 +214,9 @@ open class BaseHTTPService(
             }.parseResponse()
         }
 
-    protected inline fun <T> tryRequest(request: () -> ApiResult<T, Problem>): ApiResult<T, Problem> {
+    protected suspend inline fun <T> tryRequest(request: () -> ApiResult<T, Problem>): ApiResult<T, Problem> {
         return try {
+            delay(1000)
             request()
         } catch (e: Exception) {
             Log.e(TAG, "Error executing request", e)

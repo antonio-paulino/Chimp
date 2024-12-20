@@ -8,6 +8,11 @@ import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import java.time.LocalDateTime
 
+/**
+ * Output model for a created channel invitation, received from the server.
+ *
+ * @property id The identifier of the invitation.
+ */
 @Serializable
 data class ChannelInvitationCreationOutputModel(
     val id: Long,

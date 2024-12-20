@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.failure
@@ -39,7 +40,7 @@ class FireStoreMessageRepository : MessageRepository {
                     .get().await()
             return success(querySnapshot.getPagination(MessagePOJO::class.java, MessagePOJO::toDomain, limit, getCount))
         } catch (e: Exception) {
-            Log.d("FirestoreMessageRepository", "Failed to get channel messages", e)
+            Log.d(TAG, "Failed to get channel messages", e)
             failure(Problem.UnexpectedProblem)
         }
     }
@@ -54,7 +55,7 @@ class FireStoreMessageRepository : MessageRepository {
             pendingSets.forEach { it.await() }
             success(Unit)
         } catch (e: Exception) {
-            Log.d("FirestoreMessageRepository", "Failed to update messages", e)
+            Log.d(TAG, "Failed to update messages", e)
             failure(Problem.UnexpectedProblem)
         }
     }
@@ -66,7 +67,7 @@ class FireStoreMessageRepository : MessageRepository {
                 .await()
             success(Unit)
         } catch (e: Exception) {
-            Log.d("FirestoreMessageRepository", "Failed to delete message", e)
+            Log.d(TAG, "Failed to delete message", e)
             failure(Problem.UnexpectedProblem)
         }
     }

@@ -7,6 +7,13 @@ import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.domain.wrappers.identifier.toIdentifier
 import java.time.LocalDateTime
 
+/**
+ * Output model for a created message, received from the server.
+ *
+ * @property id The identifier of the message.
+ * @property createdAt The creation date of the message.
+ * @property editedAt The edition date of the message.
+ */
 @Serializable
 data class MessageCreationOutputModel(
     val id: Long,

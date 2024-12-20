@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,7 +45,6 @@ fun LoginView(
                 value = emailOrUsername,
                 onValueChange = onEmailOrUsernameChange,
                 label = { Text(stringResource(id = R.string.email_or_username)) },
-                modifier = Modifier.size(280.dp, 56.dp),
                 singleLine = true,
             )
             PasswordTextField(
@@ -59,7 +57,7 @@ fun LoginView(
                 style = MaterialTheme.typography.titleSmall.copy(color = MaterialTheme.colorScheme.onBackground),
             )
             Button(
-                onClick = { onLogin(emailOrUsername.text, password.text) },
+                onClick = { onLogin(emailOrUsername.text.trim(), password.text.trim()) },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 enabled = listOf(emailOrUsername, password).allValid(),
             ) {
