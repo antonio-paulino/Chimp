@@ -243,9 +243,9 @@ fun BottomBar(
                             Text(
                                 text = "Type a message",
                                 style =
-                                MaterialTheme.typography.bodyLarge.copy(
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                ),
+                                    MaterialTheme.typography.bodyLarge.copy(
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    ),
                             )
                         }
                     },

@@ -77,18 +77,18 @@
     <string name="new_message_notification_title">
         New message in %s
     </string>
-    <string name="new_message_notification_content">
+    <string name="new_message_notification_content" formatted="false">
         %s: %s
     </string>
     <string name="notification_channel_name">Chimp</string>
-    <string name="new_invitation_notification_title">
+    <string name="new_invitation_notification_title" formatted="false">
         New invitation to %s
     </string>
-    <string name="new_invitation_notification_content">
+    <string name="new_invitation_notification_content" formatted="false">
         %s invited you to join as %s
     </string>
     <string name="message_content_blank">Message must not be blank</string>
-    <string name="message_content_length">Message content must be between %d and %d characters</string>
+    <string name="message_content_length" formatted="false">Message content must be between %d and %d characters</string>
     <string name="invitation_sent">Invitation sent to</string>
     <string name="search_users">Search users…</string>
     <string name="leave_channel">Leave Channel</string>
