@@ -18,6 +18,7 @@ private val DarkColorScheme =
         onError = Red50,
         onErrorContainer = Red900,
         surface = Gray800,
+        onSurface = Gray800,
         outline = Gray700,
         onBackground = Gray50,
     )
@@ -30,6 +31,7 @@ private val LightColorScheme =
         onError = Red900,
         onErrorContainer = Red50,
         surface = Gray50,
+        onSurface = Gray300,
         outline = Gray300,
         onBackground = Gray900,
     )

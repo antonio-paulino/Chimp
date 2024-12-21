@@ -62,6 +62,7 @@ open class ChannelActivity : ChannelsActivity() {
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Initial())
             ChIMPTheme {
                 ChannelScreen(
+                    session = session,
                     state = state,
                     channel = channel,
                     scrollState = scrollState,
@@ -71,7 +72,6 @@ open class ChannelActivity : ChannelsActivity() {
                         viewModel.createMessage(
                             channel!!,
                             message,
-                            session!!,
                         )
                     },
                     onEditChannel = {
@@ -82,10 +82,22 @@ open class ChannelActivity : ChannelsActivity() {
                             // navigateTo(::class.java)
                         },
                     onChannelDelete = {
-                        viewModel.deleteChannel(channel!!, session!!)
+                        viewModel.deleteChannel(channel!!)
                     },
                     onChannelMembers = { navigateTo(ChannelMembersActivity::class.java) },
                     onManageInvitations = { navigateTo(ChannelInvitationsActivity::class.java) },
+                    onLeaveChannel = {
+                        viewModel.leaveChannel(channel!!)
+                    },
+                    onEditMessage = { message, content ->
+                        viewModel.updateMessage(message, content)
+                    },
+                    onDeleteMessage = { message ->
+                        viewModel.deleteMessage(message)
+                    },
+                    onToggleEdit = { message ->
+                        viewModel.onToggleEdit(message)
+                    },
                 )
             }
         }

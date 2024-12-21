@@ -34,13 +34,14 @@ fun <T : Identifiable> InfiniteScroll(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     itemSpacing: PaddingValues = PaddingValues(0.dp),
     filterCondition: (T) -> Boolean = { true },
+    modifier: Modifier = Modifier,
     renderItem: @Composable (T) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
     ChIMPTheme {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             containerColor = Color.Transparent,
         ) { innerPadding ->
             val filteredItems = scrollState.pagination.items.filter(filterCondition)
@@ -90,8 +91,11 @@ fun <T : Identifiable> InfiniteScroll(
     val previousItemCount = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(itemCount) {
-        if (itemCount == previousItemCount.intValue + 1 && isAtBottom.value) {
-            listState.animateScrollToItem(itemCount - 1)
+        if (
+            itemCount == previousItemCount.intValue + 1 &&
+            (reverse && listState.firstVisibleItemIndex < listState.layoutInfo.visibleItemsInfo.size || !reverse && isAtBottom.value)
+        ) {
+            listState.animateScrollToItem(if (reverse) 0 else itemCount - 1)
         }
         previousItemCount.intValue = itemCount
     }

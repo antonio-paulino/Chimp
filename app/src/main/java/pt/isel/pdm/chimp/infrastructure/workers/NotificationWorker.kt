@@ -34,8 +34,10 @@ class NotificationWorker(
     context: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
-    private val dependencies: DependenciesContainer = context.applicationContext as DependenciesContainer
-    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val dependencies: DependenciesContainer =
+        context.applicationContext as DependenciesContainer
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val notificationChannel =
         NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
@@ -83,26 +85,38 @@ class NotificationWorker(
             Intent(applicationContext, ChannelsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val notificationId = event.message.channelId.value.hashCode()
         val notificationManager = NotificationManagerCompat.from(applicationContext)
-        val existingNotification = notificationManager.activeNotifications.find { it.id == notificationId }
+        val existingNotification =
+            notificationManager.activeNotifications.find { it.id == notificationId }
 
         val inboxStyle = NotificationCompat.InboxStyle()
 
         if (existingNotification != null) {
-            val existingLines = existingNotification.notification.extras.getCharSequenceArray(NotificationCompat.EXTRA_TEXT_LINES)
+            val existingLines =
+                existingNotification.notification.extras.getCharSequenceArray(NotificationCompat.EXTRA_TEXT_LINES)
             existingLines?.forEach { inboxStyle.addLine(it) }
         }
 
         inboxStyle.addLine(
-            applicationContext.getString(R.string.new_message_notification_content, event.message.author.name.value, event.message.content),
+            applicationContext.getString(
+                R.string.new_message_notification_content,
+                event.message.author.name.value,
+                event.message.content,
+            ),
         )
 
         val notification =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(applicationContext.getString(R.string.new_message_notification_title, channel.name.value))
+                .setContentTitle(
+                    applicationContext.getString(
+                        R.string.new_message_notification_title,
+                        channel.name.value,
+                    ),
+                )
                 .setContentInfo(channel.name.value)
                 .setSmallIcon(android.R.drawable.ic_dialog_email)
                 .setContentIntent(pendingIntent)
@@ -119,12 +133,16 @@ class NotificationWorker(
             Intent(applicationContext, ChannelInvitationsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         if (user?.id == event.invitation.invitee.id) {
             val notification =
                 NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(
-                        applicationContext.getString(R.string.new_invitation_notification_title, event.invitation.channel.name.value),
+                        applicationContext.getString(
+                            R.string.new_invitation_notification_title,
+                            event.invitation.channel.name.value,
+                        ),
                     )
                     .setContentText(
                         applicationContext.getString(
@@ -145,7 +163,11 @@ class NotificationWorker(
         eventId: Int,
     ) {
         with(NotificationManagerCompat.from(applicationContext)) {
-            if (!ChimpApplication.isInForeground && ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            if (!ChimpApplication.isInForeground && ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 notify(eventId, notification)
             }
         }
@@ -153,7 +175,12 @@ class NotificationWorker(
 
     private suspend fun getChannel(channelId: Identifier): Channel? {
         val session = dependencies.sessionManager.session.firstOrNull() ?: return null
-        return (dependencies.chimpService.channelService.getChannel(channelId, session) as? Success)?.value
+        return (
+            dependencies.chimpService.channelService.getChannel(
+                channelId,
+                session,
+            ) as? Success
+        )?.value
     }
 
     companion object {

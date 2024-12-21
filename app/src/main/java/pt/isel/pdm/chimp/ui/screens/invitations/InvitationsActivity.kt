@@ -75,7 +75,7 @@ open class InvitationsActivity : ChannelsActivity() {
     }
 
     private suspend fun handleInvitationCreated(event: Event.InvitationEvent.CreatedEvent) {
-        scrollingViewModel.handleItemUpdate(event.invitation)
+        scrollingViewModel.handleItemCreate(event.invitation)
     }
 
     private suspend fun handleInvitationUpdated(event: Event.InvitationEvent.UpdatedEvent) {

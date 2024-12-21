@@ -15,7 +15,6 @@ import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
-import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.ChimpService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
@@ -27,6 +26,8 @@ sealed interface ChannelScreenState {
     data class ChannelMessageCreated(val message: Message) : ChannelScreenState
 
     data class ChannelMessagesError(val problem: Problem) : ChannelScreenState
+
+    data object SendingMessage : ChannelScreenState
 
     data object MessagesList : ChannelScreenState
 
@@ -62,8 +63,8 @@ class ChannelViewModel(
     fun createMessage(
         channel: Channel,
         message: String,
-        session: Session,
     ) {
+        _state.value = ChannelScreenState.SendingMessage
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -73,7 +74,7 @@ class ChannelViewModel(
                     )
                 null
             },
-            request = {
+            request = { session ->
                 services.messageService.createMessage(channel, message, session)
             },
             onError = { problem ->
@@ -97,7 +98,6 @@ class ChannelViewModel(
     fun updateMessage(
         message: Message,
         content: String,
-        session: Session,
     ) {
         launchRequestRefreshing(
             sessionManager = sessionManager,
@@ -108,7 +108,7 @@ class ChannelViewModel(
                     )
                 null
             },
-            request = {
+            request = { session ->
                 services.messageService.updateMessage(message, content, session)
             },
             onError = { problem ->
@@ -127,10 +127,7 @@ class ChannelViewModel(
         )
     }
 
-    fun deleteMessage(
-        message: Message,
-        session: Session,
-    ) {
+    fun deleteMessage(message: Message) {
         viewModelScope.launch {
             launchRequestRefreshing(
                 sessionManager = sessionManager,
@@ -141,7 +138,7 @@ class ChannelViewModel(
                         )
                     null
                 },
-                request = {
+                request = { session ->
                     services.messageService.deleteMessage(message, session)
                 },
                 onError = { problem ->
@@ -161,10 +158,7 @@ class ChannelViewModel(
         }
     }
 
-    fun deleteChannel(
-        channel: Channel,
-        session: Session,
-    ) {
+    fun deleteChannel(channel: Channel) {
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -174,7 +168,7 @@ class ChannelViewModel(
                     )
                 null
             },
-            request = {
+            request = { session ->
                 services.channelService.deleteChannel(channel, session)
             },
             onError = { problem ->
@@ -197,9 +191,6 @@ class ChannelViewModel(
         paginationRequest: PaginationRequest,
         currentItems: List<Message>,
     ): Either<Problem, Pagination<Message>> {
-        if (channel == null) {
-            return failure(Problem.UnexpectedProblem)
-        }
         var result: Either<Problem, Pagination<Message>> = failure(Problem.UnexpectedProblem)
         val job =
             launchRequestRefreshing(
@@ -238,5 +229,46 @@ class ChannelViewModel(
             )
         job.join()
         return result
+    }
+
+    fun leaveChannel(channel: Channel) {
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = {
+                _state.value =
+                    ChannelScreenState.ChannelMessagesError(
+                        Problem.NoConnection,
+                    )
+                null
+            },
+            request = { session ->
+                services.channelService.removeMemberFromChannel(
+                    channel,
+                    channel.getMember(session.user)!!,
+                    session,
+                )
+            },
+            onError = { problem ->
+                _state.emit(
+                    ChannelScreenState.ChannelMessagesError(
+                        problem,
+                    ),
+                )
+            },
+            onSuccess = {
+                _state.emit(
+                    ChannelScreenState.ChannelDeleted,
+                )
+            },
+            refresh = services.authService::refresh,
+        )
+    }
+
+    fun onToggleEdit(message: Message?) {
+        if ((_state.value is ChannelScreenState.EditingMessage && (_state.value as ChannelScreenState.EditingMessage).message == message) || message == null) {
+            _state.value = ChannelScreenState.MessagesList
+        } else {
+            _state.value = ChannelScreenState.EditingMessage(message)
+        }
     }
 }

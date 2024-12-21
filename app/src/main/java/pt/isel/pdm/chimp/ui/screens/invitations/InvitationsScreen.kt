@@ -3,6 +3,7 @@ package pt.isel.pdm.chimp.ui.screens.invitations
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
 import pt.isel.pdm.chimp.ui.components.NavBar
@@ -41,7 +43,16 @@ fun InvitationsScreen(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             topBar = {
                 TopBar(
-                    content = { Text(text = stringResource(R.string.invitations)) },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.invitations),
+                            style =
+                                TextStyle(
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                ),
+                        )
+                    },
                 )
             },
             bottomBar = {
@@ -80,16 +91,19 @@ fun InvitationsScreen(
                         SnackBarVisuals(message = state.problem.detail),
                     )
                 }
+
                 is InvitationsScreenState.AcceptedInvitation -> {
                     snackBarHostState.showSnackbar(
                         SnackBarVisuals(message = acceptedInvitationString),
                     )
                 }
+
                 is InvitationsScreenState.RejectedInvitation -> {
                     snackBarHostState.showSnackbar(
                         SnackBarVisuals(message = rejectedInvitationString),
                     )
                 }
+
                 else -> {}
             }
         }

@@ -5,8 +5,13 @@
     <string name="bernardo_pereira_author_title">Bernardo Pereira</string>
     <string name="bernardo_pereira_number">50493</string>
     <string name="github_link_bernardo_pereira">https://github.com/BernardoPe</string>
-    <string name="linkedin_link_bernardo_pereira">https://linkedin.com/BernardoPe</string>
+    <string name="linkedin_link_bernardo_pereira">https://linkedin.com/in/BernardoPe</string>
     <string name="mail_link_bernardo_pereira">mailto:a50493@alunos.isel.pt</string>
+    <string name="antonio_paulino_author_title">António Paulino</string>
+    <string name="antonio_paulino_number">50512</string>
+    <string name="github_link_antonio_paulino">https://github.com/antonio-paulino</string>
+    <string name="linkedin_link_antonio_paulino">https://linkedin.com/in/antonio-paulinoo/</string>
+    <string name="mail_link_antonio_paulino">mailto:a50512@alunos.isel.pt</string>
     <string name="error_opening_url">Could not open link</string>
     <string name="error_sending_mail">Could not send email</string>
     <string name="success_icon">Success Icon</string>
@@ -65,6 +70,7 @@
     <string name="member_removed">Removed</string>
     <string name="role_updated">role updated</string>
     <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
     <string name="invitation_removed">
         Invitation deleted for %s
     </string>
@@ -83,4 +89,6 @@
     <string name="new_invitation_notification_content">
         %s invited you to join as %s
     </string>
+    <string name="leave_channel">Leave Channel</string>
+    <string name="chimp">Chimp</string>
 </resources>

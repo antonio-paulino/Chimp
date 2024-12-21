@@ -39,4 +39,8 @@ data class Channel(
     fun isGuest(user: User): Boolean {
         return getMemberRole(user) == ChannelRole.GUEST
     }
+
+    fun getMember(user: User): ChannelMember? {
+        return members.find { it.id == user.id }
+    }
 }

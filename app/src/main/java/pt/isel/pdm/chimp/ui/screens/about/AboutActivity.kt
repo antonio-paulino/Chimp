@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +23,35 @@ import pt.isel.pdm.chimp.ui.utils.showErrorToast
  * Activity that shows information about the application.
  */
 class AboutActivity : ComponentActivity() {
+    private lateinit var authors: List<Author>
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        authors =
+            listOf(
+                Author(
+                    number = getString(R.string.bernardo_pereira_number),
+                    name = getString(R.string.bernardo_pereira_author_title),
+                    image = R.drawable.bernardo_pereira,
+                    socials =
+                        Socials(
+                            linkedInUrl = R.string.linkedin_link_bernardo_pereira,
+                            githubUrl = R.string.github_link_bernardo_pereira,
+                            mailUrl = R.string.mail_link_bernardo_pereira,
+                        ),
+                ),
+                Author(
+                    number = getString(R.string.antonio_paulino_number),
+                    name = getString(R.string.antonio_paulino_author_title),
+                    image = R.drawable.antonio_paulino,
+                    socials =
+                        Socials(
+                            linkedInUrl = R.string.linkedin_link_antonio_paulino,
+                            githubUrl = R.string.github_link_antonio_paulino,
+                            mailUrl = R.string.mail_link_antonio_paulino,
+                        ),
+                ),
+            )
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -73,20 +102,5 @@ class AboutActivity : ComponentActivity() {
 
     companion object {
         private const val SUBJECT = "ChIMP"
-
-        private val authors =
-            listOf(
-                Author(
-                    number = "50493",
-                    name = "Bernardo Pereira",
-                    image = R.drawable.bernardo_pereira,
-                    socials =
-                        Socials(
-                            linkedInUrl = R.string.linkedin_link_bernardo_pereira,
-                            githubUrl = R.string.github_link_bernardo_pereira,
-                            mailUrl = R.string.mail_link_bernardo_pereira,
-                        ),
-                ),
-            )
     }
 }

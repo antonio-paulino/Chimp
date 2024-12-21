@@ -154,6 +154,9 @@ open class ChannelsActivity : ComponentActivity() {
         if (event.channel.members.none { it.id == dependencies.sessionManager.session.firstOrNull()?.user?.id }) {
             scrollingViewModel.handleItemDelete(event.channel.id)
             dependencies.storage.channelRepository.deleteChannel(event.channel.id)
+            if (dependencies.entityReferenceManager.channel.firstOrNull()?.id == event.channel.id) {
+                dependencies.entityReferenceManager.setChannel(null)
+            }
         } else {
             val state = scrollingViewModel.state.firstOrNull()
             val paginationItems = state?.pagination?.items
