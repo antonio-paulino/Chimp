@@ -4,16 +4,12 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.firstOrNull
@@ -23,6 +19,7 @@ import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
@@ -37,9 +34,7 @@ import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
-open class ChannelsActivity : ComponentActivity() {
-    lateinit var dependencies: DependenciesContainer
-
+open class ChannelsActivity : DependenciesActivity() {
     private val channelsViewModel by initializeViewModel { dependencies ->
         ChannelsViewModel(
             dependencies.chimpService,
@@ -97,23 +92,6 @@ open class ChannelsActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    inline fun <reified T : ViewModel> initializeViewModel(
-        crossinline constructor: (
-            dependencies: DependenciesContainer,
-        ) -> T,
-    ): Lazy<T> {
-        val factory =
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return constructor(
-                        dependencies,
-                    ) as T
-                }
-            }
-        return viewModels<T>(factoryProducer = { factory })
     }
 
     private fun startListening() {

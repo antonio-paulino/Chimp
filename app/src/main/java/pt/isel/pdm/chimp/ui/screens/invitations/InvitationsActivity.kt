@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
@@ -19,7 +20,7 @@ import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
-open class InvitationsActivity : ChannelsActivity() {
+open class InvitationsActivity : DependenciesActivity() {
     private val invitationsViewModel by initializeViewModel { dependencies ->
         InvitationsViewModel(
             dependencies.chimpService,
@@ -84,7 +85,7 @@ open class InvitationsActivity : ChannelsActivity() {
         scrollingViewModel.handleItemDelete(event.invitationId)
     }
 
-    private suspend fun handleInvitationCreated(event: Event.InvitationEvent.CreatedEvent) {
+    private fun handleInvitationCreated(event: Event.InvitationEvent.CreatedEvent) {
         scrollingViewModel.handleItemCreate(event.invitation)
     }
 

@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.channel.channelInvitations.ChannelInvitationsActivity
 import pt.isel.pdm.chimp.ui.screens.channel.channelMembers.ChannelMembersActivity
 import pt.isel.pdm.chimp.ui.screens.channel.createInvitation.CreateChannelInvitationActivity
 import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
-import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
-open class ChannelActivity : ChannelsActivity() {
+open class ChannelActivity : DependenciesActivity() {
     private val viewModel by initializeViewModel { dependencies ->
         ChannelViewModel(
             dependencies.chimpService,

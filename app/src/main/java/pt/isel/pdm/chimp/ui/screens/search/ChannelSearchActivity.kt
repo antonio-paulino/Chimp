@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
 import pt.isel.pdm.chimp.ui.screens.about.AboutActivity
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
@@ -20,7 +21,7 @@ import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import kotlin.time.Duration.Companion.seconds
 
-open class ChannelSearchActivity : ChannelsActivity() {
+open class ChannelSearchActivity : DependenciesActivity() {
     private val viewModel by initializeViewModel { dependencies ->
         ChannelSearchViewModel(
             dependencies.chimpService,

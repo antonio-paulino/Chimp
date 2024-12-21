@@ -7,11 +7,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
-import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
-class InviteUserActivity : ChannelsActivity() {
+class InviteUserActivity : DependenciesActivity() {
     private val inviteUserViewModel by initializeViewModel { dependencies ->
         InviteUserViewModel(
             dependencies.chimpService,

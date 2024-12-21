@@ -8,12 +8,12 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.DependenciesContainer
-import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollViewModel
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
-class CreateChannelInvitationActivity : ChannelsActivity() {
+class CreateChannelInvitationActivity : DependenciesActivity() {
     private val viewModel by initializeViewModel { dependencies ->
         CreateChannelInvitationViewModel(
             dependencies.chimpService,

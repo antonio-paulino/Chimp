@@ -6,10 +6,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
-import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
+import pt.isel.pdm.chimp.ui.DependenciesActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 
-class EditChannelActivity : ChannelsActivity() {
+class EditChannelActivity : DependenciesActivity() {
     private val editChannelViewModel by initializeViewModel { dependencies ->
         EditChannelViewModel(
             dependencies.chimpService,
