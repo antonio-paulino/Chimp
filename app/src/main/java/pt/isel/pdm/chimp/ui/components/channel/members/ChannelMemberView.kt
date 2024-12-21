@@ -73,6 +73,7 @@ fun ChannelMemberActions(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         RoleInput(
+            modifier = Modifier.weight(0.9f).padding(start = 8.dp, end = 8.dp),
             role = member.role,
             enabled = !loading.value,
             onRoleChange = {

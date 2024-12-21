@@ -51,6 +51,7 @@ fun ChannelsScreen(
     scrollState: InfiniteScrollState<Channel>,
     channelState: ChannelsScreenState,
     onNotLoggedIn: () -> Unit,
+    onLoggedIn: () -> Unit,
     onBottomScroll: () -> Unit,
     onChannelSelected: (Channel) -> Unit,
     onAboutNavigation: () -> Unit,

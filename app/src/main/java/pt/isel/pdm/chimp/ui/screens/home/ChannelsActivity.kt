@@ -58,7 +58,6 @@ open class ChannelsActivity : DependenciesActivity() {
         enableEdgeToEdge()
         dependencies = application as DependenciesContainer
         FirebaseApp.initializeApp(this)
-        checkNotificationPermission()
         startListening()
         setContent {
             val session by dependencies.sessionManager.session.collectAsState(
@@ -77,6 +76,9 @@ open class ChannelsActivity : DependenciesActivity() {
                     onNotLoggedIn = {
                         navigateTo(CredentialsActivity::class.java)
                         finish()
+                    },
+                    onLoggedIn = {
+                        checkNotificationPermission()
                     },
                     onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->

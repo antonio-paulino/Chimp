@@ -46,8 +46,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.domain.Success
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.messages.Message
+import pt.isel.pdm.chimp.domain.messages.MessageValidator
 import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.channel.MessagesList
@@ -169,7 +171,7 @@ fun BottomBar(
     onToggleEdit: (Message?) -> Unit,
 ) {
     var message by remember { mutableStateOf("") }
-
+    val messageValidator = MessageValidator()
     BottomAppBar(
         modifier = modifier.padding(4.dp),
         contentPadding = PaddingValues(2.dp),
@@ -246,21 +248,26 @@ fun BottomBar(
 
                 IconButton(
                     onClick = {
-                        if (message.isNotBlank() && state !is ChannelScreenState.EditingMessage) {
+                        if (state !is ChannelScreenState.EditingMessage) {
                             onSendMessage(message.trim())
                             message = ""
-                        } else if (state is ChannelScreenState.EditingMessage) {
+                        } else {
                             onEditMessage(state.message, message.trim())
                             message = ""
                             onToggleEdit(null)
                         }
                     },
-                    enabled = message.isNotBlank() && state !is ChannelScreenState.SendingMessage,
+                    enabled = messageValidator.validate(message) is Success,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send Message",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        tint =
+                            if (messageValidator.validate(message) is Success) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                            },
                     )
                 }
             }

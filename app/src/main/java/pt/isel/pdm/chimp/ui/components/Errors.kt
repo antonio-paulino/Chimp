@@ -6,11 +6,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+
+const val ERRORS_TEST_TAG = "errors"
 
 @Composable
 fun Errors(errors: List<String>) {
-    Column {
+    Column(
+        modifier = Modifier.testTag(ERRORS_TEST_TAG),
+    ) {
         errors.forEach {
             Text(
                 modifier = Modifier.padding(top = 8.dp, start = 20.dp),

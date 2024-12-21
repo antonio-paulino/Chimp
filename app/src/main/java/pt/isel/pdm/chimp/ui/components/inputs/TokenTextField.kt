@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,6 +26,8 @@ import pt.isel.pdm.chimp.domain.Failure
 import pt.isel.pdm.chimp.domain.Success
 import pt.isel.pdm.chimp.ui.components.Errors
 import java.util.UUID
+
+const val TOKEN_TEXT_FIELD_TEST_TAG = "token_text_field"
 
 @Composable
 fun TokenTextField(
@@ -44,12 +47,17 @@ fun TokenTextField(
                 onTokenChange(it)
             },
             isError = tokenValidation is Failure,
+            modifier = Modifier.testTag(TOKEN_TEXT_FIELD_TEST_TAG),
             label = { Text(stringResource(id = R.string.token_label)) },
             visualTransformation = if (tokenVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 Text(
                     text = if (tokenVisible) stringResource(R.string.hide) else stringResource(R.string.show),
-                    modifier = Modifier.clickable { onTokenVisibleChange(!tokenVisible) }.padding(12.dp),
+                    modifier =
+                        Modifier
+                            .clickable { onTokenVisibleChange(!tokenVisible) }
+                            .testTag(SHOW_BUTTON_TEST_TAG)
+                            .padding(12.dp),
                 )
             },
             supportingText = {

@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,10 @@ import pt.isel.pdm.chimp.ui.components.inputs.PasswordTextField
 import pt.isel.pdm.chimp.ui.components.inputs.TokenTextField
 import pt.isel.pdm.chimp.ui.components.inputs.validateToken
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
+
+const val REGISTER_VIEW_TEST_TAG = "register_view"
+const val REGISTER_BUTTON_TEST_TAG = "register_button"
+const val NAVIGATE_TO_LOGIN_TEST_TAG = "navigate_to_login"
 
 @Composable
 fun RegisterView(
@@ -64,7 +69,7 @@ fun RegisterView(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).testTag(REGISTER_VIEW_TEST_TAG),
         ) {
             Text(
                 text = stringResource(id = R.string.register),
@@ -104,14 +109,14 @@ fun RegisterView(
             )
             Text(
                 text = stringResource(id = R.string.already_have_an_account),
-                modifier = Modifier.clickable { onLoginClick() },
+                modifier = Modifier.clickable { onLoginClick() }.testTag(NAVIGATE_TO_LOGIN_TEST_TAG),
                 style = MaterialTheme.typography.titleSmall.copy(color = MaterialTheme.colorScheme.onBackground),
             )
             Button(
                 onClick = {
                     onRegister(email.text.trim(), username.text.trim(), password.text.trim(), token.text.trim())
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.CenterHorizontally).testTag(REGISTER_BUTTON_TEST_TAG),
                 enabled =
                     listOf(emailValidation, usernameValidation, passwordValidation, tokenValidation).all { it is Success } &&
                         listOf(email, username, password, token).all { it.text.isNotBlank() },

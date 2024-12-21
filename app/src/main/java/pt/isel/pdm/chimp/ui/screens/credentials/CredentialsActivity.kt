@@ -1,6 +1,7 @@
 package pt.isel.pdm.chimp.ui.screens.credentials
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
@@ -18,9 +19,18 @@ class CredentialsActivity : DependenciesActivity() {
         )
     }
 
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        onBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finishAffinity()
+                }
+            }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         setContent {
             ChIMPTheme {
                 val state by viewModel.state.collectAsState(initial = CredentialsScreenState.Login())
@@ -37,5 +47,10 @@ class CredentialsActivity : DependenciesActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onBackPressedCallback.remove()
     }
 }
