@@ -51,7 +51,6 @@ fun ChannelsScreen(
     scrollState: InfiniteScrollState<Channel>,
     channelState: ChannelsScreenState,
     onNotLoggedIn: () -> Unit,
-    onLoggedIn: (Session) -> Unit,
     onBottomScroll: () -> Unit,
     onChannelSelected: (Channel) -> Unit,
     onAboutNavigation: () -> Unit,
@@ -64,8 +63,6 @@ fun ChannelsScreen(
     if (session == null) {
         onNotLoggedIn()
         return
-    } else {
-        onLoggedIn(session)
     }
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }

@@ -188,7 +188,9 @@ class ChannelViewModel(
             sessionManager = sessionManager,
             noConnectionRequest = {
                 storage.messageRepository.getChannelMessages(
-                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    channel =
+                        entityReferenceManager.channel.firstOrNull()
+                            ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
                     paginationRequest.limit,
                     getCount = false,
                     before = currentItems.lastOrNull()?.createdAt,
@@ -196,7 +198,9 @@ class ChannelViewModel(
             },
             request = { session ->
                 services.messageService.getChannelMessages(
-                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    channel =
+                        entityReferenceManager.channel.firstOrNull()
+                            ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
                     session,
                     paginationRequest,
                     sort =
@@ -255,7 +259,12 @@ class ChannelViewModel(
     }
 
     fun onToggleEdit(message: Message?) {
-        if ((_state.value is ChannelScreenState.EditingMessage && (_state.value as ChannelScreenState.EditingMessage).message == message) || message == null) {
+        if (
+            (
+                _state.value is ChannelScreenState.EditingMessage &&
+                    (_state.value as ChannelScreenState.EditingMessage).message == message
+            ) || message == null
+        ) {
             _state.value = ChannelScreenState.MessagesList
         } else {
             _state.value = ChannelScreenState.EditingMessage(message)

@@ -117,7 +117,7 @@ class ChimpApplication : Application(), DependenciesContainer {
             return instance?.applicationContext ?: throw IllegalStateException("Application not initialized")
         }
 
-        private const val NGROK_TUNNEL = "34d5-94-62-132-208.ngrok-free.app"
+        private const val NGROK_TUNNEL = "02bd-94-62-132-208.ngrok-free.app"
         private const val API_BASE_URL = "https://$NGROK_TUNNEL/api"
     }
 }

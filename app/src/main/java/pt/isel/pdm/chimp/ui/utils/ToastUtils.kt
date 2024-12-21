@@ -27,6 +27,7 @@ class SnackBarVisuals(
 }
 
 @SuppressLint("InflateParams")
+@Suppress("DEPRECATION")
 fun showSuccessToast(
     message: String,
     context: Context,
@@ -45,6 +46,7 @@ fun showSuccessToast(
 }
 
 @SuppressLint("InflateParams")
+@Suppress("DEPRECATION")
 fun showErrorToast(message: String) {
     val context = ChimpApplication.applicationContext()
     val inflater = LayoutInflater.from(context)

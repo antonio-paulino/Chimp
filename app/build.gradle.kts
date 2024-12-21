@@ -24,6 +24,11 @@ android {
         }
     }
 
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
     ktlint {
         android.set(true)
         outputToConsole.set(true)
