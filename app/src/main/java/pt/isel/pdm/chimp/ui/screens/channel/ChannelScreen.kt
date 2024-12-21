@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.Success
 import pt.isel.pdm.chimp.domain.channel.Channel
+import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.messages.Message
 import pt.isel.pdm.chimp.domain.messages.MessageValidator
 import pt.isel.pdm.chimp.domain.sessions.Session
@@ -82,6 +83,7 @@ fun ChannelScreen(
         return
     }
     val isOwner = session?.user?.id == channel.owner.id
+    val userRole = channel.members.find { it.id == session?.user?.id }?.role
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
@@ -125,6 +127,7 @@ fun ChannelScreen(
             bottomBar = {
                 BottomBar(
                     state = state,
+                    userRole = userRole,
                     onSendMessage = onSendMessage,
                     onEditMessage = onEditMessage,
                     onToggleEdit = onToggleEdit,
@@ -166,6 +169,7 @@ fun ChannelScreen(
 fun BottomBar(
     modifier: Modifier,
     state: ChannelScreenState,
+    userRole: ChannelRole?,
     onSendMessage: (String) -> Unit,
     onEditMessage: (Message, String) -> Unit,
     onToggleEdit: (Message?) -> Unit,
@@ -227,13 +231,23 @@ fun BottomBar(
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                     placeholder = {
-                        Text(
-                            text = "Type a message",
-                            style =
+                        if (userRole == ChannelRole.GUEST) {
+                            Text(
+                                text = "You can't send messages",
+                                style =
+                                    MaterialTheme.typography.bodyLarge.copy(
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    ),
+                            )
+                        } else {
+                            Text(
+                                text = "Type a message",
+                                style =
                                 MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 ),
-                        )
+                            )
+                        }
                     },
                     shape = RoundedCornerShape(8.dp),
                     colors =
@@ -244,6 +258,7 @@ fun BottomBar(
                             unfocusedIndicatorColor = Color.Transparent,
                             cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
+                    enabled = userRole != ChannelRole.GUEST,
                 )
 
                 IconButton(
@@ -257,13 +272,13 @@ fun BottomBar(
                             onToggleEdit(null)
                         }
                     },
-                    enabled = messageValidator.validate(message) is Success,
+                    enabled = (messageValidator.validate(message) is Success) && userRole != ChannelRole.GUEST,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send Message",
                         tint =
-                            if (messageValidator.validate(message) is Success) {
+                            if ((messageValidator.validate(message) is Success) && userRole != ChannelRole.GUEST) {
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             } else {
                                 MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
