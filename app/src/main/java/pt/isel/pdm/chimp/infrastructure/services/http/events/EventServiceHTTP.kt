@@ -219,6 +219,6 @@ class EventServiceHTTP(
 
     companion object {
         private const val EVENT_SOURCE_URL = "/sse/listen"
-        private val reconnectTime = Duration.parse("PT5S")
+        private val reconnectTime = Duration.parse("PT0.5S")
     }
 }

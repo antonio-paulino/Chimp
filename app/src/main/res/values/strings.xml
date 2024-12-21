@@ -75,20 +75,20 @@
     <string name="invitation_role_updated">Invitation role updated to</string>
     <string name="editing_channel">Updating channel…</string>
     <string name="new_message_notification_title">
-        New message in %1
+        New message in %s
     </string>
     <string name="new_message_notification_content">
-        $1: $2
+        %s: %s
     </string>
     <string name="notification_channel_name">Chimp</string>
     <string name="new_invitation_notification_title">
-        New invitation to %1
+        New invitation to %s
     </string>
     <string name="new_invitation_notification_content">
-        $1 invited you to join as $2
+        %s invited you to join as %s
     </string>
     <string name="message_content_blank">Message must not be blank</string>
-    <string name="message_content_length">Message content must be between $1 and $2 characters</string>
+    <string name="message_content_length">Message content must be between %d and %d characters</string>
     <string name="invitation_sent">Invitation sent to</string>
     <string name="search_users">Search users…</string>
     <string name="leave_channel">Leave Channel</string>
