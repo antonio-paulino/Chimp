@@ -171,7 +171,12 @@ suspend fun <T> executeRequestRefreshing(
 
     when (res) {
         is Success -> onSuccess(res)
-        is Failure -> onError(res.value)
+        is Failure -> {
+            onError(res.value)
+            if (res.value.status == 401) {
+                sessionManager.clear()
+            }
+        }
     }
 }
 

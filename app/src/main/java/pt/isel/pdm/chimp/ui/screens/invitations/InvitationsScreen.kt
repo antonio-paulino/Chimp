@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.ui.components.NavBar
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.invitations.ChannelInvitationsList
@@ -29,16 +30,21 @@ import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 fun InvitationsScreen(
     state: InvitationsScreenState,
     scrollState: InfiniteScrollState<ChannelInvitation>,
+    session: Session?,
     onAcceptInvitation: (ChannelInvitation) -> Unit,
     onRejectInvitation: (ChannelInvitation) -> Unit,
     onScrollToBottom: () -> Unit,
     onAboutNavigation: () -> Unit,
     onHomeNavigation: () -> Unit,
     onSearchNavigation: () -> Unit,
+    onNotLoggedIn: () -> Unit,
 ) {
+    if (session == null) {
+        onNotLoggedIn()
+        return
+    }
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }
-
         Scaffold(
             snackbarHost = { SnackbarHost(snackBarHostState) },
             topBar = {

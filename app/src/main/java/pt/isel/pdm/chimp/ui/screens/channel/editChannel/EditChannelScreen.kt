@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.TopBar
@@ -30,13 +31,13 @@ import pt.isel.pdm.chimp.ui.utils.getMessage
 @Composable
 fun EditChannelScreen(
     channel: Channel?,
-    onChannelNull: () -> Unit,
+    session: Session?,
     state: EditChannelScreenState,
     onEditChannel: (channel: Channel, name: Name, isPublic: Boolean, defaultRole: ChannelRole) -> Unit,
     onBack: () -> Unit,
 ) {
-    if (channel == null) {
-        onChannelNull()
+    if (channel == null || session == null) {
+        onBack()
         return
     }
     val snackBarHostState = remember { SnackbarHostState() }
@@ -60,18 +61,9 @@ fun EditChannelScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.Transparent),
         ) {
             when (state) {
-                is EditChannelScreenState.EditingChannel -> {
-                    ChannelForm(
-                        initialName = channel.name.value,
-                        initialIsPublic = channel.isPublic,
-                        initialRole = channel.defaultRole,
-                        onSubmit = { name, isPublic, defaultRole ->
-                            onEditChannel(channel, name, isPublic, defaultRole)
-                        },
-                        submitLabel = stringResource(id = R.string.edit_channel),
-                    )
-                }
-                is EditChannelScreenState.EditingChannelError -> {
+                is EditChannelScreenState.EditingChannel,
+                is EditChannelScreenState.EditingChannelError,
+                -> {
                     ChannelForm(
                         initialName = channel.name.value,
                         initialIsPublic = channel.isPublic,

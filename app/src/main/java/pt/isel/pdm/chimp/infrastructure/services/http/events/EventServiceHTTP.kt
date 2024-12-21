@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -50,7 +51,7 @@ class EventServiceHTTP(
     private var job: Job? = null
     private val context: Context
 
-    private var _eventFlow: Flow<Event>? = null
+    private var _eventFlow: MutableSharedFlow<Event>? = null
 
     init {
         check(ChimpApplication.isInitialized) {
@@ -175,13 +176,13 @@ class EventServiceHTTP(
     private fun listenEvents(
         session: SessionManager,
         scope: CoroutineScope,
-    ): Flow<Event> {
+    ): MutableSharedFlow<Event> {
+        val sharedFlow = MutableSharedFlow<Event>(replay = 0)
         val url = "$baseUrl$EVENT_SOURCE_URL"
         var lastEventId: String? = null
-        return flow {
+        scope.launch {
             while (scope.isActive) {
                 try {
-                    Log.d(TAG, "Connecting to event source at $url")
                     httpClient.prepareRequest {
                         url(url)
                         header("Accept", "text/event-stream")
@@ -191,7 +192,7 @@ class EventServiceHTTP(
                         val channel = response.bodyAsChannel()
                         channel.readEvents(scope).collect { event ->
                             lastEventId = event.id
-                            emit(event)
+                            sharedFlow.emit(event)
                         }
                     }
                 } catch (e: IOException) {
@@ -204,14 +205,16 @@ class EventServiceHTTP(
                     Log.d(TAG, "Connection timeout: ${e.message} - reconnecting in $reconnectTime")
                 } catch (e: Exception) {
                     Log.e(TAG, "Unexpected error: ${e.message} - reconnecting in $reconnectTime", e)
-                }
-                if (!context.isNetworkAvailable()) {
-                    context.awaitNetworkAvailable()
-                } else {
-                    delay(reconnectTime)
+                } finally {
+                    if (!context.isNetworkAvailable()) {
+                        context.awaitNetworkAvailable()
+                    } else {
+                        delay(reconnectTime)
+                    }
                 }
             }
         }
+        return sharedFlow
     }
 
     companion object {

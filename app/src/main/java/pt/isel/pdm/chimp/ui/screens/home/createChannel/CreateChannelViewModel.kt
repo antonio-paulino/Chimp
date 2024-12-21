@@ -12,18 +12,24 @@ import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 
 sealed interface CreateChannelScreenState {
+    sealed interface CreateChannelForm : CreateChannelScreenState {
+        val name: String
+        val isPublic: Boolean
+        val defaultRole: ChannelRole
+    }
+
     data class CreatingChannel(
-        val name: String = "",
-        val isPublic: Boolean = true,
-        val defaultRole: ChannelRole = ChannelRole.MEMBER,
-    ) : CreateChannelScreenState
+        override val name: String = "",
+        override val isPublic: Boolean = false,
+        override val defaultRole: ChannelRole = ChannelRole.MEMBER,
+    ) : CreateChannelForm
 
     data class CreatingChannelError(
-        val name: String = "",
-        val isPublic: Boolean = true,
-        val defaultRole: ChannelRole = ChannelRole.MEMBER,
+        override val name: String = "",
+        override val isPublic: Boolean = false,
+        override val defaultRole: ChannelRole = ChannelRole.MEMBER,
         val problem: Problem,
-    ) : CreateChannelScreenState
+    ) : CreateChannelForm
 
     data object Loading : CreateChannelScreenState
 

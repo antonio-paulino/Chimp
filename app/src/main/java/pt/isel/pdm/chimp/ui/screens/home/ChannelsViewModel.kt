@@ -19,6 +19,8 @@ import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 sealed interface ChannelsScreenState {
     data object ChannelsList : ChannelsScreenState
 
+    data object Loading : ChannelsScreenState
+
     data class ChannelsListError(val problem: Problem) : ChannelsScreenState
 }
 
@@ -33,6 +35,8 @@ open class ChannelsViewModel(
     val state: Flow<ChannelsScreenState> = _state
 
     fun logout() {
+        if (_state.value == ChannelsScreenState.Loading) return
+        _state.value = ChannelsScreenState.Loading
         launchRequestRefreshing(
             sessionManager = sessionManager,
             noConnectionRequest = {
@@ -51,39 +55,37 @@ open class ChannelsViewModel(
         currentItems: List<Channel>,
     ): Either<Problem, Pagination<Channel>> {
         var result: Either<Problem, Pagination<Channel>> = failure(Problem.UnexpectedProblem)
-        val job =
-            launchRequestRefreshing(
-                sessionManager = sessionManager,
-                noConnectionRequest = { session ->
-                    storage.channelRepository.getChannels(
-                        user = session.user,
-                        limit = paginationRequest.limit,
-                        getCount = false,
-                        after = currentItems.lastOrNull()?.id,
-                        filterOwned = false,
-                    )
-                },
-                request = { session ->
-                    services.userService.getUserChannels(
-                        session = session,
-                        pagination = paginationRequest,
-                        sort = null,
-                        after = currentItems.lastOrNull()?.id,
-                        filterOwned = false,
-                    )
-                },
-                refresh = services.authService::refresh,
-                onError = {
-                    result = failure(it)
-                },
-                onSuccess = {
-                    result = it
-                    if (ChimpApplication.applicationContext().isNetworkAvailable()) {
-                        storage.channelRepository.updateChannels(it.value.items)
-                    }
-                },
-            )
-        job.join()
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = { session ->
+                storage.channelRepository.getChannels(
+                    user = session.user,
+                    limit = paginationRequest.limit,
+                    getCount = false,
+                    after = currentItems.lastOrNull()?.id,
+                    filterOwned = false,
+                )
+            },
+            request = { session ->
+                services.userService.getUserChannels(
+                    session = session,
+                    pagination = paginationRequest,
+                    sort = null,
+                    after = currentItems.lastOrNull()?.id,
+                    filterOwned = false,
+                )
+            },
+            refresh = services.authService::refresh,
+            onError = {
+                result = failure(it)
+            },
+            onSuccess = {
+                result = it
+                if (ChimpApplication.applicationContext().isNetworkAvailable()) {
+                    storage.channelRepository.updateChannels(it.value.items)
+                }
+            },
+        ).join()
         return result
     }
 }

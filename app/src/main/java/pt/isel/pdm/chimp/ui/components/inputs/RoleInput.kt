@@ -1,7 +1,6 @@
 package pt.isel.pdm.chimp.ui.components.inputs
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,8 +48,7 @@ fun RoleInput(
                     .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
                     .clickable {
                         expanded.value = !expanded.value
-                    }
-                    .fillMaxWidth(0.8f),
+                    },
         )
         DropdownMenu(
             expanded = expanded.value,

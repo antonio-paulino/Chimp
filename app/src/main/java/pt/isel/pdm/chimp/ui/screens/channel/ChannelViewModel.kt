@@ -1,10 +1,10 @@
 package pt.isel.pdm.chimp.ui.screens.channel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.domain.Either
@@ -15,6 +15,7 @@ import pt.isel.pdm.chimp.domain.pagination.Pagination
 import pt.isel.pdm.chimp.domain.pagination.PaginationRequest
 import pt.isel.pdm.chimp.domain.pagination.Sort
 import pt.isel.pdm.chimp.domain.pagination.SortRequest
+import pt.isel.pdm.chimp.infrastructure.EntityReferenceManager
 import pt.isel.pdm.chimp.infrastructure.services.interfaces.ChimpService
 import pt.isel.pdm.chimp.infrastructure.services.media.problems.Problem
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
@@ -44,18 +45,9 @@ class ChannelViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
     private val storage: Storage,
+    private val entityReferenceManager: EntityReferenceManager,
     initialScreenState: ChannelScreenState = ChannelScreenState.MessagesList,
-    channel: Channel?,
 ) : ViewModel() {
-    private val _channel = mutableStateOf(channel)
-
-    val channel: Channel?
-        get() = _channel.value
-
-    fun setChannel(channel: Channel?) {
-        _channel.value = channel
-    }
-
     private val _state: MutableStateFlow<ChannelScreenState> = MutableStateFlow(initialScreenState)
 
     val state: Flow<ChannelScreenState> = _state
@@ -192,42 +184,40 @@ class ChannelViewModel(
         currentItems: List<Message>,
     ): Either<Problem, Pagination<Message>> {
         var result: Either<Problem, Pagination<Message>> = failure(Problem.UnexpectedProblem)
-        val job =
-            launchRequestRefreshing(
-                sessionManager = sessionManager,
-                noConnectionRequest = {
-                    storage.messageRepository.getChannelMessages(
-                        channel!!,
-                        paginationRequest.limit,
-                        getCount = false,
-                        before = currentItems.lastOrNull()?.createdAt,
-                    )
-                },
-                request = { session ->
-                    services.messageService.getChannelMessages(
-                        channel!!,
-                        session,
-                        paginationRequest,
-                        sort =
-                            SortRequest(
-                                "createdAt",
-                                Sort.DESC,
-                            ),
-                        before = currentItems.lastOrNull()?.createdAt,
-                    )
-                },
-                refresh = services.authService::refresh,
-                onError = {
-                    result = failure(it)
-                },
-                onSuccess = {
-                    result = it
-                    if (ChimpApplication.applicationContext().isNetworkAvailable()) {
-                        storage.messageRepository.updateMessages(it.value.items)
-                    }
-                },
-            )
-        job.join()
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = {
+                storage.messageRepository.getChannelMessages(
+                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    paginationRequest.limit,
+                    getCount = false,
+                    before = currentItems.lastOrNull()?.createdAt,
+                )
+            },
+            request = { session ->
+                services.messageService.getChannelMessages(
+                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    session,
+                    paginationRequest,
+                    sort =
+                        SortRequest(
+                            "createdAt",
+                            Sort.DESC,
+                        ),
+                    before = currentItems.lastOrNull()?.createdAt,
+                )
+            },
+            refresh = services.authService::refresh,
+            onError = {
+                result = failure(it)
+            },
+            onSuccess = {
+                result = it
+                if (ChimpApplication.applicationContext().isNetworkAvailable()) {
+                    storage.messageRepository.updateMessages(it.value.items)
+                }
+            },
+        ).join()
         return result
     }
 

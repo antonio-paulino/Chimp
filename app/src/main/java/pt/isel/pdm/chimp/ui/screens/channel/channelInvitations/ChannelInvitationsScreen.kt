@@ -19,6 +19,7 @@ import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.invitations.ChannelInvitation
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.buttons.BackButton
 import pt.isel.pdm.chimp.ui.components.invitations.ChannelInvitationsManagedList
@@ -29,16 +30,16 @@ import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 @Composable
 fun ChannelInvitationsScreen(
     state: ChannelInvitationsScreenState,
+    session: Session?,
     scrollState: InfiniteScrollState<ChannelInvitation>,
-    onChannelNull: () -> Unit,
     onRemoveInvitation: (ChannelInvitation) -> Unit,
     onUpdateInvitationRole: (ChannelInvitation, ChannelRole) -> Unit,
     loadMore: () -> Unit,
     onBack: () -> Unit,
     channel: Channel?,
 ) {
-    if (channel == null) {
-        onChannelNull()
+    if (channel == null || session == null) {
+        onBack()
         return
     }
     ChIMPTheme {

@@ -14,6 +14,7 @@ import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.channel.channelInvitations.ChannelInvitationsActivity
 import pt.isel.pdm.chimp.ui.screens.channel.channelMembers.ChannelMembersActivity
+import pt.isel.pdm.chimp.ui.screens.channel.createInvitation.CreateChannelInvitationActivity
 import pt.isel.pdm.chimp.ui.screens.channel.editChannel.EditChannelActivity
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
@@ -27,7 +28,7 @@ open class ChannelActivity : ChannelsActivity() {
             dependencies.chimpService,
             dependencies.sessionManager,
             dependencies.storage,
-            channel = runBlocking { dependencies.entityReferenceManager.channel.firstOrNull() },
+            dependencies.entityReferenceManager,
         )
     }
 
@@ -57,7 +58,6 @@ open class ChannelActivity : ChannelsActivity() {
                         dependencies.entityReferenceManager.channel.firstOrNull()
                     },
             )
-            viewModel.setChannel(channel)
             val state by viewModel.state.collectAsState(initial = ChannelScreenState.MessagesList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Initial())
             ChIMPTheme {
@@ -77,10 +77,9 @@ open class ChannelActivity : ChannelsActivity() {
                     onEditChannel = {
                         navigateTo(EditChannelActivity::class.java)
                     },
-                    onInviteMember =
-                        {
-                            // navigateTo(::class.java)
-                        },
+                    onInviteMember = {
+                        navigateTo(CreateChannelInvitationActivity::class.java)
+                    },
                     onChannelDelete = {
                         viewModel.deleteChannel(channel!!)
                     },
@@ -116,8 +115,10 @@ open class ChannelActivity : ChannelsActivity() {
         }
     }
 
-    private fun handleMessageCreated(event: Event.MessageEvent.CreatedEvent) {
-        scrollingViewModel.handleItemCreate(event.message, prepend = true)
+    private suspend fun handleMessageCreated(event: Event.MessageEvent.CreatedEvent) {
+        if (event.message.channelId == dependencies.entityReferenceManager.channel.firstOrNull()?.id) {
+            scrollingViewModel.handleItemCreate(event.message, prepend = true)
+        }
     }
 
     private suspend fun handleMessageDeleted(event: Event.MessageEvent.DeletedEvent) {

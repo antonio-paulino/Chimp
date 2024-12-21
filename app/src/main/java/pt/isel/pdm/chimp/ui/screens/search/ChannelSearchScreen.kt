@@ -2,6 +2,7 @@ package pt.isel.pdm.chimp.ui.screens.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -21,7 +22,7 @@ import pt.isel.pdm.chimp.domain.user.User
 import pt.isel.pdm.chimp.ui.components.NavBar
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.channel.searchResults.ChannelResultsList
-import pt.isel.pdm.chimp.ui.components.inputs.ChannelSearchBar
+import pt.isel.pdm.chimp.ui.components.inputs.SearchBarField
 import pt.isel.pdm.chimp.ui.screens.shared.viewModels.InfiniteScrollState
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
 import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
@@ -52,7 +53,14 @@ fun ChannelSearchScreen(
             topBar = {
                 TopBar(
                     modifier = Modifier.height(100.dp),
-                    content = { ChannelSearchBar(searchField, onSearchValueChange, doSearch) },
+                    content = {
+                        SearchBarField(
+                            searchField,
+                            onSearchValueChange,
+                            doSearch,
+                            Modifier.fillMaxWidth(1f),
+                        )
+                    },
                 )
             },
             bottomBar = {

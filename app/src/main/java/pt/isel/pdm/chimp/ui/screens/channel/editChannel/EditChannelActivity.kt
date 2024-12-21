@@ -28,9 +28,15 @@ class EditChannelActivity : ChannelsActivity() {
                             dependencies.entityReferenceManager.channel.firstOrNull()
                         },
                 )
+                val session by dependencies.sessionManager.session.collectAsState(
+                    initial =
+                        runBlocking {
+                            dependencies.sessionManager.session.firstOrNull()
+                        },
+                )
                 EditChannelScreen(
                     channel = channel,
-                    onChannelNull = { finish() },
+                    session = session,
                     state = state,
                     onEditChannel = editChannelViewModel::updateChannel,
                     onBack = { finish() },

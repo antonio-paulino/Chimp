@@ -91,10 +91,7 @@ fun <T : Identifiable> InfiniteScroll(
     val previousItemCount = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(itemCount) {
-        if (
-            itemCount == previousItemCount.intValue + 1 &&
-            (reverse && listState.firstVisibleItemIndex < listState.layoutInfo.visibleItemsInfo.size || !reverse && isAtBottom.value)
-        ) {
+        if (itemCount == previousItemCount.intValue + 1 && (reverse && listState.firstVisibleItemIndex < listState.layoutInfo.visibleItemsInfo.size || !reverse && isAtBottom.value)) {
             listState.animateScrollToItem(if (reverse) 0 else itemCount - 1)
         }
         previousItemCount.intValue = itemCount

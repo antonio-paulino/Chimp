@@ -96,22 +96,25 @@ fun InvitationActions(
 fun InvitationHeader(
     invitation: ChannelInvitation,
     modifier: Modifier = Modifier,
+    received: Boolean = true,
 ) {
     Row {
         Column(
             modifier = modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            if (received) {
+                Text(
+                    text = invitation.channel.name.value,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Text(
-                text = invitation.channel.name.value,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = invitation.inviter.name.value,
-                style = MaterialTheme.typography.labelLarge,
+                text = if (received) invitation.inviter.name.value else invitation.invitee.name.value,
+                style = if (received) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

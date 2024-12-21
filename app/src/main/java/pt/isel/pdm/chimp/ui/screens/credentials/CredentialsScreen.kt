@@ -46,7 +46,10 @@ fun CredentialsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 when (state) {
-                    is CredentialsScreenState.Login -> {
+                    is CredentialsScreenState.Login,
+                    is CredentialsScreenState.LoginError,
+                    -> {
+                        state as CredentialsScreenState.LoginFormState
                         LoginView(
                             emailOrUsernameInitialValue = state.emailOrUsername,
                             passwordInitialValue = state.password,
@@ -54,24 +57,10 @@ fun CredentialsScreen(
                             onLogin = doLogin,
                         )
                     }
-                    is CredentialsScreenState.LoginError -> {
-                        LoginView(
-                            emailOrUsernameInitialValue = state.emailOrUsername,
-                            passwordInitialValue = state.password,
-                            onRegisterClick = onRegisterClick,
-                            onLogin = doLogin,
-                        )
-                    }
-                    is CredentialsScreenState.Register -> {
-                        RegisterView(
-                            emailInitialValue = state.email,
-                            usernameInitialValue = state.username,
-                            passwordInitialValue = state.password,
-                            onLoginClick = onLoginClick,
-                            onRegister = doRegister,
-                        )
-                    }
-                    is CredentialsScreenState.RegisterError -> {
+                    is CredentialsScreenState.Register,
+                    is CredentialsScreenState.RegisterError,
+                    -> {
+                        state as CredentialsScreenState.RegisterFormState
                         RegisterView(
                             emailInitialValue = state.email,
                             usernameInitialValue = state.username,

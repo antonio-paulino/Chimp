@@ -40,8 +40,6 @@ class ChannelMembersActivity : ChannelsActivity() {
                 ).value
             ChIMPTheme {
                 ChannelMembersScreen(
-                    onNotLoggedIn = { finish() },
-                    onChannelNull = { finish() },
                     state = viewModelState,
                     onRemoveMember = { channel, member -> channelMembersViewModel.removeMember(channel, member) },
                     onUpdateMemberRole = { channel, member, role -> channelMembersViewModel.updateMemberRole(channel, member, role) },

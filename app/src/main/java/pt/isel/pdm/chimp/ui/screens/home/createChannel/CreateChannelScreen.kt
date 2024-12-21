@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.domain.wrappers.name.Name
 import pt.isel.pdm.chimp.ui.components.LoadingSpinner
 import pt.isel.pdm.chimp.ui.components.TopBar
@@ -29,9 +30,14 @@ import pt.isel.pdm.chimp.ui.utils.getMessage
 @Composable
 fun CreateChannelScreen(
     state: CreateChannelScreenState,
+    session: Session?,
     onCreateChannel: (Name, Boolean, ChannelRole) -> Unit,
     onBack: () -> Unit,
 ) {
+    if (session == null) {
+        onBack()
+        return
+    }
     val snackBarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -53,15 +59,10 @@ fun CreateChannelScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding).background(Color.Transparent),
         ) {
             when (state) {
-                is CreateChannelScreenState.CreatingChannel -> {
-                    ChannelForm(
-                        initialName = state.name,
-                        initialIsPublic = state.isPublic,
-                        initialRole = state.defaultRole,
-                        onSubmit = onCreateChannel,
-                    )
-                }
-                is CreateChannelScreenState.CreatingChannelError -> {
+                is CreateChannelScreenState.CreatingChannel,
+                is CreateChannelScreenState.CreatingChannelError,
+                -> {
+                    state as CreateChannelScreenState.CreateChannelForm
                     ChannelForm(
                         initialName = state.name,
                         initialIsPublic = state.isPublic,

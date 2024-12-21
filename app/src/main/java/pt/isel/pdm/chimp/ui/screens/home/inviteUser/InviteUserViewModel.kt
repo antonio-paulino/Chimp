@@ -12,14 +12,16 @@ import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
 import pt.isel.pdm.chimp.ui.utils.launchRequestRefreshing
 
 sealed interface InviteUserScreenState {
-    data class CreatingInvite(val expirationDate: ExpirationOptions) : InviteUserScreenState
+    val expirationDate: ExpirationOptions
 
-    data class Loading(val expirationDate: ExpirationOptions) : InviteUserScreenState
+    data class CreatingInvite(override val expirationDate: ExpirationOptions) : InviteUserScreenState
 
-    data class InviteCreationError(val expirationDate: ExpirationOptions, val problem: Problem) :
+    data class Loading(override val expirationDate: ExpirationOptions) : InviteUserScreenState
+
+    data class InviteCreationError(override val expirationDate: ExpirationOptions, val problem: Problem) :
         InviteUserScreenState
 
-    data class InviteCreated(val expirationDate: ExpirationOptions, val invite: ImInvitation) :
+    data class InviteCreated(override val expirationDate: ExpirationOptions, val invitation: ImInvitation) :
         InviteUserScreenState
 }
 
@@ -47,7 +49,7 @@ class InviteUserViewModel internal constructor(
                     )
                 null
             },
-            request = { services.authService.createInvitation(sessionManager.session.first()!!, expirationOptions.expirationDate) },
+            request = { services.authService.createInvitation(sessionManager.session.first()!!, expirationOptions.expirationDate()) },
             refresh = services.authService::refresh,
             onError = {
                 _state.emit(

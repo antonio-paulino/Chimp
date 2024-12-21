@@ -17,24 +17,40 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 sealed interface CredentialsScreenState {
-    data class Login(val emailOrUsername: String = "", val password: String = "") : CredentialsScreenState
+    sealed interface LoginFormState : CredentialsScreenState {
+        val emailOrUsername: String
+        val password: String
+    }
 
-    data class LoginError(val emailOrUsername: String = "", val password: String = "", val problem: Problem) : CredentialsScreenState
+    data class Login(override val emailOrUsername: String = "", override val password: String = "") : LoginFormState
+
+    data class LoginError(
+        override val emailOrUsername: String = "",
+        override val password: String = "",
+        val problem: Problem,
+    ) : LoginFormState
+
+    sealed interface RegisterFormState : CredentialsScreenState {
+        val email: String
+        val username: String
+        val password: String
+        val token: String
+    }
 
     data class Register(
-        val email: String = "",
-        val username: String = "",
-        val password: String = "",
-        val token: String = "",
-    ) : CredentialsScreenState
+        override val email: String = "",
+        override val username: String = "",
+        override val password: String = "",
+        override val token: String = "",
+    ) : RegisterFormState
 
     data class RegisterError(
-        val email: String = "",
-        val username: String = "",
-        val password: String = "",
-        val token: String = "",
+        override val email: String = "",
+        override val username: String = "",
+        override val password: String = "",
+        override val token: String = "",
         val problem: Problem,
-    ) : CredentialsScreenState
+    ) : RegisterFormState
 
     data class Loading(val message: String = "") : CredentialsScreenState
 
@@ -44,8 +60,9 @@ sealed interface CredentialsScreenState {
 class CredentialsViewModel(
     private val services: ChimpService,
     private val sessionManager: SessionManager,
+    initialScreenState: CredentialsScreenState = CredentialsScreenState.Login(),
 ) : ViewModel() {
-    private val _state: MutableStateFlow<CredentialsScreenState> = MutableStateFlow(CredentialsScreenState.Login())
+    private val _state: MutableStateFlow<CredentialsScreenState> = MutableStateFlow(initialScreenState)
 
     val state: Flow<CredentialsScreenState> = _state
 

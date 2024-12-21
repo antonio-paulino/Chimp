@@ -94,27 +94,25 @@ open class ChannelSearchViewModel(
         currentItems: List<Channel>,
     ): Either<Problem, Pagination<Channel>> {
         var result: Either<Problem, Pagination<Channel>> = failure(Problem.UnexpectedProblem)
-        val job =
-            launchRequestRefreshing(
-                sessionManager = sessionManager,
-                noConnectionRequest = {
-                    _state.emit(ChannelSearchListScreenState.ChannelSearchListError(Problem.NoConnection))
-                    null
-                },
-                request = { session ->
-                    services.channelService.getChannels(
-                        name = searchQuery.firstOrNull(),
-                        session = session,
-                        pagination = paginationRequest,
-                        sort = null,
-                        after = currentItems.lastOrNull()?.id,
-                    )
-                },
-                refresh = services.authService::refresh,
-                onError = { result = failure(it) },
-                onSuccess = { result = it },
-            )
-        job.join()
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = {
+                _state.emit(ChannelSearchListScreenState.ChannelSearchListError(Problem.NoConnection))
+                null
+            },
+            request = { session ->
+                services.channelService.getChannels(
+                    name = searchQuery.firstOrNull(),
+                    session = session,
+                    pagination = paginationRequest,
+                    sort = null,
+                    after = currentItems.lastOrNull()?.id,
+                )
+            },
+            refresh = services.authService::refresh,
+            onError = { result = failure(it) },
+            onSuccess = { result = it },
+        ).join()
         return result
     }
 }

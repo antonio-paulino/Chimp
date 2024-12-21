@@ -1,12 +1,10 @@
 package pt.isel.pdm.chimp.ui.screens.credentials
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.ui.navigation.navigateTo
 import pt.isel.pdm.chimp.ui.screens.home.ChannelsActivity
 import pt.isel.pdm.chimp.ui.theme.ChIMPTheme
@@ -38,25 +36,5 @@ class CredentialsActivity : ChannelsActivity() {
                 )
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.v(TAG, "CredentialsActivity.onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.v(TAG, "CredentialsActivity.onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.v(TAG, "CredentialsActivity.onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.v(TAG, "CredentialsActivity.onStop")
     }
 }

@@ -28,8 +28,6 @@ import pt.isel.pdm.chimp.ui.utils.SnackBarVisuals
 
 @Composable
 fun ChannelMembersScreen(
-    onNotLoggedIn: () -> Unit,
-    onChannelNull: () -> Unit,
     channel: Channel?,
     state: ChannelMembersScreenState,
     onRemoveMember: (channel: Channel, member: ChannelMember) -> Unit,
@@ -37,12 +35,8 @@ fun ChannelMembersScreen(
     onBack: () -> Unit,
     user: User?,
 ) {
-    if (user == null) {
-        onNotLoggedIn()
-        return
-    }
-    if (channel == null) {
-        onChannelNull()
+    if (user == null || channel == null) {
+        onBack()
         return
     }
     ChIMPTheme {

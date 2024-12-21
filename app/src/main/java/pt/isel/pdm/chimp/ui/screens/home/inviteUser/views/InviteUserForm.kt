@@ -37,7 +37,7 @@ fun InviteUserForm(
         ) {
             ExpirationInput(
                 expiration = expiration,
-                setExpiration = setExpiration,
+                onExpirationChange = setExpiration,
             )
             if (!loading) {
                 Button(

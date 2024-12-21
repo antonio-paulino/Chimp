@@ -5,7 +5,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pt.isel.pdm.chimp.DependenciesContainer
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.ui.navigation.navigateToNoAnimation
@@ -42,16 +44,24 @@ open class InvitationsActivity : ChannelsActivity() {
         setContent {
             val invitationsState by invitationsViewModel.state.collectAsState(initial = InvitationsScreenState.InvitationsList)
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Initial())
+            val session by dependencies.sessionManager.session.collectAsState(
+                initial =
+                    runBlocking {
+                        dependencies.sessionManager.session.firstOrNull()
+                    },
+            )
             ChIMPTheme {
                 InvitationsScreen(
                     state = invitationsState,
                     scrollState = scrollState,
+                    session = session,
                     onAcceptInvitation = { invitation -> invitationsViewModel.acceptInvitation(invitation) },
                     onRejectInvitation = { invitation -> invitationsViewModel.rejectInvitation(invitation) },
                     onScrollToBottom = { scrollingViewModel.loadMore() },
                     onAboutNavigation = { navigateToNoAnimation(AboutActivity::class.java) },
                     onHomeNavigation = { navigateToNoAnimation(ChannelsActivity::class.java) },
                     onSearchNavigation = { navigateToNoAnimation(ChannelSearchActivity::class.java) },
+                    onNotLoggedIn = { finish() },
                 )
             }
         }

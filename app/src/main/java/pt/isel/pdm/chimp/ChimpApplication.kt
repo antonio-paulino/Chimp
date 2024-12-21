@@ -68,12 +68,6 @@ class ChimpApplication : Application(), DependenciesContainer {
         createNotificationWorker()
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        WorkManager.getInstance(this).cancelAllWorkByTag(SSEWorker::class.java.name)
-        WorkManager.getInstance(this).cancelAllWorkByTag(NotificationWorker::class.java.name)
-    }
-
     private fun createSSEWorker() {
         val workManager = WorkManager.getInstance(this)
         val workItem =
@@ -120,10 +114,10 @@ class ChimpApplication : Application(), DependenciesContainer {
             }
 
         fun applicationContext(): Context {
-            return instance!!.applicationContext
+            return instance?.applicationContext ?: throw IllegalStateException("Application not initialized")
         }
 
-        private const val NGROK_TUNNEL = "together-kid-admittedly.ngrok-free.app"
+        private const val NGROK_TUNNEL = "34d5-94-62-132-208.ngrok-free.app"
         private const val API_BASE_URL = "https://$NGROK_TUNNEL/api"
     }
 }

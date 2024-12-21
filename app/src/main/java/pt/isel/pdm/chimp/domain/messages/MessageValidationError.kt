@@ -1,14 +1,19 @@
 package pt.isel.pdm.chimp.domain.messages
 
+import pt.isel.pdm.chimp.ChimpApplication
+import pt.isel.pdm.chimp.R
+
 sealed class MessageValidationError(
-    val defaultMessage: String = "Invalid message",
+    private val defaultMessage: String = "Invalid message",
 ) {
-    data object ContentBlank : MessageValidationError("Message content cannot be blank")
+    data object ContentBlank : MessageValidationError(
+        ChimpApplication.applicationContext().resources.getString(R.string.message_content_blank),
+    )
 
     data class ContentLength(
         val min: Int,
         val max: Int,
-    ) : MessageValidationError("Message content must be between $min and $max characters")
+    ) : MessageValidationError(ChimpApplication.applicationContext().resources.getString(R.string.message_content_length, min, max))
 
     fun toErrorMessage(): String = defaultMessage
 }

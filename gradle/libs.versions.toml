@@ -15,6 +15,8 @@ firebaseBom = "33.5.1"
 dataStore = "1.1.1"
 workManager = "2.7.0"
 guava = "32.0.1-jre"
+mockito = "4.8.1"
+mockito-kotlin = "4.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +42,10 @@ google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", ve
 google-firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 work-manager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

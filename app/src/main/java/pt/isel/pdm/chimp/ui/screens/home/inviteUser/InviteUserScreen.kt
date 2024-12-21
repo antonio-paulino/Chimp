@@ -18,8 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.chimp.R
+import pt.isel.pdm.chimp.domain.sessions.Session
 import pt.isel.pdm.chimp.ui.components.TopBar
 import pt.isel.pdm.chimp.ui.components.inputs.ExpirationOptions
 import pt.isel.pdm.chimp.ui.screens.home.inviteUser.views.InviteUserForm
@@ -30,11 +30,15 @@ import pt.isel.pdm.chimp.ui.utils.getMessage
 @Composable
 fun CreateUserInviteScreen(
     state: InviteUserScreenState,
+    session: Session?,
     onCreateInvite: (ExpirationOptions) -> Unit,
     onBack: () -> Unit,
 ) {
+    if (session == null) {
+        onBack()
+        return
+    }
     val snackBarHostState = remember { SnackbarHostState() }
-
     ChIMPTheme {
         Scaffold(
             snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -58,13 +62,9 @@ fun CreateUserInviteScreen(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
                 when (state) {
-                    is InviteUserScreenState.CreatingInvite -> {
-                        InviteUserForm(
-                            expirationOption = state.expirationDate,
-                            onCreateInvite = onCreateInvite,
-                        )
-                    }
-                    is InviteUserScreenState.InviteCreationError -> {
+                    is InviteUserScreenState.CreatingInvite,
+                    is InviteUserScreenState.InviteCreationError,
+                    -> {
                         InviteUserForm(
                             expirationOption = state.expirationDate,
                             onCreateInvite = onCreateInvite,
@@ -81,7 +81,7 @@ fun CreateUserInviteScreen(
                         InviteUserForm(
                             expirationOption = state.expirationDate,
                             onCreateInvite = onCreateInvite,
-                            createdInvite = state.invite,
+                            createdInvite = state.invitation,
                         )
                     }
                 }
@@ -98,14 +98,4 @@ fun CreateUserInviteScreen(
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun CreateUserInviteScreenPreview() {
-    CreateUserInviteScreen(
-        state = InviteUserScreenState.CreatingInvite(ExpirationOptions.THIRTY_MINUTES),
-        onCreateInvite = {},
-        onBack = {},
-    )
 }

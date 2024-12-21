@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -303,26 +304,6 @@ fun ChannelScreenDropDown(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_channel),
-                    )
-                    Text(
-                        text = stringResource(R.string.edit_channel),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            },
-            onClick = {
-                onEditChannel()
-                expanded = false
-            },
-        )
-        DropdownMenuItem(
-            text = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = stringResource(R.string.channel_members),
                     )
@@ -332,61 +313,72 @@ fun ChannelScreenDropDown(
                     )
                 }
             },
-            onClick = { onChannelMembers() },
-        )
-        DropdownMenuItem(
-            text = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.List,
-                        contentDescription = stringResource(R.string.manage_channel_invitations),
-                    )
-                    Text(
-                        text = stringResource(R.string.manage_channel_invitations),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+            onClick = {
+                onChannelMembers()
+                expanded = false
             },
-            onClick = onManageInvitations,
         )
-        DropdownMenuItem(
-            text = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = stringResource(R.string.invite_member),
-                    )
-                    Text(
-                        text = stringResource(R.string.invite_member),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            },
-            onClick = onInviteMember,
-        )
-        if (!isOwner) {
+        if (isOwner) {
             DropdownMenuItem(
                 text = {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = stringResource(R.string.leave_channel),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit_channel),
                         )
                         Text(
-                            text = stringResource(R.string.leave_channel),
+                            text = stringResource(R.string.edit_channel),
                             fontWeight = FontWeight.Bold,
                         )
                     }
                 },
-                onClick = onLeaveChannel,
+                onClick = {
+                    onEditChannel()
+                    expanded = false
+                },
             )
-        } else {
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.List,
+                            contentDescription = stringResource(R.string.manage_channel_invitations),
+                        )
+                        Text(
+                            text = stringResource(R.string.manage_channel_invitations),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                },
+                onClick = {
+                    onManageInvitations()
+                    expanded = false
+                },
+            )
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(R.string.invite_member),
+                        )
+                        Text(
+                            text = stringResource(R.string.invite_member),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                },
+                onClick = {
+                    onInviteMember()
+                    expanded = false
+                },
+            )
             DropdownMenuItem(
                 text = {
                     Row(
@@ -402,7 +394,31 @@ fun ChannelScreenDropDown(
                         )
                     }
                 },
-                onClick = onChannelDelete,
+                onClick = {
+                    onChannelDelete()
+                    expanded = false
+                },
+            )
+        } else {
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = stringResource(R.string.leave_channel),
+                        )
+                        Text(
+                            text = stringResource(R.string.leave_channel),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                },
+                onClick = {
+                    onLeaveChannel()
+                    expanded = false
+                },
             )
         }
     }

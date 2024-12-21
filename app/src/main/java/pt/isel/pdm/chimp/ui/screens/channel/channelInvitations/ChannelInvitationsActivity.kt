@@ -22,7 +22,7 @@ class ChannelInvitationsActivity : ChannelsActivity() {
         ChannelInvitationsViewModel(
             dependencies.chimpService,
             dependencies.sessionManager,
-            channel = runBlocking { dependencies.entityReferenceManager.channel.firstOrNull() },
+            dependencies.entityReferenceManager,
         )
     }
 
@@ -44,25 +44,29 @@ class ChannelInvitationsActivity : ChannelsActivity() {
             val viewModelState by channelInvitationsViewModel.state.collectAsState(
                 initial = ChannelInvitationsScreenState.ChannelInvitationsList,
             )
+            val channel by dependencies.entityReferenceManager.channel.collectAsState(
+                initial =
+                    runBlocking {
+                        dependencies.entityReferenceManager.channel.firstOrNull()
+                    },
+            )
             val scrollState by scrollingViewModel.state.collectAsState(initial = InfiniteScrollState.Initial())
-            val channel =
-                dependencies.entityReferenceManager.channel.collectAsState(
-                    initial =
-                        runBlocking {
-                            dependencies.entityReferenceManager.channel.firstOrNull()
-                        },
-                ).value
-            channelInvitationsViewModel.setChannel(channel)
+            val session by dependencies.sessionManager.session.collectAsState(
+                initial =
+                    runBlocking {
+                        dependencies.sessionManager.session.firstOrNull()
+                    },
+            )
             ChIMPTheme {
                 ChannelInvitationsScreen(
                     state = viewModelState,
+                    session = session,
                     scrollState = scrollState,
-                    onChannelNull = { finish() },
                     onRemoveInvitation = { invitation -> channelInvitationsViewModel.deleteInvitation(invitation) },
                     onUpdateInvitationRole = { invitation, role -> channelInvitationsViewModel.updateInvitationRole(invitation, role) },
                     onBack = { finish() },
                     loadMore = { scrollingViewModel.loadMore() },
-                    channel = channelInvitationsViewModel.channel,
+                    channel = channel,
                 )
             }
         }
@@ -81,8 +85,8 @@ class ChannelInvitationsActivity : ChannelsActivity() {
         }
     }
 
-    private fun handleInvitationCreated(event: Event.InvitationEvent.CreatedEvent) {
-        if (event.invitation.channel.id == channelInvitationsViewModel.channel?.id) {
+    private suspend fun handleInvitationCreated(event: Event.InvitationEvent.CreatedEvent) {
+        if (event.invitation.channel.id == dependencies.entityReferenceManager.channel.firstOrNull()?.id) {
             scrollingViewModel.handleItemCreate(event.invitation)
         }
     }

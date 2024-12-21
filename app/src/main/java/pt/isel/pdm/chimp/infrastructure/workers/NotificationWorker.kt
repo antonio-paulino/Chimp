@@ -13,11 +13,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.DependenciesContainer
@@ -50,34 +47,30 @@ class NotificationWorker(
     }
 
     override suspend fun doWork(): Result {
-        val job: Job?
         withContext(Dispatchers.IO) {
-            listenForMessageNotifications(this)
-            job = listenForInvitationNotifications(this)
+            listenForMessageNotifications()
+            listenForInvitationNotifications()
         }
-        job?.join()
         return Result.success()
     }
 
-    private fun listenForMessageNotifications(scope: CoroutineScope) =
-        scope.launch {
-            dependencies.chimpService.eventService.awaitInitialization(30.seconds)
-            dependencies.chimpService.eventService.messageEventFlow.collect { event ->
-                if (event is Event.MessageEvent.CreatedEvent) {
-                    notifyMessage(event)
-                }
+    private suspend fun listenForMessageNotifications() {
+        dependencies.chimpService.eventService.awaitInitialization(30.seconds)
+        dependencies.chimpService.eventService.messageEventFlow.collect { event ->
+            if (event is Event.MessageEvent.CreatedEvent) {
+                notifyMessage(event)
             }
         }
+    }
 
-    private fun listenForInvitationNotifications(scope: CoroutineScope) =
-        scope.launch {
-            dependencies.chimpService.eventService.awaitInitialization(30.seconds)
-            dependencies.chimpService.eventService.invitationEventFlow.collect { event ->
-                if (event is Event.InvitationEvent.CreatedEvent) {
-                    notifyInvitation(event)
-                }
+    private suspend fun listenForInvitationNotifications() {
+        dependencies.chimpService.eventService.awaitInitialization(30.seconds)
+        dependencies.chimpService.eventService.invitationEventFlow.collect { event ->
+            if (event is Event.InvitationEvent.CreatedEvent) {
+                notifyInvitation(event)
             }
         }
+    }
 
     private suspend fun notifyMessage(event: Event.MessageEvent.CreatedEvent) {
         val channel = getChannel(event.message.channelId) ?: return

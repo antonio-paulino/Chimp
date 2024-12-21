@@ -21,7 +21,8 @@ import java.time.LocalDateTime
 @Composable
 fun ExpirationInput(
     expiration: ExpirationOptions,
-    setExpiration: (ExpirationOptions) -> Unit,
+    onExpirationChange: (ExpirationOptions) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val expanded = remember { mutableStateOf(false) }
     val expirationOptions = ExpirationOptions.entries.toTypedArray()
@@ -30,6 +31,7 @@ fun ExpirationInput(
         onExpandedChange = {
             expanded.value = !expanded.value
         },
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = expiration.toStringResourceRepresentation(),
@@ -52,7 +54,7 @@ fun ExpirationInput(
                 DropdownMenuItem(
                     text = { Text(option.toStringResourceRepresentation()) },
                     onClick = {
-                        setExpiration(option)
+                        onExpirationChange(option)
                         expanded.value = false
                     },
                 )
@@ -61,12 +63,12 @@ fun ExpirationInput(
     }
 }
 
-enum class ExpirationOptions(val expirationDate: LocalDateTime) {
-    THIRTY_MINUTES(LocalDateTime.now().plusMinutes(30)),
-    ONE_HOUR(LocalDateTime.now().plusHours(1)),
-    ONE_DAY(LocalDateTime.now().plusDays(1)),
-    ONE_WEEK(LocalDateTime.now().plusDays(7)),
-    THIRTY_DAYS(LocalDateTime.now().plusDays(30)),
+enum class ExpirationOptions(val expirationDate: () -> LocalDateTime) {
+    THIRTY_MINUTES({ LocalDateTime.now().plusMinutes(30) }),
+    ONE_HOUR({ LocalDateTime.now().plusHours(1) }),
+    ONE_DAY({ LocalDateTime.now().plusDays(1) }),
+    ONE_WEEK({ LocalDateTime.now().plusDays(7) }),
+    THIRTY_DAYS({ LocalDateTime.now().plusDays(30) }),
     ;
 
     @Composable

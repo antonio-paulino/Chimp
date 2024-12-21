@@ -20,18 +20,17 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 
 @Composable
-fun ChannelSearchBar(
+fun SearchBarField(
     searchField: String,
     onSearch: (String) -> Unit,
     doSearch: () -> Unit,
+    modifier: Modifier = Modifier,
+    label: String = stringResource(id = R.string.search_channels),
 ) {
     val (searchFieldValue, setSearchFieldValue) = remember { mutableStateOf(searchField) }
 
     Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+        modifier = modifier.padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         OutlinedTextField(
@@ -46,9 +45,9 @@ fun ChannelSearchBar(
                 setSearchFieldValue(it)
                 onSearch(it)
             },
-            placeholder = {
+            label = {
                 Text(
-                    text = stringResource(id = R.string.search_channels),
+                    text = label,
                     style =
                         MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),

@@ -65,6 +65,7 @@ fun <T : Identifiable> Scrollable(
                 listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size + 10 >= listState.layoutInfo.totalItemsCount
             }
         }
+
     val previousItemCount = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(items.size) {

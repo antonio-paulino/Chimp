@@ -83,26 +83,24 @@ open class InvitationsViewModel(
         currentItems: List<ChannelInvitation>,
     ): Either<Problem, Pagination<ChannelInvitation>> {
         var result: Either<Problem, Pagination<ChannelInvitation>> = failure(Problem.UnexpectedProblem)
-        val job =
-            launchRequestRefreshing(
-                sessionManager = sessionManager,
-                noConnectionRequest = {
-                    _state.emit(InvitationsScreenState.InvitationsListError(Problem.NoConnection))
-                    null
-                },
-                request = { session ->
-                    services.invitationService.getUserInvitations(
-                        session = session,
-                        pagination = paginationRequest,
-                        sort = null,
-                        after = currentItems.lastOrNull()?.id,
-                    )
-                },
-                refresh = services.authService::refresh,
-                onError = { result = failure(it) },
-                onSuccess = { result = it },
-            )
-        job.join()
+        launchRequestRefreshing(
+            sessionManager = sessionManager,
+            noConnectionRequest = {
+                _state.emit(InvitationsScreenState.InvitationsListError(Problem.NoConnection))
+                null
+            },
+            request = { session ->
+                services.invitationService.getUserInvitations(
+                    session = session,
+                    pagination = paginationRequest,
+                    sort = null,
+                    after = currentItems.lastOrNull()?.id,
+                )
+            },
+            refresh = services.authService::refresh,
+            onError = { result = failure(it) },
+            onSuccess = { result = it },
+        ).join()
         return result
     }
 }
