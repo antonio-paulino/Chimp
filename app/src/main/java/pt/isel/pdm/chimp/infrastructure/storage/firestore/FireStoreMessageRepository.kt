@@ -1,11 +1,11 @@
 package pt.isel.pdm.chimp.infrastructure.storage.firestore
 
+import android.content.Context
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
-import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.Either
 import pt.isel.pdm.chimp.domain.channel.Channel
@@ -22,7 +22,9 @@ import pt.isel.pdm.chimp.ui.utils.isNetworkAvailable
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-class FireStoreMessageRepository : MessageRepository {
+class FireStoreMessageRepository(
+    private val context: Context,
+) : MessageRepository {
     private val db = Firebase.firestore
     private val messageCollection = db.collection("messages")
 
@@ -34,7 +36,7 @@ class FireStoreMessageRepository : MessageRepository {
         before: LocalDateTime?,
     ): Either<Problem, Pagination<Message>> {
         val source =
-            if (!ChimpApplication.applicationContext().isNetworkAvailable()) {
+            if (!context.isNetworkAvailable()) {
                 Source.CACHE
             } else {
                 Source.DEFAULT

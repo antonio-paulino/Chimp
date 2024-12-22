@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import pt.isel.pdm.chimp.ChimpApplication
 import pt.isel.pdm.chimp.ChimpApplication.Companion.TAG
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.infrastructure.services.http.BaseHTTPService
@@ -47,18 +46,11 @@ import kotlin.time.Duration
 class EventServiceHTTP(
     httpClient: HttpClient,
     baseUrl: String,
+    private val context: Context,
 ) : EventService, BaseHTTPService(httpClient, baseUrl) {
     private var job: Job? = null
-    private val context: Context
 
     private var _eventFlow: MutableSharedFlow<Event>? = null
-
-    init {
-        check(ChimpApplication.isInitialized) {
-            "Application context not initialized, make sure the application context is available before creating the service"
-        }
-        context = ChimpApplication.applicationContext()
-    }
 
     /**
      * Initializes the event service.
@@ -171,10 +163,10 @@ class EventServiceHTTP(
      * Whenever a connection error occurs, this method will attempt to reconnect after a delay.
      *
      * @param scope The scope to use for the service.
-     * @param session The session of the user.
+     * @param sessionManager The session manager to use for the service.
      */
     private fun listenEvents(
-        session: SessionManager,
+        sessionManager: SessionManager,
         scope: CoroutineScope,
     ): MutableSharedFlow<Event> {
         val sharedFlow = MutableSharedFlow<Event>(replay = 0)
@@ -182,15 +174,19 @@ class EventServiceHTTP(
         var lastEventId: String? = null
         scope.launch {
             while (scope.isActive) {
+                val session = sessionManager.session.firstOrNull()
+                if (session == null) {
+                    delay(reconnectTime)
+                    continue
+                }
                 try {
                     httpClient.prepareRequest {
                         url(url)
                         header("Accept", "text/event-stream")
-                        header("Authorization", "Bearer ${session.session.firstOrNull()?.accessToken?.token}")
+                        header("Authorization", "Bearer ${session.accessToken.token}")
                         lastEventId?.let { header("Last-Event-ID", it) }
                     }.execute { response ->
-                        val channel = response.bodyAsChannel()
-                        channel.readEvents(scope).collect { event ->
+                        response.bodyAsChannel().readEvents(scope).collect { event ->
                             lastEventId = event.id
                             sharedFlow.emit(event)
                         }

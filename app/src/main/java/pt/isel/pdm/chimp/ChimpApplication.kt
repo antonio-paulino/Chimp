@@ -44,10 +44,10 @@ class ChimpApplication : Application(), DependenciesContainer {
     private val preferencesDataStore: DataStore<Preferences> by preferencesDataStore("chimp_preferences")
 
     private val client by lazy { createHttpClient() }
-    override val chimpService by lazy { ChimpServiceHttp(API_BASE_URL, client) }
+    override val chimpService by lazy { ChimpServiceHttp(API_BASE_URL, client, this) }
     override val sessionManager by lazy { SessionManagerPreferencesDataStore(preferencesDataStore) }
     override val entityReferenceManager by lazy { EntityReferenceManagerImpl() }
-    override val storage by lazy { FireStoreStorage() }
+    override val storage by lazy { FireStoreStorage(this) }
 
     private fun createHttpClient() =
         HttpClient(OkHttp) {
@@ -93,9 +93,6 @@ class ChimpApplication : Application(), DependenciesContainer {
         const val TAG = "CHIMP_APPLICATION"
 
         private var instance: ChimpApplication? = null
-
-        val isInitialized: Boolean
-            get() = instance != null
 
         private val activityManager: ActivityManager by lazy {
             applicationContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

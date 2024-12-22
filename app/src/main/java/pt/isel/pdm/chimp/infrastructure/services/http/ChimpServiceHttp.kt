@@ -1,5 +1,6 @@
 package pt.isel.pdm.chimp.infrastructure.services.http
 
+import android.content.Context
 import io.ktor.client.HttpClient
 import pt.isel.pdm.chimp.infrastructure.services.http.auth.AuthServiceHTTP
 import pt.isel.pdm.chimp.infrastructure.services.http.channels.ChannelServiceHTTP
@@ -17,11 +18,12 @@ import pt.isel.pdm.chimp.infrastructure.services.interfaces.users.UserService
 class ChimpServiceHttp(
     baseUrl: String,
     httpClient: HttpClient,
+    context: Context,
 ) : ChimpService {
     override val authService: AuthService = AuthServiceHTTP(baseUrl, httpClient)
     override val userService: UserService = UserServiceHTTP(baseUrl, httpClient)
     override val channelService: ChannelService = ChannelServiceHTTP(baseUrl, httpClient)
     override val invitationService: InvitationService = InvitationServiceHTTP(baseUrl, httpClient)
     override val messageService: MessageService = MessageServiceHTTP(baseUrl, httpClient)
-    override val eventService = EventServiceHTTP(httpClient, baseUrl)
+    override val eventService = EventServiceHTTP(httpClient, baseUrl, context)
 }
