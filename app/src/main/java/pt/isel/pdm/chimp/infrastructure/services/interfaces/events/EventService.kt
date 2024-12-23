@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
-import kotlin.time.Duration
 import java.util.concurrent.TimeoutException
+import kotlin.time.Duration
 
 /**
  * Represents the service responsible for managing the events of the Chelas Instant Messaging Platform.
