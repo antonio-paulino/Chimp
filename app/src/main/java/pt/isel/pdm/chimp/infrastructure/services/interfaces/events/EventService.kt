@@ -6,6 +6,7 @@ import pt.isel.pdm.chimp.domain.channel.Channel
 import pt.isel.pdm.chimp.infrastructure.services.http.events.Event
 import pt.isel.pdm.chimp.infrastructure.session.SessionManager
 import kotlin.time.Duration
+import java.util.concurrent.TimeoutException
 
 /**
  * Represents the service responsible for managing the events of the Chelas Instant Messaging Platform.
@@ -77,6 +78,8 @@ interface EventService {
 
     /**
      * Suspends the coroutine until the service is initialized or the timeout is reached.
+     *
+     * @throws TimeoutException If the service is not initialized before the timeout.
      */
     suspend fun awaitInitialization(timeout: Duration)
 

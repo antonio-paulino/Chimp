@@ -10,6 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.firebase.FirebaseApp
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -64,6 +65,7 @@ class ChimpApplication : Application(), DependenciesContainer {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         createSSEWorker()
         createNotificationWorker()
     }

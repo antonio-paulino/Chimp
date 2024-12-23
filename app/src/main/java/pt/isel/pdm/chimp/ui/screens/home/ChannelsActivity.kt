@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -57,7 +56,6 @@ open class ChannelsActivity : DependenciesActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         dependencies = application as DependenciesContainer
-        FirebaseApp.initializeApp(this)
         startListening()
         setContent {
             val session by dependencies.sessionManager.session.collectAsState(
@@ -78,7 +76,9 @@ open class ChannelsActivity : DependenciesActivity() {
                         finish()
                     },
                     onLoggedIn = {
-                        checkNotificationPermission()
+                        if (Build.VERSION_CODES.TIRAMISU <= Build.VERSION.SDK_INT) {
+                            checkNotificationPermission()
+                        }
                     },
                     onBottomScroll = scrollingViewModel::loadMore,
                     onChannelSelected = { channel ->
@@ -125,13 +125,11 @@ open class ChannelsActivity : DependenciesActivity() {
         if (referencedChannel != null && referencedChannel.id == event.channelId) {
             dependencies.entityReferenceManager.setChannel(null)
         }
-        dependencies.storage.channelRepository.deleteChannel(event.channelId)
     }
 
     private suspend fun handleChannelUpdated(event: Event.ChannelEvent.UpdatedEvent) {
         if (event.channel.members.none { it.id == dependencies.sessionManager.session.firstOrNull()?.user?.id }) {
             scrollingViewModel.handleItemDelete(event.channel.id)
-            dependencies.storage.channelRepository.deleteChannel(event.channel.id)
             if (dependencies.entityReferenceManager.channel.firstOrNull()?.id == event.channel.id) {
                 dependencies.entityReferenceManager.setChannel(null)
             }
@@ -147,7 +145,6 @@ open class ChannelsActivity : DependenciesActivity() {
             } else {
                 scrollingViewModel.handleItemUpdate(event.channel)
             }
-            dependencies.storage.channelRepository.updateChannels(listOf(event.channel))
         }
         val referencedChannel = dependencies.entityReferenceManager.channel.firstOrNull()
         if (referencedChannel != null && referencedChannel.id == event.channel.id) {
@@ -157,7 +154,6 @@ open class ChannelsActivity : DependenciesActivity() {
 
     private suspend fun handleChannelCreated(event: Event.ChannelEvent.CreatedEvent) {
         scrollingViewModel.handleItemCreate(event.channel)
-        dependencies.storage.channelRepository.updateChannels(listOf(event.channel))
         val referencedChannel = dependencies.entityReferenceManager.channel.firstOrNull()
         if (referencedChannel != null && referencedChannel.id == event.channel.id) {
             dependencies.entityReferenceManager.setChannel(event.channel)
