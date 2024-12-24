@@ -33,7 +33,6 @@ android {
         android.set(true)
         outputToConsole.set(true)
         outputColorName.set("RED")
-        ignoreFailures.set(true)
     }
 
     buildTypes {

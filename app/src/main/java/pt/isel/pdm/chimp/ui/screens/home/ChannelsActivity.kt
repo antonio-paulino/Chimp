@@ -113,7 +113,10 @@ open class ChannelsActivity : DependenciesActivity() {
     private fun checkNotificationPermission() {
         val sharedPreferences = getSharedPreferences("app_preferences", MODE_PRIVATE)
         val hasRequestedPermission = sharedPreferences.getBoolean("requested_notification_permission", false)
-        if (!hasRequestedPermission && ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (
+            !hasRequestedPermission &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
             sharedPreferences.edit().putBoolean("requested_notification_permission", true).apply()
         }

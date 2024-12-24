@@ -97,7 +97,9 @@ class ChannelInvitationsViewModel(
             },
             request = { session ->
                 services.invitationService.getChannelInvitations(
-                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    channel =
+                        entityReferenceManager.channel.firstOrNull()
+                            ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
                     session = session,
                     pagination = paginationRequest,
                     sort = null,

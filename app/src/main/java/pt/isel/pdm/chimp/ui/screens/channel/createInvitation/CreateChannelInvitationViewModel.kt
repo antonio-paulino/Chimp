@@ -89,7 +89,9 @@ class CreateChannelInvitationViewModel(
             },
             request = { session ->
                 services.invitationService.createChannelInvitation(
-                    channel = entityReferenceManager.channel.firstOrNull() ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
+                    channel =
+                        entityReferenceManager.channel.firstOrNull()
+                            ?: return@launchRequestRefreshing failure(Problem.UnexpectedProblem),
                     session = session,
                     role = role,
                     invitee = user,
