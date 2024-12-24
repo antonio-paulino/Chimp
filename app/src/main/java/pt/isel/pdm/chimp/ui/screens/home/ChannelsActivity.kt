@@ -51,7 +51,6 @@ open class ChannelsActivity : DependenciesActivity() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

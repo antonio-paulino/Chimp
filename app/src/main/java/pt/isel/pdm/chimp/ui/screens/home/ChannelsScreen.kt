@@ -64,6 +64,8 @@ fun ChannelsScreen(
     if (session == null) {
         onNotLoggedIn()
         return
+    } else {
+        onLoggedIn()
     }
     ChIMPTheme {
         val snackBarHostState = remember { SnackbarHostState() }
