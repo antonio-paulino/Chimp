@@ -46,7 +46,7 @@ fun ChannelMemberView(
             )
         } else {
             Spacer(modifier = Modifier.width(8.dp))
-            ChannelMemberRoleIcon(channel = channel, user = user)
+            ChannelMemberRoleIcon(channel = channel, user = member)
         }
     }
 }

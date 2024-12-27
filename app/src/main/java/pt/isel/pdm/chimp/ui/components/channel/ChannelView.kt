@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.chimp.R
 import pt.isel.pdm.chimp.domain.channel.Channel
+import pt.isel.pdm.chimp.domain.channel.ChannelMember
 import pt.isel.pdm.chimp.domain.channel.ChannelRole
 import pt.isel.pdm.chimp.domain.user.User
 
@@ -36,7 +37,7 @@ fun ChannelView(
     ChannelContainer(
         modifier = Modifier.clickable { onChannelSelected(channel) },
     ) {
-        ChannelMemberRoleIcon(channel = channel, user = user)
+        ChannelMemberRoleIcon(channel = channel, user = channel.members.find { it.id == user.id }!!)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -52,9 +53,9 @@ fun ChannelView(
 @Composable
 fun ChannelMemberRoleIcon(
     channel: Channel,
-    user: User,
+    user: ChannelMember,
 ) {
-    when (channel.getMemberRole(user)!!) {
+    when (channel.members.find { it.id == user.id }!!.role) {
         ChannelRole.OWNER -> {
             Icon(
                 tint = MaterialTheme.colorScheme.onBackground,
