@@ -17,7 +17,7 @@ class SSEWorker(context: Context, params: WorkerParameters) : CoroutineWorker(co
     private val dependencies: DependenciesContainer = context.applicationContext as DependenciesContainer
 
     override suspend fun doWork(): Result {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             startSSEConnection(this)
         }
         return Result.success()
