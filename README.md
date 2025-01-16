@@ -15,7 +15,6 @@ The application was developed in Kotlin with the use of Jetpack Compose and Ktor
 
 To run the application, make sure you set up the `google-services.json` file in the `app` directory with the Firebase configuration.
 
----
 ## Instant-Messaging
 - [Server project](https://github.com/antonio-paulino/Instant-Messaging)
 
